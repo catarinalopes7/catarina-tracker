@@ -1,78 +1,160 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <title>Painel CT – Catarina Tracker</title>
+  <meta charset="UTF-8" />
+  <title>Catarina Tracker – Painel</title>
   <style>
-    body {
-      margin: 0; background: #1E1B3C; color: #FFF;
-      font-family:'Poppins',sans-serif; text-align:center;
-    }
-    header { background:#15122C; padding:20px; color:#FFD54A;}
-    button {
-      background:#4F3EC7; border:none; color:white;
-      padding:8px 16px; border-radius:6px; cursor:pointer;
-      font-size:15px;
-    }
+    body{margin:0;background:#1E1B3C;color:#FFF;
+     font-family:'Poppins',sans-serif;text-align:center;}
+    header{background:#15122C;padding:20px;color:#FFD54A;}
+    section{margin:20px auto;width:90%;max-width:900px;}
+    table{width:100%;border-collapse:collapse;background:#241F45;}
+    th,td{padding:10px;border-bottom:1px solid #444;text-align:left;}
+    th{color:#FFD54A;}
+    button{background:#4F3EC7;border:none;color:white;padding:6px 12px;
+           border-radius:5px;margin:2px;cursor:pointer;}
     button:hover{background:#FF4DD4;}
-    table {
-      width:90%; margin:20px auto; border-collapse:collapse;
-      background:#241F45; border-radius:8px;
-    }
-    th,td { padding:10px; border-bottom:1px solid #444; }
-    th { color:#FFD54A; }
+    input{padding:5px;margin:4px;border:none;border-radius:4px;}
   </style>
 </head>
 <body>
-  <header>
-    <h1>🎯 Painel CT</h1>
-    <button onclick="criarHunt()">➕ Nova Caçada</button>
-  </header>
+<header>
+  <h1>🎯 Catarina Tracker</h1>
+  <button onclick="menuNova()">➕ Nova Caçada</button>
+</header>
 
-  <table id="tabela">
+<section>
+  <h2>Caçadas</h2>
+  <table id="tblHunts">
     <thead>
-      <tr>
-        <th>Caçada</th>
-        <th>Saldo Inicial (€)</th>
-        <th>Lucro/Prejuízo (€)</th>
-        <th>Ações</th>
-      </tr>
+      <tr><th>Nome</th><th>Saldo Inicial (€)</th>
+          <th>Total Pago (€)</th><th>Lucro/Prejuízo (€)</th><th>Ações</th></tr>
     </thead>
     <tbody></tbody>
   </table>
+</section>
 
+<section>
+  <h2>Bónus da Caçada Selecionada</h2>
+  <div id="secBonus">
+    <p>Seleciona uma caçada para ver os bónus correspondentes.</p>
+  </div>
+</section>
+
+<!-- Scripts -->
 <script src="conexao.js"></script>
 <script>
+let huntSelecionado=null;
+
+// 🔹 carregar hunts
 async function carregarHunts(){
-  const resp=await fetch(`${SUPABASE_URL}/rest/v1/hunts?select=*`,{headers});
-  const dados=await resp.json();
-  const corpo=document.querySelector("#tabela tbody");
+  const resp = await fetch(`${SUPABASE_URL}/rest/v1/hunts?select=*`,{headers});
+  const dados = await resp.json();
+  const corpo = document.querySelector("#tblHunts tbody");
   corpo.innerHTML="";
   dados.forEach(h=>{
     const tr=document.createElement("tr");
+    const lucro = (h.profit_loss||0).toFixed(2);
     tr.innerHTML=`
-      <td>${h.nome||"—"}</td>
-      <td>${h.start_balance?.toFixed(2)||0}</td>
-      <td>${(h.profit_loss||0).toFixed(2)}</td>
-      <td><button onclick="apagarHunt(${h.id})">🗑️</button></td>`;
+      <td>${h.nome}</td>
+      <td>${(h.start_balance||0).toFixed(2)}</td>
+      <td>${(h.total_pago||0).toFixed(2)}</td>
+      <td>${lucro}</td>
+      <td>
+        <button onclick="verBonus(${h.id})">🔍 Abrir</button>
+        <button onclick="editarHunt(${h.id},'${h.nome}',${h.start_balance||0})">✏️</button>
+        <button onclick="apagarHunt(${h.id})">🗑️</button>
+      </td>`;
     corpo.appendChild(tr);
   });
 }
 
-async function criarHunt(){
-  const nome=prompt("Nome da Caçada:","");
-  const saldo=parseFloat(prompt("Saldo Inicial (€):","0"));
+// 🔹 criar nova hunt
+async function menuNova(){
+  const nome = prompt("Nome da Caçada (ex: #58)","");
+  const saldo = parseFloat(prompt("Saldo Inicial (€):","0"));
   if(!nome||isNaN(saldo))return;
   await inserirDados("hunts",{nome,start_balance:saldo});
   carregarHunts();
 }
 
+// 🔹 editar
+async function editarHunt(id,nomeAntigo,saldoAntigo){
+  const nome = prompt("Novo nome",nomeAntigo);
+  const saldo = parseFloat(prompt("Novo saldo inicial (€)",saldoAntigo));
+  if(!nome||isNaN(saldo))return;
+  await fetch(`${SUPABASE_URL}/rest/v1/hunts?id=eq.${id}`,{
+    method:'PATCH',headers,body:JSON.stringify({nome,start_balance:saldo})
+  });
+  carregarHunts();
+}
+
+// 🔹 apagar
 async function apagarHunt(id){
-  if(confirm("Apagar esta caça?")){
+  if(confirm("Apagar esta caçada?")){
     await apagarDado("hunts",id);
     carregarHunts();
+    document.getElementById("secBonus").innerHTML =
+      "<p>Seleciona uma caçada para ver bónus.</p>";
   }
 }
+
+// 🔹 ver bónus
+async function verBonus(id){
+  huntSelecionado=id;
+  const resp=await fetch(`${SUPABASE_URL}/rest/v1/bonus?select=*`,{headers});
+  const dados=(await resp.json()).filter(b=>b.hunt_id==id);
+  let html=`<button onclick="novoBonus()">➕ Adicionar Bónus</button>`;
+  html+=`<table><thead>
+           <tr><th>Nome</th><th>Aposta (€)</th>
+               <th>Tipo</th><th>Payout (€)</th><th>Ações</th></tr>
+         </thead><tbody>`;
+  dados.forEach(b=>{
+    html+=`<tr>
+      <td>${b.nome}</td>
+      <td>${b.aposta}</td>
+      <td>${b.tipo}</td>
+      <td>${b.payout||0}</td>
+      <td>
+        <button onclick="editarBonus(${b.id},'${b.nome}',${b.aposta},'${b.tipo}',${b.payout||0})">✏️</button>
+        <button onclick="apagarBonus(${b.id})">🗑️</button>
+      </td></tr>`;
+  });
+  html+="</tbody></table>";
+  document.getElementById("secBonus").innerHTML=html;
+}
+
+// 🔹 adicionar bónus
+async function novoBonus(){
+  if(!huntSelecionado){alert("Seleciona um hunt.");return;}
+  const nome=prompt("Nome do Jogo","");
+  const aposta=parseFloat(prompt("Aposta (€)","0"));
+  const tipo=prompt("Tipo (Normal, Super, Épico)","Normal");
+  if(!nome||isNaN(aposta))return;
+  await inserirDados("bonus",{nome,aposta,tipo,hunt_id:huntSelecionado});
+  verBonus(huntSelecionado);
+}
+
+// 🔹 editar bónus
+async function editarBonus(id,nomeAntigo,apAntiga,tipoAntigo,payoutAntigo){
+  const nome=prompt("Novo nome",nomeAntigo);
+  const aposta=parseFloat(prompt("Nova aposta",apAntiga));
+  const tipo=prompt("Tipo (Normal, Super, Épico)",tipoAntigo);
+  const payout=parseFloat(prompt("Payout (€)",payoutAntigo));
+  await fetch(`${SUPABASE_URL}/rest/v1/bonus?id=eq.${id}`,{
+    method:'PATCH',headers,body:JSON.stringify({nome,aposta,tipo,payout})
+  });
+  verBonus(huntSelecionado);
+}
+
+// 🔹 apagar bónus
+async function apagarBonus(id){
+  if(confirm("Apagar bónus definitivamente?")){
+    await apagarDado("bonus",id);
+    verBonus(huntSelecionado);
+  }
+}
+
 carregarHunts();
 </script>
 </body>
