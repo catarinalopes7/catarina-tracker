@@ -78,7 +78,7 @@ async function menuNova(){
   carregarHunts();
 }
 
-// 🔹 editar
+// 🔹 editar hunt
 async function editarHunt(id,nomeAntigo,saldoAntigo){
   const nome = prompt("Novo nome",nomeAntigo);
   const saldo = parseFloat(prompt("Novo saldo inicial (€)",saldoAntigo));
@@ -89,7 +89,7 @@ async function editarHunt(id,nomeAntigo,saldoAntigo){
   carregarHunts();
 }
 
-// 🔹 apagar
+// 🔹 apagar hunt
 async function apagarHunt(id){
   if(confirm("Apagar esta caçada?")){
     await apagarDado("hunts",id);
@@ -116,7 +116,7 @@ async function verBonus(id){
       <td>${b.tipo}</td>
       <td>${b.payout||0}</td>
       <td>
-        <button onclick="editarBonus(${b.id},'${b.nome}',${b.aposta},'${b.tipo}',${b.payout||0})">✏️</button>
+        <button onclick="editarBonus(${b.id},'${b.nome}',${b.aposta},'${b.tipo}','${b.payout||0}')">✏️</button>
         <button onclick="apagarBonus(${b.id})">🗑️</button>
       </td></tr>`;
   });
@@ -124,7 +124,7 @@ async function verBonus(id){
   document.getElementById("secBonus").innerHTML=html;
 }
 
-// 🔹 adicionar bónus
+// 🔹 adicionar bónus (com cálculo automático)
 async function novoBonus(){
   if(!huntSelecionado){alert("Seleciona um hunt.");return;}
   const nome=prompt("Nome do Jogo","");
@@ -132,10 +132,11 @@ async function novoBonus(){
   const tipo=prompt("Tipo (Normal, Super, Épico)","Normal");
   if(!nome||isNaN(aposta))return;
   await inserirDados("bonus",{nome,aposta,tipo,hunt_id:huntSelecionado});
+  await recalcularHunt(huntSelecionado);     // 🔸 chama o cálculo automático
   verBonus(huntSelecionado);
 }
 
-// 🔹 editar bónus
+// 🔹 editar bónus (com cálculo automático)
 async function editarBonus(id,nomeAntigo,apAntiga,tipoAntigo,payoutAntigo){
   const nome=prompt("Novo nome",nomeAntigo);
   const aposta=parseFloat(prompt("Nova aposta",apAntiga));
@@ -144,6 +145,7 @@ async function editarBonus(id,nomeAntigo,apAntiga,tipoAntigo,payoutAntigo){
   await fetch(`${SUPABASE_URL}/rest/v1/bonus?id=eq.${id}`,{
     method:'PATCH',headers,body:JSON.stringify({nome,aposta,tipo,payout})
   });
+  await recalcularHunt(huntSelecionado);     // 🔸 chama o cálculo automático
   verBonus(huntSelecionado);
 }
 
@@ -151,6 +153,7 @@ async function editarBonus(id,nomeAntigo,apAntiga,tipoAntigo,payoutAntigo){
 async function apagarBonus(id){
   if(confirm("Apagar bónus definitivamente?")){
     await apagarDado("bonus",id);
+    await recalcularHunt(huntSelecionado);   // 🔸 chama o cálculo automático
     verBonus(huntSelecionado);
   }
 }
