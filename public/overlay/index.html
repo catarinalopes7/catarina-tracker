@@ -1,42 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<title>CT Overlay</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920">
+<title>CT Overlay - Catarina Tracker</title>
 <style>
-body {
-  width:1080px; height:1920px;
-  margin:0; background:linear-gradient(180deg,#4F3EC7,#362A7A);
-  color:#FFF; font-family:'Poppins',sans-serif; text-align:center;
-  overflow:hidden;
+body{
+  width:1080px;height:1920px;margin:0;
+  background:linear-gradient(180deg,#4F3EC7,#362A7A);
+  color:#fff;font-family:'Poppins',sans-serif;
+  text-align:center;overflow:hidden;
 }
-#title{font-size:40px;color:#FFD54A;margin-top:30px;}
-#bonus-list{height:1600px;overflow-y:auto;margin-top:20px;}
-.card{margin:12px 40px;padding:15px;background:rgba(0,0,0,0.25);
-border-radius:10px;}
-.super{color:#FFD54A;} .épico{color:#FF5C5C;}
+#title{
+  font-size:40px;font-weight:700;
+  color:#FFD54A;margin-top:25px;
+}
+#stats{
+  font-size:22px;line-height:1.4em;
+  margin-top:10px;color:#EEE;
+}
+#bonus-wrap{
+  height:1550px;overflow-y:auto;margin-top:20px;
+  padding:0 40px;
+}
+.card{
+  background:rgba(0,0,0,0.25);
+  border-radius:12px;margin:10px 0;padding:15px;
+  font-size:20px;text-align:left;
+}
+.super{color:#FFD54A;}
+.épico{color:#FF5C5C;}
+.normal{color:#FFF;}
+#bonus-wrap::-webkit-scrollbar{width:6px;}
+#bonus-wrap::-webkit-scrollbar-thumb{background:#FFD54A;border-radius:4px;}
 </style>
 </head>
 <body>
   <div id="title">CT 🎯</div>
-  <div id="bonus-list"></div>
+  <div id="stats">Carregando estatísticas...</div>
+  <div id="bonus-wrap"></div>
 
-<script src="../admin/conexao.js"></script>
-<script>
-async function carregarBonus(){
-  const resp=await fetch(`${SUPABASE_URL}/rest/v1/bonus?select=*`,{headers});
-  const dados=await resp.json();
-  const lista=document.getElementById("bonus-list"); lista.innerHTML="";
-  dados.forEach(b=>{
-    const div=document.createElement("div");
-    div.className="card";
-    div.innerHTML=`<b>${b.nome}</b> — ${b.aposta||0}€
-    <span class="${b.tipo?.toLowerCase()}">${b.tipo||""}</span>`;
-    lista.appendChild(div);
-  });
-}
-setInterval(carregarBonus,3000);
-carregarBonus();
-</script>
+  <script src="../admin/conexao.js"></script>
+  <script>
+  async function carregarOverlay(){
+    // 🔹 buscar hunts (pega a mais recente)
+    const huntsResp = await fetch(`${SUPABASE_URL}/rest/v1/hunts?select=*`,{headers});
+    const hunts = await huntsResp.json();
+    const atual = hunts[hunts.length-1];
+    if(!atual){
+      document.getElementById("stats").innerHTML="Nenhuma caçada criada ainda.";
+      return;
+    }
+
+    // 🔹 estatísticas gerais
+    const start = atual.start_balance||0;
+    const pago  = atual.total_pago||0;
+    const lucro = atual.profit_loss||0;
+    const corLucro = lucro>=0 ? "lawngreen" : "#FF5C5C";
+
+    document.getElementById("stats").innerHTML =
+      `💰 Saldo Inicial: ${start.toFixed(2)} € &nbsp;|
+       💵 Total Pago: ${pago.toFixed(2)} € &nbsp;|
+       <span style="color:${corLucro};">Lucro/Prejuízo: ${lucro.toFixed(2)} €</span>`;
+
+    // 🔹 carregar todos os bónus daquela hunt
+    const bonusResp = await fetch(`${SUPABASE_URL}/rest/v1/bonus?select=*`,{headers});
+    const bonusAll = await bonusResp.json();
+    const bonus = bonusAll.filter(b=>b.hunt_id===atual.id);
+
+    const lista = document.getElementById("bonus-wrap");
+    lista.innerHTML="";
+
+    // 🔸 sem limite de bónus – mostra todos
+    for(const b of bonus.slice().reverse()){
+      const div=document.createElement("div");
+      div.className="card";
+      div.innerHTML=
+        `<b>${b.nome}</b> — Aposta ${b.aposta?.toFixed(2)||0} €
+         <span class="${(b.tipo||'').toLowerCase()}">${b.tipo||""}</span>
+         | Payout: ${b.payout?.toFixed(2)||0} €`;
+      lista.appendChild(div);
+    }
+  }
+
+  // 🔁 atualização automática a cada 5 segundos
+  carregarOverlay();
+  setInterval(carregarOverlay,5000);
+  </script>
 </body>
 </html>
