@@ -1,8 +1,79 @@
 <!DOCTYPE html>
 <html lang="pt">
-<head><meta charset="UTF-8"><title>Painel CT</title></head>
-<body style="background:#1E1B3C;color:#fff;font-family:Poppins;text-align:center;">
-<h1>💜 Painel CT ativo!</h1>
-<p>Se vês isto, o painel principal está a funcionar.</p>
+<head>
+  <meta charset="UTF-8">
+  <title>Painel CT – Catarina Tracker</title>
+  <style>
+    body {
+      margin: 0; background: #1E1B3C; color: #FFF;
+      font-family:'Poppins',sans-serif; text-align:center;
+    }
+    header { background:#15122C; padding:20px; color:#FFD54A;}
+    button {
+      background:#4F3EC7; border:none; color:white;
+      padding:8px 16px; border-radius:6px; cursor:pointer;
+      font-size:15px;
+    }
+    button:hover{background:#FF4DD4;}
+    table {
+      width:90%; margin:20px auto; border-collapse:collapse;
+      background:#241F45; border-radius:8px;
+    }
+    th,td { padding:10px; border-bottom:1px solid #444; }
+    th { color:#FFD54A; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎯 Painel CT</h1>
+    <button onclick="criarHunt()">➕ Nova Caçada</button>
+  </header>
+
+  <table id="tabela">
+    <thead>
+      <tr>
+        <th>Caçada</th>
+        <th>Saldo Inicial (€)</th>
+        <th>Lucro/Prejuízo (€)</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+<script src="conexao.js"></script>
+<script>
+async function carregarHunts(){
+  const resp=await fetch(`${SUPABASE_URL}/rest/v1/hunts?select=*`,{headers});
+  const dados=await resp.json();
+  const corpo=document.querySelector("#tabela tbody");
+  corpo.innerHTML="";
+  dados.forEach(h=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${h.nome||"—"}</td>
+      <td>${h.start_balance?.toFixed(2)||0}</td>
+      <td>${(h.profit_loss||0).toFixed(2)}</td>
+      <td><button onclick="apagarHunt(${h.id})">🗑️</button></td>`;
+    corpo.appendChild(tr);
+  });
+}
+
+async function criarHunt(){
+  const nome=prompt("Nome da Caçada:","");
+  const saldo=parseFloat(prompt("Saldo Inicial (€):","0"));
+  if(!nome||isNaN(saldo))return;
+  await inserirDados("hunts",{nome,start_balance:saldo});
+  carregarHunts();
+}
+
+async function apagarHunt(id){
+  if(confirm("Apagar esta caça?")){
+    await apagarDado("hunts",id);
+    carregarHunts();
+  }
+}
+carregarHunts();
+</script>
 </body>
 </html>
