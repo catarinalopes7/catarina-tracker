@@ -207,8 +207,8 @@
       <h2>Criar Hunt</h2>
 
       <div class="field">
-        <label for="huntName">Nome da hunt</label>
-        <input id="huntName" type="text" placeholder="Ex: Hunt Abril #1" />
+        <label for="huntNome">Nome da hunt</label>
+        <input id="huntNome" type="text" placeholder="Ex: BH 1000€" />
       </div>
 
       <div class="field">
@@ -217,7 +217,7 @@
       </div>
 
       <div class="hint">
-        O Start é o valor inicial fixo da hunt. Exemplo: se começares com 1000€, este valor fica sempre 1000€ no overlay.
+        O Start é o valor inicial fixo da hunt. Este valor deve ficar igual no overlay do início ao fim.
       </div>
 
       <div class="actions">
@@ -236,7 +236,7 @@
 
   <script src="./conexao.js"></script>
   <script>
-    const huntNameInput = document.getElementById("huntName");
+    const huntNomeInput = document.getElementById("huntNome");
     const huntStartInput = document.getElementById("huntStart");
     const createHuntBtn = document.getElementById("createHuntBtn");
     const refreshBtn = document.getElementById("refreshBtn");
@@ -275,13 +275,13 @@
             const bonuses = await getBonusesByHunt(hunt.id);
             const totalBonus = bonuses.length;
             const totalPaid = getTotalPaid(bonuses);
-            const profitLoss = getProfitLoss(bonuses);
+            const profitLoss = getProfitLossFromStart(hunt, bonuses);
             const startValue = safeNumber(hunt.start_value);
 
             return `
               <div class="hunt-item">
                 <div class="hunt-top">
-                  <div class="hunt-name">${escapeHtml(hunt.name || "Sem nome")}</div>
+                  <div class="hunt-name">${escapeHtml(hunt.nome || "Sem nome")}</div>
                   <div>${getStatusBadge(hunt)}</div>
                 </div>
 
@@ -325,10 +325,10 @@
 
     async function handleCreateHunt() {
       try {
-        const name = huntNameInput.value.trim();
+        const nome = huntNomeInput.value.trim();
         const startValue = safeNumber(huntStartInput.value);
 
-        if (!name) {
+        if (!nome) {
           setStatus("Escreve o nome da hunt.");
           return;
         }
@@ -341,16 +341,16 @@
         createHuntBtn.disabled = true;
         setStatus("A criar hunt...");
 
-        await createHunt({ name, startValue });
+        await createHunt({ nome, startValue });
 
-        huntNameInput.value = "";
+        huntNomeInput.value = "";
         huntStartInput.value = "";
 
         setStatus("Hunt criada com sucesso.");
         await renderHunts();
       } catch (error) {
         console.error(error);
-        setStatus("Erro ao criar hunt. Confirma se a coluna start_value já existe.");
+        setStatus("Erro ao criar hunt.");
       } finally {
         createHuntBtn.disabled = false;
       }
