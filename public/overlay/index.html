@@ -22,7 +22,6 @@
       --bg3: #120d22;
       --panel: rgba(255,255,255,0.08);
       --panel-2: rgba(255,255,255,0.06);
-      --panel-3: rgba(255,255,255,0.10);
       --border: rgba(255,255,255,0.14);
       --text: #ffffff;
       --muted: rgba(255,255,255,0.72);
@@ -31,7 +30,6 @@
       --green: #47d97b;
       --red: #ff5f7d;
       --blue: #6db6ff;
-      --purple: #b68dff;
       --shadow: 0 18px 40px rgba(0,0,0,0.35);
       --glow: 0 0 0 1px rgba(255,213,74,0.18), 0 0 30px rgba(255,213,74,0.18);
     }
@@ -198,7 +196,6 @@
     .green { color: var(--green); }
     .red { color: var(--red); }
     .blue { color: var(--blue); }
-    .purple { color: var(--purple); }
 
     .secondary-cards {
       display: grid;
@@ -207,11 +204,11 @@
     }
 
     .slot-highlight {
-      min-height: 118px;
+      min-height: 142px;
       background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.05));
       border: 1px solid var(--border);
       border-radius: 22px;
-      padding: 16px 18px;
+      padding: 16px 18px 18px 18px;
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
@@ -250,13 +247,43 @@
     }
 
     .slot-sub {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--muted);
+      margin-top: 4px;
     }
 
-    .slot-value {
+    .slot-metrics {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-top: 10px;
+    }
+
+    .metric-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .metric-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .metric-value-x {
       font-size: 30px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .metric-value-eur {
+      font-size: 26px;
       font-weight: 800;
       line-height: 1;
     }
@@ -488,17 +515,43 @@
 
     <div class="secondary-cards">
       <div class="slot-highlight best">
-        <div class="label">Best Slot</div>
-        <div id="bestName" class="slot-name">-</div>
-        <div class="slot-sub">Maior payout</div>
-        <div id="bestValue" class="slot-value green">0.00€</div>
+        <div>
+          <div class="label">Best Slot</div>
+          <div id="bestName" class="slot-name">-</div>
+          <div class="slot-sub">Maior retorno</div>
+        </div>
+
+        <div class="slot-metrics">
+          <div class="metric-block">
+            <div class="metric-label">X</div>
+            <div id="bestX" class="metric-value-x green">0.00x</div>
+          </div>
+
+          <div class="metric-block" style="text-align:right;">
+            <div class="metric-label">Pago</div>
+            <div id="bestValue" class="metric-value-eur green">0.00€</div>
+          </div>
+        </div>
       </div>
 
       <div class="slot-highlight worst">
-        <div class="label">Worst Slot</div>
-        <div id="worstName" class="slot-name">-</div>
-        <div class="slot-sub">Menor payout</div>
-        <div id="worstValue" class="slot-value red">0.00€</div>
+        <div>
+          <div class="label">Worst Slot</div>
+          <div id="worstName" class="slot-name">-</div>
+          <div class="slot-sub">Menor retorno</div>
+        </div>
+
+        <div class="slot-metrics">
+          <div class="metric-block">
+            <div class="metric-label">X</div>
+            <div id="worstX" class="metric-value-x red">0.00x</div>
+          </div>
+
+          <div class="metric-block" style="text-align:right;">
+            <div class="metric-label">Pago</div>
+            <div id="worstValue" class="metric-value-eur red">0.00€</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -634,12 +687,15 @@
       );
     }
 
-    function getTotalCost(bonuses) {
-      return bonuses.reduce((sum, b) => sum + getBuyAmount(b), 0);
+    function getBonusMultiplier(bonus) {
+      const buyAmount = getBuyAmount(bonus);
+      const payout = getPayout(bonus);
+      if (buyAmount <= 0) return 0;
+      return payout / buyAmount;
     }
 
-    function getOpenedCost(bonuses) {
-      return getOpenedBonuses(bonuses).reduce((sum, b) => sum + getBuyAmount(b), 0);
+    function getTotalCost(bonuses) {
+      return bonuses.reduce((sum, b) => sum + getBuyAmount(b), 0);
     }
 
     function getTotalPaid(bonuses) {
@@ -673,14 +729,14 @@
     function getBestBonus(bonuses) {
       if (!bonuses.length) return null;
       return bonuses.reduce((best, current) => {
-        return getPayout(current) > getPayout(best) ? current : best;
+        return getBonusMultiplier(current) > getBonusMultiplier(best) ? current : best;
       });
     }
 
     function getWorstBonus(bonuses) {
       if (!bonuses.length) return null;
       return bonuses.reduce((worst, current) => {
-        return getPayout(current) < getPayout(worst) ? current : worst;
+        return getBonusMultiplier(current) < getBonusMultiplier(worst) ? current : worst;
       });
     }
 
@@ -726,9 +782,11 @@
       const worst = getWorstBonus(bonuses);
 
       document.getElementById("bestName").textContent = best ? getSlotName(best) : "-";
+      document.getElementById("bestX").textContent = best ? xValue(getBonusMultiplier(best)) : "0.00x";
       document.getElementById("bestValue").textContent = best ? euro(getPayout(best)) : "0.00€";
 
       document.getElementById("worstName").textContent = worst ? getSlotName(worst) : "-";
+      document.getElementById("worstX").textContent = worst ? xValue(getBonusMultiplier(worst)) : "0.00x";
       document.getElementById("worstValue").textContent = worst ? euro(getPayout(worst)) : "0.00€";
     }
 
@@ -826,10 +884,15 @@
           document.getElementById("profitLoss").textContent = "0.00€";
           document.getElementById("profitLoss").classList.remove("green", "red");
           document.getElementById("totalPago").textContent = "0.00€";
+
           document.getElementById("bestName").textContent = "-";
+          document.getElementById("bestX").textContent = "0.00x";
           document.getElementById("bestValue").textContent = "0.00€";
+
           document.getElementById("worstName").textContent = "-";
+          document.getElementById("worstX").textContent = "0.00x";
           document.getElementById("worstValue").textContent = "0.00€";
+
           renderBonuses([]);
           return;
         }
