@@ -431,7 +431,7 @@
         dados.forEach((b) => {
           const slot =
             todasSlots.find((s) => Number(s.id) === Number(b.slot_id)) ||
-            todasSlots.find((s) => s.nome === b.nome) ||
+            todasSlots.find((s) => String(s.nome).trim().toLowerCase() === String(b.nome).trim().toLowerCase()) ||
             {};
 
           html += `
@@ -509,13 +509,13 @@
 
     function selecionarSlot(slot) {
       document.getElementById("slotSearch").value = slot.nome;
-      document.getElementById("slotSelecionada").value = slot.id;
+      document.getElementById("slotSelecionada").value = String(slot.id);
       document.getElementById("slotResults").innerHTML = "";
     }
 
     async function confirmarBonus() {
       const slotNome = document.getElementById("slotSearch").value.trim();
-      const slotId = document.getElementById("slotSelecionada").value;
+      let slotId = document.getElementById("slotSelecionada").value.trim();
       const aposta = parseFloat(document.getElementById("bonusAposta").value);
       const tipo = document.getElementById("bonusTipo").value;
 
@@ -529,14 +529,27 @@
         return;
       }
 
-      const ok = await gravarBonus({
+      if (!slotId) {
+        const slotEncontrada = todasSlots.find(
+          (s) => String(s.nome || "").trim().toLowerCase() === slotNome.toLowerCase()
+        );
+        if (slotEncontrada) {
+          slotId = String(slotEncontrada.id);
+        }
+      }
+
+      const dadosBonus = {
         nome: slotNome,
         aposta: aposta,
         tipo: tipo,
         hunt_id: huntSelecionado,
-        slot_id: slotId ? Number(slotId) : null,
-        payout: 0
-      });
+        payout: 0,
+        slot_id: slotId ? Number(slotId) : null
+      };
+
+      console.log("Bonus a gravar:", dadosBonus);
+
+      const ok = await gravarBonus(dadosBonus);
 
       if (!ok) {
         alert("Erro ao adicionar o bónus.");
@@ -595,7 +608,11 @@
     }
 
     document.addEventListener("DOMContentLoaded", async function () {
-      document.getElementById("slotSearch").addEventListener("input", pesquisarSlots);
+      document.getElementById("slotSearch").addEventListener("input", () => {
+        document.getElementById("slotSelecionada").value = "";
+        pesquisarSlots();
+      });
+
       document.getElementById("providerFilter").addEventListener("change", pesquisarSlots);
 
       await carregarSlots();
