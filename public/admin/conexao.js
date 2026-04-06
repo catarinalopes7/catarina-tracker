@@ -1,8 +1,8 @@
-const SUPABASE_URL = "COLOCA_AQUI_O_TEU_SUPABASE_URL";
-const SUPABASE_KEY = "COLOCA_AQUI_O_TEU_SUPABASE_ANON_KEY";
+const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
 const HUNTS_TABLE = "hunts";
-const BONUSES_TABLE = "hunt_bonuses";
+const BONUS_TABLE = "bonus";
 
 function supabaseHeaders() {
   return {
@@ -47,37 +47,25 @@ async function apiFetch(url, options = {}) {
 
   const contentType = res.headers.get("content-type") || "";
   if (contentType.includes("application/json")) {
-    return res.json();
+    return await res.json();
   }
 
-  return res.text();
+  return await res.text();
 }
 
 async function getAllHunts() {
   const url =
     `${SUPABASE_URL}/rest/v1/${HUNTS_TABLE}` +
     `?select=*` +
-    `&order=created_at.desc`;
+    `&order=id.desc`;
 
   return await apiFetch(url);
 }
 
-async function getActiveHunt() {
-  const url =
-    `${SUPABASE_URL}/rest/v1/${HUNTS_TABLE}` +
-    `?select=*` +
-    `&is_active=eq.true` +
-    `&order=created_at.desc` +
-    `&limit=1`;
-
-  const data = await apiFetch(url);
-  return data[0] || null;
-}
-
-async function createHunt({ name, startValue }) {
+async function createHunt({ nome, startValue }) {
   const body = [
     {
-      name: String(name || "").trim(),
+      nome: String(nome || "").trim(),
       start_value: safeNumber(startValue),
       is_active: false,
       is_closed: false
@@ -140,44 +128,26 @@ async function closeHunt(huntId) {
 
 async function getBonusesByHunt(huntId) {
   const url =
-    `${SUPABASE_URL}/rest/v1/${BONUSES_TABLE}` +
+    `${SUPABASE_URL}/rest/v1/${BONUS_TABLE}` +
     `?select=*` +
     `&hunt_id=eq.${huntId}` +
-    `&order=created_at.asc`;
+    `&order=id.asc`;
 
   return await apiFetch(url);
-}
-
-function getBonusStatus(bonus) {
-  const raw = String(bonus.status || "").toLowerCase();
-
-  if (raw === "opened" || raw === "open" || raw === "done" || raw === "completed") {
-    return "opened";
-  }
-
-  if (raw === "active" || raw === "opening" || raw === "current") {
-    return "active";
-  }
-
-  return "pending";
 }
 
 function getPayout(bonus) {
   return safeNumber(bonus.payout ?? bonus.win_amount ?? 0);
 }
 
-function getBuyAmount(bonus) {
-  return safeNumber(bonus.buy_amount ?? bonus.cost ?? bonus.price ?? 0);
+function getBet(bonus) {
+  return safeNumber(bonus.bet ?? 0);
 }
 
 function getTotalPaid(bonuses) {
   return bonuses.reduce((sum, b) => sum + getPayout(b), 0);
 }
 
-function getTotalCost(bonuses) {
-  return bonuses.reduce((sum, b) => sum + getBuyAmount(b), 0);
-}
-
-function getProfitLoss(bonuses) {
-  return getTotalPaid(bonuses) - getTotalCost(bonuses);
+function getProfitLossFromStart(hunt, bonuses) {
+  return getTotalPaid(bonuses) - safeNumber(hunt?.start_value);
 }
