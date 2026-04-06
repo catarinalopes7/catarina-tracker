@@ -1,0 +1,13 @@
+async function getSlots() {
+    const { data, error } = await supabase
+        .from("slots")
+        .select("*")
+        .order("provider", { ascending: true });
+
+    if (error) {
+        console.error(error);
+        return [];
+    }
+
+    return data;
+}
