@@ -1,20 +1,23 @@
-async function getSlots() {
-    const { data, error } = await supabase
-        .from("slots")
-        .select("*")
-        .order("provider", { ascending: true });
+// public/js/getSlots.js
 
-    if (error) {
-        console.error(error);
+async function getSlots() {
+    try {
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/slots?select=*&order=provider.asc`, {
+            method: "GET",
+            headers
+        });
+
+        if (!r.ok) {
+            const erro = await r.text();
+            console.error("Erro ao buscar slots:", erro);
+            return [];
+        }
+
+        const data = await r.json();
+        return data;
+
+    } catch (err) {
+        console.error("Erro de ligação ao buscar slots:", err);
         return [];
     }
-
-    return data;
 }
-
-<script src="/js/getSlots.js"></script>
-<script>
-getSlots().then(slots => {
-    console.log("Slots carregados:", slots);
-});
-</script>
