@@ -1,71 +1,155 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=1080, height=1920">
-<title>CT Overlay - Catarina Tracker</title>
-<style>
-body{
-  width:1080px; height:1920px; margin:0;
-  background:linear-gradient(180deg,#4F3EC7,#362A7A);
-  color:#fff; font-family:'Poppins',sans-serif;
-  text-align:center; overflow:hidden;
-}
-#title{
-  font-size:40px;font-weight:700;
-  color:#FFD54A;margin-top:25px;
-}
-#stats{
-  font-size:22px;line-height:1.5em;
-  margin-top:10px;color:#EEE;
-}
-#bestworst{
-  margin-top:25px;
-}
-.slot-card{
-  background:rgba(0,0,0,0.35);
-  border-radius:12px;margin:8px auto;
-  padding:15px;width:85%;font-size:22px;line-height:1.4em;
-  min-height:120px;display:flex;align-items:center;justify-content:center;
-  transition:all 0.8s ease;
-}
-.slot-card.best{border-left:6px solid #36d27d;}
-.slot-card.worst{border-left:6px solid #ff5c5c;}
-.slot-img{
-  width:80px;height:80px;border-radius:8px;margin-right:15px;
-  background:#444;overflow:hidden;
-}
-.slot-img img{
-  width:100%;height:100%;object-fit:cover;border-radius:8px;
-}
-.slot-info{
-  flex:1;text-align:left;
-}
-#bonus-wrap{
-  height:1250px;overflow-y:auto;
-  margin-top:20px;padding:0 40px;
-}
-.card{
-  background:rgba(0,0,0,0.25);
-  border-radius:12px;margin:10px 0;padding:15px;
-  font-size:20px;text-align:left;display:flex;align-items:center;
-}
-.card-img{
-  width:60px;height:60px;border-radius:6px;margin-right:12px;
-  background:#444;overflow:hidden;
-}
-.card-img img{
-  width:100%;height:100%;object-fit:cover;
-}
-.card-info{
-  flex:1;
-}
-.super{color:#FFD54A;}
-.épico{color:#FF5C5C;}
-.normal{color:#FFF;}
-#bonus-wrap::-webkit-scrollbar{width:6px;}
-#bonus-wrap::-webkit-scrollbar-thumb{background:#FFD54A;border-radius:4px;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920">
+  <title>CT Overlay - Catarina Tracker</title>
+  <style>
+    body {
+      width: 1080px;
+      height: 1920px;
+      margin: 0;
+      background: linear-gradient(180deg, #4F3EC7, #362A7A);
+      color: #fff;
+      font-family: 'Poppins', Arial, sans-serif;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    #title {
+      font-size: 40px;
+      font-weight: 700;
+      color: #FFD54A;
+      margin-top: 25px;
+    }
+
+    #stats {
+      font-size: 22px;
+      line-height: 1.5em;
+      margin-top: 10px;
+      color: #EEE;
+      padding: 0 30px;
+    }
+
+    #bestworst {
+      margin-top: 25px;
+    }
+
+    .slot-card {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 12px;
+      margin: 8px auto;
+      padding: 15px;
+      width: 85%;
+      font-size: 22px;
+      line-height: 1.4em;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.8s ease;
+      box-sizing: border-box;
+    }
+
+    .slot-card.best {
+      border-left: 6px solid #36d27d;
+    }
+
+    .slot-card.worst {
+      border-left: 6px solid #ff5c5c;
+    }
+
+    .slot-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      margin-right: 15px;
+      background: #444;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .slot-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .slot-info {
+      flex: 1;
+      text-align: left;
+    }
+
+    #bonus-wrap {
+      height: 1250px;
+      overflow-y: auto;
+      margin-top: 20px;
+      padding: 0 40px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      margin: 10px 0;
+      padding: 15px;
+      font-size: 20px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+    }
+
+    .card-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 6px;
+      margin-right: 12px;
+      background: #444;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-info {
+      flex: 1;
+    }
+
+    .super {
+      color: #FFD54A;
+      font-weight: 700;
+    }
+
+    .épico {
+      color: #FF5C5C;
+      font-weight: 700;
+    }
+
+    .epico {
+      color: #FF5C5C;
+      font-weight: 700;
+    }
+
+    .normal {
+      color: #FFF;
+      font-weight: 700;
+    }
+
+    #bonus-wrap::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #bonus-wrap::-webkit-scrollbar-thumb {
+      background: #FFD54A;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 <body>
   <div id="title">CT 🎯</div>
@@ -74,137 +158,222 @@ body{
   <div id="bestworst">
     <div id="slideshow" class="slot-card"></div>
   </div>
+
   <div id="bonus-wrap"></div>
 
   <script src="../admin/conexao.js"></script>
   <script>
-  let melhorSlot=null, piorSlot=null, mostrandoMelhor=true;
-  let todasSlots=[];
+    let melhorSlot = null;
+    let piorSlot = null;
+    let mostrandoMelhor = true;
+    let todasSlots = [];
 
-  // Carregar slots para obter imagens
-  async function carregarSlots(){
-    const resp = await fetch(`${SUPABASE_URL}/rest/v1/slots?select=*`, {headers});
-    todasSlots = await resp.json();
-  }
+    const PLACEHOLDER_80 = "https://via.placeholder.com/80x80/444/FFF?text=Slot";
+    const PLACEHOLDER_60 = "https://via.placeholder.com/60x60/444/FFF?text=Slot";
 
-  // Função para obter dados da slot
-  function obterSlot(nomeSlot){
-    return todasSlots.find(s => s.nome === nomeSlot) || {
-      nome: nomeSlot,
-      provider: 'N/A',
-      imagem_url: '[via.placeholder.com](https://via.placeholder.com/80x80/444/FFF?text=)'
-    };
-  }
-
-  async function carregarOverlay(){
-    // 🔹 Buscar hunts (pega a mais recente)
-    const huntsResp = await fetch(`${SUPABASE_URL}/rest/v1/hunts?select=*`,{headers});
-    const hunts = await huntsResp.json();
-    const atual = hunts[hunts.length-1];
-    if(!atual){
-      document.getElementById("stats").innerHTML="Nenhuma caçada criada ainda.";
-      return;
+    function numero(valor) {
+      return Number(valor || 0);
     }
 
-    // 🔹 Estatísticas gerais
-    const start = atual.start_balance||0;
-    const pago  = atual.total_pago||0;
-    const lucro = atual.profit_loss||0;
-    const corLucro = lucro>=0 ? "lawngreen" : "#FF5C5C";
-    const breakeven = start>0 ? (start / (pago||start) * 100) : 0;
-    const average = start>0 ? (pago/start*100) : 0;
-
-    document.getElementById("stats").innerHTML =
-      `💰 Saldo Inicial: ${start.toFixed(2)} € |
-       💵 Total Pago: ${pago.toFixed(2)} € |
-       <span style="color:${corLucro};">Lucro/Prejuízo: ${lucro.toFixed(2)} €</span><br>
-       🏁 Breakeven X: ${breakeven.toFixed(2)}× |
-       📈 Average X: ${average.toFixed(2)}×`;
-
-    // 🔹 Buscar todos os bónus
-    const bonusResp = await fetch(`${SUPABASE_URL}/rest/v1/bonus?select=*`,{headers});
-    const bonusAll = await bonusResp.json();
-    const bonus = bonusAll.filter(b=>b.hunt_id===atual.id);
-
-    // --- Calcular melhor e pior slot ---
-    const bonusComPayout = bonus.filter(b=>b.payout && b.aposta);
-    if(bonusComPayout.length){
-      melhorSlot = bonusComPayout.reduce((a,b)=>{
-        const multA=a.payout/a.aposta, multB=b.payout/b.aposta;
-        return multB>multA?b:a;
-      });
-      piorSlot = bonusComPayout.reduce((a,b)=>{
-        const multA=a.payout/a.aposta, multB=b.payout/b.aposta;
-        return multB<multA?b:a;
-      });
+    function formatarEuro(valor) {
+      return `${numero(valor).toFixed(2)} €`;
     }
 
-    // 🔹 Listagem completa de bónus com imagens
-    const lista = document.getElementById("bonus-wrap");
-    lista.innerHTML="";
-    for(const b of bonus.slice().reverse()){
-      const slot = obterSlot(b.nome);
-      const div=document.createElement("div");
-      div.className="card";
-      div.innerHTML=
-        `<div class="card-img">
-          <img src="${slot.imagem_url}" alt="${b.nome}" onerror="this.src='[via.placeholder.com](https://via.placeholder.com/60x60/444/FFF?text=)'">
-         </div>
-         <div class="card-info">
-           <b>${b.nome}</b> — Aposta ${b.aposta?.toFixed(2)||0} €
-           <span class="${(b.tipo||'').toLowerCase()}">${b.tipo||""}</span>
-           | Payout: ${b.payout?.toFixed(2)||0} €<br>
-           <small style="color:#BBB;">${slot.provider}</small>
-         </div>`;
-      lista.appendChild(div);
-    }
-  }
-
-  // 🔄 Alternar entre melhor e pior slot
-  function atualizarSlideshow(){
-    const slideDiv = document.getElementById("slideshow");
-    if(!melhorSlot && !piorSlot){
-      slideDiv.innerHTML = "<span style='color:#888;'>Sem slots com payout ainda</span>";
-      return;
+    function formatarX(valor) {
+      return `${numero(valor).toFixed(2)}×`;
     }
 
-    const slot = mostrandoMelhor ? melhorSlot : piorSlot;
-    const emoji = mostrandoMelhor ? "🏆" : "💀";
-    const label = mostrandoMelhor ? "Melhor" : "Pior";
-    const classe = mostrandoMelhor ? "best" : "worst";
-    
-    if(slot){
+    function getTipoClass(tipo) {
+      const t = String(tipo || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (t === "epico") return "epico";
+      if (t === "super") return "super";
+      return "normal";
+    }
+
+    async function carregarSlots() {
+      try {
+        const resp = await fetch(`${SUPABASE_URL}/rest/v1/slots?select=*`, { headers });
+        if (!resp.ok) {
+          console.error("Erro ao carregar slots:", await resp.text());
+          todasSlots = [];
+          return;
+        }
+        todasSlots = await resp.json();
+      } catch (erro) {
+        console.error("Erro de ligação ao carregar slots:", erro);
+        todasSlots = [];
+      }
+    }
+
+    function obterSlot(nomeSlot) {
+      return todasSlots.find((s) => s.nome === nomeSlot) || {
+        nome: nomeSlot,
+        provider: "N/A",
+        imagem_url: PLACEHOLDER_80
+      };
+    }
+
+    async function carregarOverlay() {
+      try {
+        const huntsResp = await fetch(
+          `${SUPABASE_URL}/rest/v1/hunts?select=*&order=id.desc&limit=1`,
+          { headers }
+        );
+
+        if (!huntsResp.ok) {
+          document.getElementById("stats").innerHTML = "Erro ao carregar hunts.";
+          console.error(await huntsResp.text());
+          return;
+        }
+
+        const hunts = await huntsResp.json();
+        const atual = hunts[0];
+
+        if (!atual) {
+          document.getElementById("stats").innerHTML = "Nenhuma caçada criada ainda.";
+          document.getElementById("bonus-wrap").innerHTML = "";
+          document.getElementById("slideshow").innerHTML = "<span style='color:#888;'>Sem dados disponíveis</span>";
+          return;
+        }
+
+        const start = numero(atual.start_balance);
+        const pago = numero(atual.total_pago);
+        const lucro = numero(atual.profit_loss);
+        const corLucro = lucro >= 0 ? "lawngreen" : "#FF5C5C";
+
+        const breakevenX = start > 0 ? start / (pago || 1) : 0;
+        const averageX = start > 0 ? pago / start : 0;
+
+        document.getElementById("stats").innerHTML = `
+          💰 Saldo Inicial: ${formatarEuro(start)} |
+          💵 Total Pago: ${formatarEuro(pago)} |
+          <span style="color:${corLucro};">Lucro/Prejuízo: ${formatarEuro(lucro)}</span><br>
+          🏁 Breakeven X: ${formatarX(breakevenX)} |
+          📈 Average X: ${formatarX(averageX)}
+        `;
+
+        const bonusResp = await fetch(
+          `${SUPABASE_URL}/rest/v1/bonus?select=*&hunt_id=eq.${atual.id}&order=id.asc`,
+          { headers }
+        );
+
+        if (!bonusResp.ok) {
+          console.error("Erro ao carregar bônus:", await bonusResp.text());
+          return;
+        }
+
+        const bonus = await bonusResp.json();
+
+        const bonusComPayout = bonus.filter((b) => numero(b.payout) > 0 && numero(b.aposta) > 0);
+
+        if (bonusComPayout.length) {
+          melhorSlot = bonusComPayout.reduce((a, b) => {
+            const multA = numero(a.payout) / numero(a.aposta);
+            const multB = numero(b.payout) / numero(b.aposta);
+            return multB > multA ? b : a;
+          });
+
+          piorSlot = bonusComPayout.reduce((a, b) => {
+            const multA = numero(a.payout) / numero(a.aposta);
+            const multB = numero(b.payout) / numero(b.aposta);
+            return multB < multA ? b : a;
+          });
+        } else {
+          melhorSlot = null;
+          piorSlot = null;
+        }
+
+        const lista = document.getElementById("bonus-wrap");
+        lista.innerHTML = "";
+
+        for (const b of [...bonus].reverse()) {
+          const slot = obterSlot(b.nome);
+          const imagem = slot.imagem_url || PLACEHOLDER_60;
+          const tipoClass = getTipoClass(b.tipo);
+
+          const div = document.createElement("div");
+          div.className = "card";
+          div.innerHTML = `
+            <div class="card-img">
+              <img
+                src="${imagem}"
+                alt="${b.nome}"
+                onerror="this.src='${PLACEHOLDER_60}'"
+              >
+            </div>
+            <div class="card-info">
+              <b>${b.nome}</b> — Aposta ${numero(b.aposta).toFixed(2)} €
+              <span class="${tipoClass}">${b.tipo || ""}</span>
+              | Payout: ${numero(b.payout).toFixed(2)} €<br>
+              <small style="color:#BBB;">${slot.provider || "N/A"}</small>
+            </div>
+          `;
+          lista.appendChild(div);
+        }
+
+        atualizarSlideshow();
+      } catch (erro) {
+        console.error("Erro no overlay:", erro);
+        document.getElementById("stats").innerHTML = "Erro ao carregar overlay.";
+      }
+    }
+
+    function atualizarSlideshow() {
+      const slideDiv = document.getElementById("slideshow");
+
+      if (!melhorSlot && !piorSlot) {
+        slideDiv.className = "slot-card";
+        slideDiv.innerHTML = "<span style='color:#888;'>Sem slots com payout ainda</span>";
+        return;
+      }
+
+      const slot = mostrandoMelhor ? melhorSlot : piorSlot;
+
+      if (!slot) {
+        slideDiv.className = "slot-card";
+        slideDiv.innerHTML = "<span style='color:#888;'>Sem dados suficientes</span>";
+        mostrandoMelhor = !mostrandoMelhor;
+        return;
+      }
+
+      const emoji = mostrandoMelhor ? "🏆" : "💀";
+      const label = mostrandoMelhor ? "Melhor" : "Pior";
+      const classe = mostrandoMelhor ? "best" : "worst";
+
       const slotInfo = obterSlot(slot.nome);
-      const mult = (slot.payout/slot.aposta).toFixed(2);
+      const imagem = slotInfo.imagem_url || PLACEHOLDER_80;
+      const mult = numero(slot.aposta) > 0 ? numero(slot.payout) / numero(slot.aposta) : 0;
+      const tipoClass = getTipoClass(slot.tipo);
+
       slideDiv.className = `slot-card ${classe}`;
       slideDiv.innerHTML = `
         <div class="slot-img">
-          <img src="${slotInfo.imagem_url}" alt="${slot.nome}" onerror="this.src='[via.placeholder.com](https://via.placeholder.com/80x80/444/FFF?text=)'">
+          <img
+            src="${imagem}"
+            alt="${slot.nome}"
+            onerror="this.src='${PLACEHOLDER_80}'"
+          >
         </div>
         <div class="slot-info">
           ${emoji} ${label} Slot<br>
-          <span class="${(slot.tipo||'').toLowerCase()}">${slot.tipo||""}</span><br>
-          Bet: ${slot.aposta.toFixed(2)}€ | Mult: ${mult}×<br>
-          <small style="color:#BBB;">${slotInfo.provider}</small>
-        </div>`;
+          <b>${slot.nome}</b> <span class="${tipoClass}">${slot.tipo || ""}</span><br>
+          Bet: ${numero(slot.aposta).toFixed(2)}€ | Mult: ${mult.toFixed(2)}×<br>
+          <small style="color:#BBB;">${slotInfo.provider || "N/A"}</small>
+        </div>
+      `;
+
+      mostrandoMelhor = !mostrandoMelhor;
     }
-    
-    mostrandoMelhor = !mostrandoMelhor;
-  }
 
-  // Inicialização
-  async function inicializar(){
-    await carregarSlots();
-    carregarOverlay();
-    setInterval(carregarOverlay,5000);
-    setInterval(atualizarSlideshow,4000);
-    atualizarSlideshow();
-  }
+    async function inicializar() {
+      await carregarSlots();
+      await carregarOverlay();
 
-  inicializar();
-   
-    <script src="/js/supabase.js"></script>
+      setInterval(carregarOverlay, 5000);
+      setInterval(atualizarSlideshow, 4000);
+    }
 
+    inicializar();
   </script>
 </body>
 </html>
