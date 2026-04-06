@@ -16,8 +16,6 @@
       --gold:#ffd54a;
       --green:#20d18f;
       --red:#ff5d73;
-      --blue:#6ea8ff;
-      --purple:#7a5cff;
       --shadow:0 14px 35px rgba(0,0,0,.28);
       --radius:18px;
     }
@@ -113,11 +111,6 @@
       color:white;
     }
 
-    .btn-blue{
-      background:linear-gradient(135deg, #77b4ff, #4f92ff);
-      color:#071427;
-    }
-
     .grid{
       display:grid;
       grid-template-columns: 360px 1fr;
@@ -211,6 +204,7 @@
 
     .status-err{
       color:#ff9aa7;
+      white-space:pre-wrap;
     }
 
     .table-wrap{
@@ -251,13 +245,6 @@
     .hunt-name{
       font-weight:800;
       color:#fff;
-    }
-
-    .sub{
-      display:block;
-      color:var(--muted);
-      font-size:12px;
-      margin-top:4px;
     }
 
     .pill{
@@ -303,25 +290,15 @@
       border-radius:10px;
     }
 
-    .config-box{
-      margin-top:14px;
-      border-top:1px solid var(--line);
-      padding-top:14px;
-      display:none;
-      gap:12px;
-    }
-
-    .config-box.show{
-      display:grid;
-    }
-
-    .small{
-      font-size:12px;
-    }
-
     .right-note{
       color:var(--muted);
       font-size:12px;
+    }
+
+    code{
+      background:rgba(255,255,255,.06);
+      padding:2px 6px;
+      border-radius:6px;
     }
   </style>
 </head>
@@ -334,7 +311,6 @@
       </div>
 
       <div class="actions">
-        <button class="btn-secondary" id="toggleConfigBtn">Configuração</button>
         <button class="btn-secondary" id="refreshBtn">Atualizar lista</button>
       </div>
     </div>
@@ -360,28 +336,11 @@
             <button class="btn-primary" id="createHuntBtn">Criar Hunt</button>
 
             <div class="muted">
-              Esta versão volta a ficar compatível com o <b>conexao.js</b> e também aceita configuração manual como fallback.
+              Esta versão não depende do <code>conexao.js</code>.  
+              Fica tudo ligado diretamente aqui para eliminar o conflito.
             </div>
 
             <div class="statusbar" id="statusBox">Pronto.</div>
-
-            <div class="config-box" id="configBox">
-              <div class="field">
-                <label for="supabaseUrl">Supabase URL</label>
-                <input id="supabaseUrl" type="text" placeholder="https://xxxxx.supabase.co" />
-              </div>
-
-              <div class="field">
-                <label for="supabaseKey">Anon / Publishable Key</label>
-                <input id="supabaseKey" type="text" placeholder="sb_publishable_..." />
-              </div>
-
-              <button class="btn-blue" id="saveConfigBtn">Guardar configuração</button>
-
-              <div class="small muted">
-                Se o <code>conexao.js</code> já estiver a carregar corretamente, isto serve só de backup.
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -415,57 +374,16 @@
     </div>
   </div>
 
-  <!-- IMPORTANTE: volta a carregar o conexao.js -->
-  <script src="../conexao.js"></script>
-
   <script>
-    const CONFIG_STORAGE_KEY = "ct_admin_supabase_config";
+    // =========================================================
+    // SUPABASE DIRETO NO FICHEIRO
+    // =========================================================
+    const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
-    function readSavedConfig() {
-      try {
-        return JSON.parse(localStorage.getItem(CONFIG_STORAGE_KEY) || "{}");
-      } catch {
-        return {};
-      }
-    }
-
-    function saveConfig(url, key) {
-      localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify({ url, key }));
-    }
-
-    function getSupabaseConfig() {
-      const saved = readSavedConfig();
-
-      const possibleUrls = [
-        window.SUPABASE_URL,
-        window.supabaseUrl,
-        window.SB_URL,
-        window.sbUrl,
-        saved.url
-      ];
-
-      const possibleKeys = [
-        window.SUPABASE_ANON_KEY,
-        window.SUPABASE_KEY,
-        window.supabaseAnonKey,
-        window.supabaseKey,
-        window.SB_ANON_KEY,
-        window.sbAnonKey,
-        saved.key
-      ];
-
-      const url = possibleUrls.find(v => typeof v === "string" && v.trim()) || "";
-      const key = possibleKeys.find(v => typeof v === "string" && v.trim()) || "";
-
-      return { url, key };
-    }
-
-    function fillConfigInputs() {
-      const { url, key } = getSupabaseConfig();
-      document.getElementById("supabaseUrl").value = url || "";
-      document.getElementById("supabaseKey").value = key || "";
-    }
-
+    // =========================================================
+    // DOM
+    // =========================================================
     const huntNameInput = document.getElementById("huntName");
     const huntStartInput = document.getElementById("huntStart");
     const createHuntBtn = document.getElementById("createHuntBtn");
@@ -473,10 +391,10 @@
     const huntsTableBody = document.getElementById("huntsTableBody");
     const huntCount = document.getElementById("huntCount");
     const statusBox = document.getElementById("statusBox");
-    const toggleConfigBtn = document.getElementById("toggleConfigBtn");
-    const configBox = document.getElementById("configBox");
-    const saveConfigBtn = document.getElementById("saveConfigBtn");
 
+    // =========================================================
+    // UTILS
+    // =========================================================
     function setStatus(message, type = "") {
       statusBox.textContent = message;
       statusBox.className = "statusbar";
@@ -505,6 +423,43 @@
       return d.toLocaleString("pt-PT");
     }
 
+    function getHeaders(extra = {}) {
+      return {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+        ...extra
+      };
+    }
+
+    async function fetchJson(path, options = {}) {
+      const res = await fetch(`${SUPABASE_URL}${path}`, options);
+      const text = await res.text();
+
+      let data = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch {
+        data = text;
+      }
+
+      if (!res.ok) {
+        const message =
+          (data && data.message) ||
+          (data && data.error) ||
+          (data && data.hint) ||
+          (typeof data === "string" ? data : "") ||
+          `Erro HTTP ${res.status}`;
+        throw new Error(message);
+      }
+
+      return data;
+    }
+
+    // =========================================================
+    // HELPERS HUNTS
+    // =========================================================
     function getStartValue(row) {
       return (
         row.start_value ??
@@ -547,51 +502,9 @@
       return row.created_at ?? row.inserted_at ?? row.date_created ?? row.createdAt ?? null;
     }
 
-    function getHeaders(extra = {}) {
-      const { url, key } = getSupabaseConfig();
-
-      if (!url || !key) {
-        throw new Error("Faltam credenciais Supabase. Abre Configuração e guarda URL + KEY.");
-      }
-
-      return {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-        ...extra
-      };
-    }
-
-    async function fetchJson(path, options = {}) {
-      const { url } = getSupabaseConfig();
-
-      if (!url) {
-        throw new Error("Falta a URL do Supabase.");
-      }
-
-      const res = await fetch(`${url}${path}`, options);
-      const text = await res.text();
-
-      let data = null;
-      try {
-        data = text ? JSON.parse(text) : null;
-      } catch {
-        data = text;
-      }
-
-      if (!res.ok) {
-        const message =
-          (data && data.message) ||
-          (data && data.error) ||
-          (typeof data === "string" ? data : "") ||
-          `Erro HTTP ${res.status}`;
-        throw new Error(message);
-      }
-
-      return data;
-    }
-
+    // =========================================================
+    // API HUNTS
+    // =========================================================
     async function listHunts() {
       return fetchJson(`/rest/v1/hunts?select=*&order=id.desc`, {
         method: "GET",
@@ -602,7 +515,7 @@
     async function tryCreateWithPayload(payload) {
       return fetchJson(`/rest/v1/hunts`, {
         method: "POST",
-        headers: getHeaders({ Prefer: "return=representation" }),
+        headers: getHeaders(),
         body: JSON.stringify(payload)
       });
     }
@@ -644,7 +557,7 @@
     async function patchHunt(id, patch) {
       return fetchJson(`/rest/v1/hunts?id=eq.${id}`, {
         method: "PATCH",
-        headers: getHeaders({ Prefer: "return=representation" }),
+        headers: getHeaders(),
         body: JSON.stringify(patch)
       });
     }
@@ -720,6 +633,9 @@
       throw lastError || new Error("Não foi possível fechar a hunt.");
     }
 
+    // =========================================================
+    // RENDER
+    // =========================================================
     function renderHunts(rows) {
       huntCount.textContent = `${rows.length} hunt${rows.length === 1 ? "" : "s"}`;
 
@@ -739,17 +655,13 @@
           state.key === "closed" ? "pill-closed" :
           "pill-draft";
 
-        const created = getCreatedAt(row);
-
         return `
           <tr>
             <td>${escapeHtml(row.id ?? "-")}</td>
-            <td>
-              <span class="hunt-name">${escapeHtml(getHuntName(row))}</span>
-            </td>
+            <td><span class="hunt-name">${escapeHtml(getHuntName(row))}</span></td>
             <td>${escapeHtml(formatMoney(getStartValue(row)))}</td>
             <td><span class="pill ${pillClass}">${escapeHtml(state.label)}</span></td>
-            <td>${escapeHtml(formatDate(created))}</td>
+            <td>${escapeHtml(formatDate(getCreatedAt(row)))}</td>
             <td>
               <div class="row-actions">
                 <button class="btn-green" onclick="handleActivate(${Number(row.id)})">Ativar</button>
@@ -761,6 +673,9 @@
       }).join("");
     }
 
+    // =========================================================
+    // LOAD
+    // =========================================================
     async function loadHunts() {
       huntsTableBody.innerHTML = `
         <tr>
@@ -785,6 +700,9 @@
       }
     }
 
+    // =========================================================
+    // ACTIONS
+    // =========================================================
     async function onCreateHunt() {
       createHuntBtn.disabled = true;
 
@@ -819,7 +737,7 @@
       try {
         setStatus(`A fechar hunt #${id}...`);
         await closeHunt(id);
-        setStatus(`Hunt #${id} fechada com sucesso.`, "ok");
+        setStatus(`Erro ao fechar hunt #${id}: ${err.message || err}`, "err");
         await loadHunts();
       } catch (err) {
         console.error(err);
@@ -838,25 +756,6 @@
       if (e.key === "Enter") onCreateHunt();
     });
 
-    toggleConfigBtn.addEventListener("click", () => {
-      configBox.classList.toggle("show");
-    });
-
-    saveConfigBtn.addEventListener("click", () => {
-      const url = document.getElementById("supabaseUrl").value.trim();
-      const key = document.getElementById("supabaseKey").value.trim();
-
-      if (!url || !key) {
-        setStatus("Preenche a URL e a KEY antes de guardar.", "err");
-        return;
-      }
-
-      saveConfig(url, key);
-      setStatus("Configuração guardada com sucesso.", "ok");
-      loadHunts();
-    });
-
-    fillConfigInputs();
     loadHunts();
   </script>
 </body>
