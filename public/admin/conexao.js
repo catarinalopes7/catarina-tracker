@@ -131,6 +131,25 @@ async function buscarHuntPorId(huntId) {
   return dados.length ? dados[0] : null;
 }
 
+async function ativarHunt(huntId) {
+  try {
+    const hunts = await listarHunts();
+
+    for (const hunt of hunts) {
+      if (String(hunt.id) === String(huntId)) {
+        await atualizarDado("hunts", hunt.id, { status: "ativa" });
+      } else if (hunt.status === "ativa") {
+        await atualizarDado("hunts", hunt.id, { status: "inativa" });
+      }
+    }
+
+    return true;
+  } catch (erro) {
+    console.error("Erro ao ativar hunt:", erro);
+    return false;
+  }
+}
+
 async function gravarSlot(dadosSlot) {
   return await inserirDados("slots", dadosSlot);
 }
