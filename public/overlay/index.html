@@ -2,508 +2,575 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=1080, height=1920">
+  <meta name="viewport" content="width=1080, height=1920" />
   <title>CT Overlay - Catarina Tracker</title>
+
   <style>
-    body {
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
       width: 1080px;
       height: 1920px;
       margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Poppins', Arial, sans-serif;
       background: linear-gradient(180deg, #4F3EC7, #362A7A);
       color: #fff;
-      font-family: 'Poppins', Arial, sans-serif;
-      text-align: center;
-      overflow: hidden;
+    }
+
+    body {
+      position: relative;
+    }
+
+    .wrap {
+      width: 100%;
+      height: 100%;
+      padding: 28px 28px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
     }
 
     #title {
-      font-size: 40px;
-      font-weight: 700;
+      font-size: 42px;
+      font-weight: 800;
       color: #FFD54A;
-      margin-top: 25px;
+      text-align: center;
+      line-height: 1.1;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.25);
+      margin-top: 8px;
     }
 
-    #stats {
+    #huntCard {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 26px;
+      padding: 24px 26px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+    }
+
+    #huntName {
+      font-size: 34px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      text-align: center;
+      word-break: break-word;
+    }
+
+    .metaRow {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 999px;
+      padding: 10px 18px;
       font-size: 22px;
-      line-height: 1.5em;
-      margin-top: 10px;
-      color: #EEE;
-      padding: 0 30px;
+      font-weight: 700;
     }
 
-    #bestworst {
-      margin-top: 25px;
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
     }
 
-    .slot-card {
-      background: rgba(0, 0, 0, 0.35);
-      border-radius: 12px;
-      margin: 8px auto;
-      padding: 15px;
-      width: 85%;
-      font-size: 22px;
-      line-height: 1.4em;
-      min-height: 120px;
+    .statBox {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 24px;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.14);
+    }
+
+    .statLabel {
+      font-size: 21px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .statValue {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    #bonusPanel {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+    }
+
+    #bonusHeader {
+      padding: 20px 24px 16px;
+      font-size: 30px;
+      font-weight: 800;
+      color: #FFD54A;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.08);
+    }
+
+    #bonusViewport {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      padding: 18px;
+    }
+
+    #bonusTrack {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      right: 18px;
+      will-change: transform;
+    }
+
+    .bonusList {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .bonusItem {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 20px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .bonusLeft {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .bonusName {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.15;
+      word-break: break-word;
+    }
+
+    .bonusSub {
+      font-size: 18px;
+      opacity: 0.82;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .bonusStatus {
+      min-width: 170px;
+      text-align: center;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 20px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.10);
+    }
+
+    .status-pendente {
+      background: rgba(255, 193, 7, 0.18);
+      color: #FFE082;
+    }
+
+    .status-feito {
+      background: rgba(76, 175, 80, 0.18);
+      color: #A5D6A7;
+    }
+
+    .status-ativo {
+      background: rgba(33, 150, 243, 0.18);
+      color: #90CAF9;
+    }
+
+    .status-cancelado {
+      background: rgba(244, 67, 54, 0.18);
+      color: #FFAB91;
+    }
+
+    .emptyState {
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.8s ease;
-      box-sizing: border-box;
-    }
-
-    .slot-card.best {
-      border-left: 6px solid #36d27d;
-    }
-
-    .slot-card.worst {
-      border-left: 6px solid #ff5c5c;
-    }
-
-    .slot-img {
-      width: 80px;
-      height: 80px;
-      border-radius: 8px;
-      margin-right: 15px;
-      background: #444;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    .slot-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 8px;
-      display: block;
-    }
-
-    .slot-info {
-      flex: 1;
-      text-align: left;
-    }
-
-    #bonus-wrap {
-      height: 1250px;
-      overflow-y: auto;
-      margin-top: 20px;
-      padding: 0 40px;
-      box-sizing: border-box;
-    }
-
-    .card {
-      background: rgba(0, 0, 0, 0.25);
-      border-radius: 12px;
-      margin: 10px 0;
-      padding: 15px;
-      font-size: 20px;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      box-sizing: border-box;
-    }
-
-    .card-img {
-      width: 60px;
-      height: 60px;
-      border-radius: 6px;
-      margin-right: 12px;
-      background: #444;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    .card-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .card-info {
-      flex: 1;
-    }
-
-    .super {
-      color: #FFD54A;
+      text-align: center;
+      padding: 40px;
+      font-size: 30px;
       font-weight: 700;
+      opacity: 0.92;
     }
 
-    .épico, .epico {
-      color: #FF5C5C;
-      font-weight: 700;
-    }
-
-    .normal {
-      color: #FFF;
-      font-weight: 700;
-    }
-
-    #bonus-wrap::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    #bonus-wrap::-webkit-scrollbar-thumb {
-      background: #FFD54A;
-      border-radius: 4px;
+    .footerNote {
+      text-align: center;
+      font-size: 18px;
+      opacity: 0.65;
+      font-weight: 600;
+      margin-top: 2px;
     }
   </style>
 </head>
 <body>
-  <div id="title">CT 🎯</div>
-  <div id="stats">Carregando estatísticas...</div>
+  <div class="wrap">
+    <div id="title">Catarina Tracker</div>
 
-  <div id="bestworst">
-    <div id="slideshow" class="slot-card"></div>
+    <div id="huntCard">
+      <div id="huntName">A carregar hunt ativa...</div>
+      <div class="metaRow">
+        <div class="pill" id="huntId">ID: —</div>
+        <div class="pill" id="huntStatus">Estado: —</div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="statBox">
+        <div class="statLabel">Total</div>
+        <div class="statValue" id="statTotal">0</div>
+      </div>
+      <div class="statBox">
+        <div class="statLabel">Feitos</div>
+        <div class="statValue" id="statDone">0</div>
+      </div>
+      <div class="statBox">
+        <div class="statLabel">Pendentes</div>
+        <div class="statValue" id="statPending">0</div>
+      </div>
+    </div>
+
+    <div id="bonusPanel">
+      <div id="bonusHeader">Bónus</div>
+      <div id="bonusViewport">
+        <div id="bonusTrack"></div>
+      </div>
+    </div>
+
+    <div class="footerNote">Overlay ativo</div>
   </div>
 
-  <div id="bonus-wrap"></div>
-
+  <!-- Mantém o teu ficheiro atual de ligação ao Supabase -->
   <script src="../admin/conexao.js"></script>
+
   <script>
-    let melhorSlot = null;
-    let piorSlot = null;
-    let mostrandoMelhor = true;
-    let todasSlots = [];
-    let huntAtivaAtualId = null;
+    /*
+      IMPORTANTE:
+      - Este ficheiro assume que o teu conexao.js já expõe SUPABASE_URL
+      - e SUPABASE_ANON_KEY ou SUPABASE_KEY
+      - Se no teu conexao.js os nomes forem diferentes, ajusta só estas 2 linhas
+    */
+    const SUPABASE_BASE_URL = window.SUPABASE_URL;
+    const SUPABASE_API_KEY = window.SUPABASE_ANON_KEY || window.SUPABASE_KEY;
 
-    function numero(valor) {
-      return Number(valor || 0);
-    }
+    /*
+      Se os nomes das tabelas no teu projeto forem outros,
+      altera apenas estas duas constantes.
+    */
+    const TABLE_HUNTS = 'hunts';
+    const TABLE_BONUSES = 'hunt_bonuses';
 
-    function formatarEuro(valor) {
-      return `${numero(valor).toFixed(2)} €`;
-    }
+    const headers = {
+      apikey: SUPABASE_API_KEY,
+      Authorization: `Bearer ${SUPABASE_API_KEY}`,
+      'Content-Type': 'application/json'
+    };
 
-    function formatarX(valor) {
-      return `${numero(valor).toFixed(2)}×`;
-    }
+    const els = {
+      huntName: document.getElementById('huntName'),
+      huntId: document.getElementById('huntId'),
+      huntStatus: document.getElementById('huntStatus'),
+      statTotal: document.getElementById('statTotal'),
+      statDone: document.getElementById('statDone'),
+      statPending: document.getElementById('statPending'),
+      bonusTrack: document.getElementById('bonusTrack'),
+      bonusViewport: document.getElementById('bonusViewport')
+    };
 
-    function getTipoClass(tipo) {
-      const t = String(tipo || "")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
+    let activeHuntId = null;
+    let lastSignature = '';
+    let scrollRaf = null;
+    let scrollOffset = 0;
+    let firstListHeight = 0;
+    let isScrolling = false;
+    let lastTs = 0;
 
-      if (t === "epico") return "epico";
-      if (t === "super") return "super";
-      return "normal";
-    }
+    const SCROLL_SPEED = 28; // px por segundo
 
-    function getProviderStyle(provider) {
-      const p = String(provider || "").toLowerCase();
+    function normalizeStatus(value) {
+      const raw = String(value || '').trim().toLowerCase();
 
-      if (p.includes("pragmatic")) {
-        return { bg1: "#ff8a00", bg2: "#ff3d00", accent: "#fff3cf", short: "PP" };
-      }
-      if (p.includes("hacksaw")) {
-        return { bg1: "#8b0000", bg2: "#2b0000", accent: "#ffd2d2", short: "HG" };
-      }
-      if (p.includes("nolimit")) {
-        return { bg1: "#191919", bg2: "#5c00ff", accent: "#e6d8ff", short: "NL" };
-      }
-      if (p.includes("bgaming")) {
-        return { bg1: "#111827", bg2: "#00a86b", accent: "#d4ffe9", short: "BG" };
-      }
-
-      return { bg1: "#2b2b2b", bg2: "#575757", accent: "#f3f3f3", short: "SL" };
-    }
-
-    function escapeXml(str) {
-      return String(str || "")
-        .replace(/&/g, "&amp;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&apos;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-    }
-
-    function criarFallbackSlot(nome, provider) {
-      const style = getProviderStyle(provider);
-      const titulo = escapeXml(nome || "Slot");
-      const prov = escapeXml(provider || "Provider");
-
-      const svg = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
-          <defs>
-            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-              <stop offset="0%" stop-color="${style.bg1}"/>
-              <stop offset="100%" stop-color="${style.bg2}"/>
-            </linearGradient>
-          </defs>
-          <rect width="400" height="400" rx="36" fill="url(#g)"/>
-          <rect x="18" y="18" width="364" height="364" rx="28" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.12)"/>
-          <circle cx="70" cy="70" r="34" fill="rgba(255,255,255,0.12)"/>
-          <text x="70" y="81" text-anchor="middle" font-size="28" font-family="Arial, sans-serif" font-weight="700" fill="${style.accent}">${style.short}</text>
-          <text x="28" y="170" font-size="34" font-family="Arial, sans-serif" font-weight="700" fill="#ffffff">${titulo.slice(0, 18)}</text>
-          <text x="28" y="212" font-size="22" font-family="Arial, sans-serif" fill="${style.accent}">${prov}</text>
-          <rect x="28" y="248" width="140" height="10" rx="5" fill="rgba(255,255,255,0.35)"/>
-          <rect x="28" y="272" width="220" height="10" rx="5" fill="rgba(255,255,255,0.18)"/>
-          <rect x="28" y="296" width="180" height="10" rx="5" fill="rgba(255,255,255,0.18)"/>
-        </svg>
-      `;
-
-      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-    }
-
-    function getManualImageOverrides() {
-      return {
-        "pragmatic play:sugar-rush-1000": "/images/slots/sugar-rush-1000.png",
-        "pragmatic play:sweet-bonanza": "/images/slots/sweet-bonanza.png",
-        "pragmatic play:gates-of-olympus": "/images/slots/gates-of-olympus.png",
-        "pragmatic play:starlight-princess": "/images/slots/starlight-princess.png",
-        "pragmatic play:the-dog-house-megaways": "/images/slots/the-dog-house-megaways.png"
-      };
-    }
-
-    function resolverImagemSlot(slot) {
-      const provider = String(slot?.provider || "").toLowerCase().trim();
-      const slug = String(slot?.slug || "").toLowerCase().trim();
-
-      if (slot?.imagem_url && String(slot.imagem_url).trim()) {
-        return String(slot.imagem_url).trim();
+      if (
+        raw === 'done' ||
+        raw === 'completed' ||
+        raw === 'complete' ||
+        raw === 'feito' ||
+        raw === 'fechado' ||
+        raw === 'closed'
+      ) {
+        return 'feito';
       }
 
-      const key = `${provider}:${slug}`;
-      const overrides = getManualImageOverrides();
-
-      if (overrides[key]) {
-        return overrides[key];
+      if (
+        raw === 'active' ||
+        raw === 'ativo' ||
+        raw === 'activa' ||
+        raw === 'ativa' ||
+        raw === 'running'
+      ) {
+        return 'ativo';
       }
 
-      return criarFallbackSlot(slot?.nome || "Slot", slot?.provider || "Provider");
+      if (
+        raw === 'cancelled' ||
+        raw === 'canceled' ||
+        raw === 'cancelado'
+      ) {
+        return 'cancelado';
+      }
+
+      return 'pendente';
     }
 
-    function limparOverlaySemHunt(mensagem = "Nenhuma hunt ativa.") {
-      huntAtivaAtualId = null;
-      melhorSlot = null;
-      piorSlot = null;
-
-      document.getElementById("stats").innerHTML = mensagem;
-      document.getElementById("bonus-wrap").innerHTML = "";
-      document.getElementById("slideshow").className = "slot-card";
-      document.getElementById("slideshow").innerHTML = "<span style='color:#888;'>Sem dados disponíveis</span>";
-    }
-
-    async function carregarSlots() {
-      try {
-        const resp = await fetch(`${SUPABASE_URL}/rest/v1/slots?select=*`, { headers });
-        if (!resp.ok) {
-          console.error("Erro ao carregar slots:", await resp.text());
-          todasSlots = [];
-          return;
-        }
-        todasSlots = await resp.json();
-      } catch (erro) {
-        console.error("Erro de ligação ao carregar slots:", erro);
-        todasSlots = [];
+    function formatStatusLabel(status) {
+      switch (status) {
+        case 'feito': return 'Feito';
+        case 'ativo': return 'Ativo';
+        case 'cancelado': return 'Cancelado';
+        default: return 'Pendente';
       }
     }
 
-    function obterSlotPorBonus(bonus) {
-      let slot = null;
-
-      if (bonus.slot_id) {
-        slot = todasSlots.find((s) => Number(s.id) === Number(bonus.slot_id));
-      }
-
-      if (!slot && bonus.nome) {
-        slot = todasSlots.find(
-          (s) => String(s.nome || "").trim().toLowerCase() === String(bonus.nome || "").trim().toLowerCase()
-        );
-      }
-
-      if (!slot && bonus.nome) {
-        slot = todasSlots.find(
-          (s) =>
-            String(s.nome || "").toLowerCase().includes(String(bonus.nome || "").toLowerCase()) ||
-            String(bonus.nome || "").toLowerCase().includes(String(s.nome || "").toLowerCase())
-        );
-      }
-
-      if (slot) return slot;
-
-      return {
-        nome: bonus.nome || "Slot",
-        provider: "Provider",
-        slug: (bonus.nome || "slot").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
-        imagem_url: null
-      };
+    function getBonusName(bonus) {
+      return (
+        bonus.slot_name ||
+        bonus.name ||
+        bonus.slot ||
+        bonus.title ||
+        bonus.slot_id ||
+        `Bónus #${bonus.id ?? ''}`
+      );
     }
 
-    async function carregarOverlay() {
-      try {
-        const huntsResp = await fetch(
-          `${SUPABASE_URL}/rest/v1/hunts?select=*&status=eq.ativa&order=id.desc&limit=1`,
-          { headers }
-        );
+    function getBonusSub(bonus) {
+      const parts = [];
 
-        if (!huntsResp.ok) {
-          document.getElementById("stats").innerHTML = "Erro ao carregar hunts.";
-          console.error(await huntsResp.text());
-          return;
-        }
+      if (bonus.slot_id) parts.push(`ID: ${bonus.slot_id}`);
+      if (bonus.provider) parts.push(bonus.provider);
+      if (bonus.game_name) parts.push(bonus.game_name);
 
-        const hunts = await huntsResp.json();
-        const atual = hunts[0];
-
-        if (!atual) {
-          limparOverlaySemHunt("Nenhuma hunt ativa.");
-          return;
-        }
-
-        if (huntAtivaAtualId !== null && Number(huntAtivaAtualId) !== Number(atual.id)) {
-          melhorSlot = null;
-          piorSlot = null;
-          mostrandoMelhor = true;
-          document.getElementById("bonus-wrap").innerHTML = "";
-          document.getElementById("slideshow").className = "slot-card";
-          document.getElementById("slideshow").innerHTML = "<span style='color:#888;'>A atualizar hunt ativa...</span>";
-        }
-
-        huntAtivaAtualId = atual.id;
-
-        const start = numero(atual.start_balance);
-        const pago = numero(atual.total_pago);
-        const lucro = numero(atual.profit_loss);
-        const corLucro = lucro >= 0 ? "lawngreen" : "#FF5C5C";
-
-        const averageX = numero(atual.average_x) > 0
-          ? numero(atual.average_x)
-          : (start > 0 ? pago / start : 0);
-
-        const breakevenX = start > 0 ? 1 : 0;
-
-        document.getElementById("stats").innerHTML = `
-          💰 Hunt Ativa: ${atual.nome}<br>
-          💰 Saldo Inicial: ${formatarEuro(start)} |
-          💵 Total Pago: ${formatarEuro(pago)} |
-          <span style="color:${corLucro};">Lucro/Prejuízo: ${formatarEuro(lucro)}</span><br>
-          🏁 Breakeven X: ${formatarX(breakevenX)} |
-          📈 Average X: ${formatarX(averageX)}
-        `;
-
-        const bonusResp = await fetch(
-          `${SUPABASE_URL}/rest/v1/bonus?select=*&hunt_id=eq.${atual.id}&order=id.asc`,
-          { headers }
-        );
-
-        if (!bonusResp.ok) {
-          console.error("Erro ao carregar bônus:", await bonusResp.text());
-          return;
-        }
-
-        const bonus = await bonusResp.json();
-
-        const bonusComPayout = bonus.filter((b) => numero(b.payout) > 0 && numero(b.aposta) > 0);
-
-        if (bonusComPayout.length) {
-          melhorSlot = bonusComPayout.reduce((a, b) => {
-            const multA = numero(a.payout) / numero(a.aposta);
-            const multB = numero(b.payout) / numero(b.aposta);
-            return multB > multA ? b : a;
-          });
-
-          piorSlot = bonusComPayout.reduce((a, b) => {
-            const multA = numero(a.payout) / numero(a.aposta);
-            const multB = numero(b.payout) / numero(b.aposta);
-            return multB < multA ? b : a;
-          });
-        } else {
-          melhorSlot = null;
-          piorSlot = null;
-        }
-
-        const lista = document.getElementById("bonus-wrap");
-        lista.innerHTML = "";
-
-        for (const b of [...bonus].reverse()) {
-          const slot = obterSlotPorBonus(b);
-          const imagem = resolverImagemSlot(slot);
-          const tipoClass = getTipoClass(b.tipo);
-
-          const div = document.createElement("div");
-          div.className = "card";
-          div.innerHTML = `
-            <div class="card-img">
-              <img
-                src="${imagem}"
-                alt="${b.nome}"
-                onerror="this.src='${criarFallbackSlot(slot.nome, slot.provider)}'"
-              >
-            </div>
-            <div class="card-info">
-              <b>${b.nome}</b> — Aposta ${numero(b.aposta).toFixed(2)} €
-              <span class="${tipoClass}">${b.tipo || ""}</span>
-              | Payout: ${numero(b.payout).toFixed(2)} €<br>
-              <small style="color:#BBB;">${slot.provider || "N/A"}</small>
-            </div>
-          `;
-          lista.appendChild(div);
-        }
-
-        atualizarSlideshow();
-      } catch (erro) {
-        console.error("Erro no overlay:", erro);
-        document.getElementById("stats").innerHTML = "Erro ao carregar overlay.";
-      }
+      return parts.join(' • ');
     }
 
-    function atualizarSlideshow() {
-      const slideDiv = document.getElementById("slideshow");
+    function stopAutoScroll() {
+      if (scrollRaf) {
+        cancelAnimationFrame(scrollRaf);
+        scrollRaf = null;
+      }
+      scrollOffset = 0;
+      firstListHeight = 0;
+      isScrolling = false;
+      lastTs = 0;
+      els.bonusTrack.style.transform = 'translateY(0px)';
+    }
 
-      if (!melhorSlot && !piorSlot) {
-        slideDiv.className = "slot-card";
-        slideDiv.innerHTML = "<span style='color:#888;'>Sem slots com payout ainda</span>";
+    function autoScrollStep(ts) {
+      if (!isScrolling) return;
+
+      if (!lastTs) lastTs = ts;
+      const dt = (ts - lastTs) / 1000;
+      lastTs = ts;
+
+      scrollOffset += SCROLL_SPEED * dt;
+
+      if (scrollOffset >= firstListHeight) {
+        scrollOffset = 0;
+      }
+
+      els.bonusTrack.style.transform = `translateY(-${scrollOffset}px)`;
+      scrollRaf = requestAnimationFrame(autoScrollStep);
+    }
+
+    function startAutoScrollIfNeeded() {
+      stopAutoScroll();
+
+      const lists = els.bonusTrack.querySelectorAll('.bonusList');
+      if (!lists.length) return;
+
+      const firstList = lists[0];
+      firstListHeight = firstList.offsetHeight;
+
+      const viewportHeight = els.bonusViewport.clientHeight;
+
+      if (firstListHeight <= viewportHeight) {
+        els.bonusTrack.style.transform = 'translateY(0px)';
         return;
       }
 
-      const slotBonus = mostrandoMelhor ? melhorSlot : piorSlot;
+      isScrolling = true;
+      scrollRaf = requestAnimationFrame(autoScrollStep);
+    }
 
-      if (!slotBonus) {
-        slideDiv.className = "slot-card";
-        slideDiv.innerHTML = "<span style='color:#888;'>Sem dados suficientes</span>";
-        mostrandoMelhor = !mostrandoMelhor;
+    function renderEmpty(message) {
+      stopAutoScroll();
+      els.huntName.textContent = message;
+      els.huntId.textContent = 'ID: —';
+      els.huntStatus.textContent = 'Estado: —';
+      els.statTotal.textContent = '0';
+      els.statDone.textContent = '0';
+      els.statPending.textContent = '0';
+      els.bonusTrack.innerHTML = `<div class="emptyState">${message}</div>`;
+    }
+
+    function renderOverlay(hunt, bonuses) {
+      const total = bonuses.length;
+      const done = bonuses.filter(b => normalizeStatus(b.status) === 'feito').length;
+      const pending = bonuses.filter(b => normalizeStatus(b.status) !== 'feito').length;
+
+      els.huntName.textContent = hunt.name || `Hunt #${hunt.id}`;
+      els.huntId.textContent = `ID: ${hunt.id ?? '—'}`;
+      els.huntStatus.textContent = 'Estado: Ativa';
+
+      els.statTotal.textContent = String(total);
+      els.statDone.textContent = String(done);
+      els.statPending.textContent = String(pending);
+
+      if (!bonuses.length) {
+        stopAutoScroll();
+        els.bonusTrack.innerHTML = `<div class="emptyState">Sem bónus nesta hunt.</div>`;
         return;
       }
 
-      const emoji = mostrandoMelhor ? "🏆" : "💀";
-      const label = mostrandoMelhor ? "Melhor" : "Pior";
-      const classe = mostrandoMelhor ? "best" : "worst";
+      const listHtml = `
+        <div class="bonusList">
+          ${bonuses.map((bonus) => {
+            const status = normalizeStatus(bonus.status);
+            const bonusName = getBonusName(bonus);
+            const bonusSub = getBonusSub(bonus);
 
-      const slotInfo = obterSlotPorBonus(slotBonus);
-      const imagem = resolverImagemSlot(slotInfo);
-      const mult = numero(slotBonus.aposta) > 0 ? numero(slotBonus.payout) / numero(slotBonus.aposta) : 0;
-      const tipoClass = getTipoClass(slotBonus.tipo);
-
-      slideDiv.className = `slot-card ${classe}`;
-      slideDiv.innerHTML = `
-        <div class="slot-img">
-          <img
-            src="${imagem}"
-            alt="${slotBonus.nome}"
-            onerror="this.src='${criarFallbackSlot(slotInfo.nome, slotInfo.provider)}'"
-          >
-        </div>
-        <div class="slot-info">
-          ${emoji} ${label} Slot<br>
-          <b>${slotBonus.nome}</b> <span class="${tipoClass}">${slotBonus.tipo || ""}</span><br>
-          Bet: ${numero(slotBonus.aposta).toFixed(2)}€ | Mult: ${mult.toFixed(2)}×<br>
-          <small style="color:#BBB;">${slotInfo.provider || "N/A"}</small>
+            return `
+              <div class="bonusItem">
+                <div class="bonusLeft">
+                  <div class="bonusName">${escapeHtml(bonusName)}</div>
+                  <div class="bonusSub">${bonusSub ? escapeHtml(bonusSub) : '&nbsp;'}</div>
+                </div>
+                <div class="bonusStatus status-${status}">
+                  ${formatStatusLabel(status)}
+                </div>
+              </div>
+            `;
+          }).join('')}
         </div>
       `;
 
-      mostrandoMelhor = !mostrandoMelhor;
+      /*
+        Duplicamos a lista 2x para criar scroll infinito suave.
+      */
+      els.bonusTrack.innerHTML = listHtml + listHtml;
+
+      requestAnimationFrame(() => {
+        startAutoScrollIfNeeded();
+      });
     }
 
-    async function inicializar() {
-      await carregarSlots();
-      await carregarOverlay();
+    async function fetchJson(url) {
+      const res = await fetch(url, { headers });
 
-      setInterval(carregarOverlay, 5000);
-      setInterval(atualizarSlideshow, 4000);
+      if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(`Erro ${res.status}: ${text || 'fetch falhou'}`);
+      }
+
+      return res.json();
     }
 
-    inicializar();
+    async function getActiveHunt() {
+      const url = `${SUPABASE_BASE_URL}/rest/v1/${TABLE_HUNTS}?select=*&is_active=eq.true&order=created_at.desc&limit=1`;
+      const data = await fetchJson(url);
+      return data?.[0] || null;
+    }
+
+    async function getBonusesByHunt(huntId) {
+      const url = `${SUPABASE_BASE_URL}/rest/v1/${TABLE_BONUSES}?select=*&hunt_id=eq.${encodeURIComponent(huntId)}&order=created_at.asc`;
+      return await fetchJson(url);
+    }
+
+    function buildSignature(hunt, bonuses) {
+      return JSON.stringify({
+        huntId: hunt?.id ?? null,
+        huntName: hunt?.name ?? '',
+        bonuses: bonuses.map(b => ({
+          id: b.id ?? null,
+          name: getBonusName(b),
+          status: normalizeStatus(b.status),
+          slot_id: b.slot_id ?? null
+        }))
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    async function refreshOverlay() {
+      try {
+        if (!SUPABASE_BASE_URL || !SUPABASE_API_KEY) {
+          throw new Error('SUPABASE_URL ou SUPABASE_API_KEY não encontrados no conexao.js');
+        }
+
+        const hunt = await getActiveHunt();
+
+        if (!hunt) {
+          activeHuntId = null;
+          lastSignature = '';
+          renderEmpty('Sem hunt ativa.');
+          return;
+        }
+
+        activeHuntId = hunt.id;
+        const bonuses = await getBonusesByHunt(activeHuntId);
+
+        const signature = buildSignature(hunt, bonuses);
+        if (signature === lastSignature) return;
+
+        lastSignature = signature;
+        renderOverlay(hunt, bonuses);
+      } catch (error) {
+        console.error('[OVERLAY ERROR]', error);
+        renderEmpty('Erro ao carregar overlay.');
+      }
+    }
+
+    refreshOverlay();
+    setInterval(refreshOverlay, 4000);
   </script>
 </body>
 </html>
