@@ -57,26 +57,10 @@
     #huntName {
       font-size: 36px;
       font-weight: 900;
-      margin-bottom: 12px;
+      margin-bottom: 0;
       text-align: center;
       word-break: break-word;
       letter-spacing: 0.2px;
-    }
-
-    .metaRow {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .pill {
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 999px;
-      padding: 10px 18px;
-      font-size: 22px;
-      font-weight: 800;
     }
 
     .stats {
@@ -493,10 +477,6 @@
 
     <div id="huntCard">
       <div id="huntName">A carregar hunt ativa...</div>
-      <div class="metaRow">
-        <div class="pill" id="huntId">ID: —</div>
-        <div class="pill" id="huntStatus">Estado: —</div>
-      </div>
     </div>
 
     <div class="stats">
@@ -572,8 +552,6 @@
 
       const CT_ELS = {
         huntName: document.getElementById("huntName"),
-        huntId: document.getElementById("huntId"),
-        huntStatus: document.getElementById("huntStatus"),
         statTotal: document.getElementById("statTotal"),
         openProgressValue: document.getElementById("openProgressValue"),
         openProgressBar: document.getElementById("openProgressBar"),
@@ -664,7 +642,6 @@
           bonus.nome ||
           bonus.slot ||
           bonus.title ||
-          bonus.slot_id ||
           `Bónus #${bonus.id ?? ""}`
         );
       }
@@ -679,10 +656,15 @@
 
       function ctGetBonusSub(bonus) {
         const parts = [];
+        const status = ctNormalizeStatus(bonus.status);
 
-        if (bonus.slot_id) parts.push(`ID: ${bonus.slot_id}`);
-        if (bonus.aposta != null && bonus.aposta !== "") parts.push(`Bet: ${ctFormatPlainNumber(bonus.aposta)}`);
-        if (bonus.payout != null && bonus.payout !== "") parts.push(`Payout: ${ctFormatPlainNumber(bonus.payout)}`);
+        if (bonus.aposta != null && bonus.aposta !== "") {
+          parts.push(`Bet: ${ctFormatPlainNumber(bonus.aposta)}`);
+        }
+
+        if (status === "ativo" && bonus.payout != null && bonus.payout !== "") {
+          parts.push(`Payout: ${ctFormatPlainNumber(bonus.payout)}`);
+        }
 
         return parts.join(" • ");
       }
@@ -830,8 +812,6 @@
       function ctRenderEmpty(message) {
         ctStopAutoScroll();
         CT_ELS.huntName.textContent = message;
-        CT_ELS.huntId.textContent = "ID: —";
-        CT_ELS.huntStatus.textContent = "Estado: —";
         CT_ELS.statTotal.textContent = "0";
         ctSetOpenProgress(0, 0);
 
@@ -924,7 +904,6 @@
         return JSON.stringify({
           huntId: hunt?.id ?? null,
           huntName: hunt?.name ?? "",
-          huntStatus: hunt?.status ?? "",
           total_pago: hunt?.total_pago ?? 0,
           average_x: hunt?.average_x ?? 0,
           profit_loss: hunt?.profit_loss ?? 0,
@@ -932,7 +911,6 @@
             id: b.id ?? null,
             name: ctGetBonusName(b),
             status: ctNormalizeStatus(b.status),
-            slot_id: b.slot_id ?? null,
             payout: b.payout ?? null,
             aposta: b.aposta ?? null
           }))
@@ -950,7 +928,9 @@
         const huntBreakEvenPct = custoTotalHunt > 0 ? (totalPago / custoTotalHunt) * 100 : 0;
         const huntBreakEvenPctClamped = ctClamp(huntBreakEvenPct, 0, 100);
 
-        const activeBonus = bonuses.find(b => ctNormalizeStatus(b.status) === "ativo") || null;
+        const activeBonusIndex = bonuses.findIndex(b => ctNormalizeStatus(b.status) === "ativo");
+        const activeBonus = activeBonusIndex !== -1 ? bonuses[activeBonusIndex] : null;
+
         const openingCost = activeBonus ? ctGetBonusBuyCost(activeBonus) : 0;
         const openingPayout = Number(activeBonus?.payout || 0);
         const openingBreakEvenPct = openingCost > 0 ? (openingPayout / openingCost) * 100 : 0;
@@ -959,16 +939,14 @@
 
         const currentOpenIndex = total > 0
           ? Math.min(
-              bonuses.findIndex(b => ctNormalizeStatus(b.status) === "ativo") !== -1
-                ? bonuses.findIndex(b => ctNormalizeStatus(b.status) === "ativo") + 1
+              activeBonusIndex !== -1
+                ? activeBonusIndex + 1
                 : bonuses.filter(b => ctNormalizeStatus(b.status) === "feito").length + 1,
               total
             )
           : 0;
 
         CT_ELS.huntName.textContent = hunt.name || `Hunt #${hunt.id}`;
-        CT_ELS.huntId.textContent = `ID: ${hunt.id ?? "—"}`;
-        CT_ELS.huntStatus.textContent = `Estado: ${hunt.status || "—"}`;
         CT_ELS.statTotal.textContent = String(total);
         ctSetOpenProgress(currentOpenIndex, total);
 
