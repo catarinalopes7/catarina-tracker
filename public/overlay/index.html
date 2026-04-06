@@ -518,7 +518,7 @@
         <div>
           <div class="label">Best Slot</div>
           <div id="bestName" class="slot-name">-</div>
-          <div class="slot-sub">Maior retorno</div>
+          <div class="slot-sub">Maior X pela bet</div>
         </div>
 
         <div class="slot-metrics">
@@ -538,7 +538,7 @@
         <div>
           <div class="label">Worst Slot</div>
           <div id="worstName" class="slot-name">-</div>
-          <div class="slot-sub">Menor retorno</div>
+          <div class="slot-sub">Menor X pela bet</div>
         </div>
 
         <div class="slot-metrics">
@@ -688,10 +688,10 @@
     }
 
     function getBonusMultiplier(bonus) {
-      const buyAmount = getBuyAmount(bonus);
+      const bet = getBet(bonus);
       const payout = getPayout(bonus);
-      if (buyAmount <= 0) return 0;
-      return payout / buyAmount;
+      if (bet <= 0) return 0;
+      return payout / bet;
     }
 
     function getTotalCost(bonuses) {
