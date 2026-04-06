@@ -15,11 +15,9 @@
       height: 1920px;
       margin: 0;
       overflow: hidden;
-      font-family: Arial, sans-serif;
+      font-family: 'Poppins', Arial, sans-serif;
       color: #ffffff;
-      background:
-        radial-gradient(circle at top, rgba(88, 146, 255, 0.18), transparent 30%),
-        linear-gradient(180deg, #07162f 0%, #071e44 40%, #04152f 100%);
+      background: linear-gradient(180deg, #4F3EC7, #2b1d74);
     }
 
     body {
@@ -35,12 +33,9 @@
     }
 
     .panel {
-      background: linear-gradient(180deg, rgba(11, 42, 89, 0.96) 0%, rgba(7, 28, 61, 0.96) 100%);
-      border: 2px solid rgba(92, 155, 255, 0.22);
+      background: linear-gradient(180deg, #3b2a70, #2a1d55);
       border-radius: 26px;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 16px 40px rgba(0,0,0,0.35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       overflow: hidden;
     }
 
@@ -67,14 +62,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background:
-        radial-gradient(circle at 30% 30%, #1ca9ff 0%, #0c62d9 50%, #07378a 100%);
+      background: radial-gradient(circle at 30% 30%, #7e6aff 0%, #5a43e0 50%, #35227f 100%);
       box-shadow:
         inset 0 0 0 3px rgba(255,255,255,0.08),
         0 8px 18px rgba(0,0,0,0.35);
       font-size: 30px;
       font-weight: 900;
-      color: #dff3ff;
+      color: #f5edff;
     }
 
     .hunt-meta {
@@ -82,11 +76,11 @@
     }
 
     .hunt-label {
-      font-size: 19px;
+      font-size: 22px;
       font-weight: 900;
       letter-spacing: 1px;
       text-transform: uppercase;
-      color: #f5f9ff;
+      color: #FFD54A;
       line-height: 1;
       text-shadow: 0 2px 8px rgba(0,0,0,0.35);
       white-space: nowrap;
@@ -99,7 +93,7 @@
       margin-top: 6px;
       font-size: 18px;
       font-weight: 700;
-      color: #7fc4ff;
+      color: #ffffff;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       white-space: nowrap;
@@ -109,9 +103,9 @@
     }
 
     .hunt-id {
-      font-size: 36px;
+      font-size: 30px;
       font-weight: 900;
-      color: rgba(255,255,255,0.8);
+      color: #FFD54A;
       letter-spacing: 1px;
       font-style: italic;
       flex-shrink: 0;
@@ -121,17 +115,16 @@
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      gap: 12px;
       padding: 0 22px 14px;
     }
 
     .stat-card {
-      min-height: 126px;
-      border-radius: 22px;
-      padding: 18px 18px 14px;
-      background:
-        linear-gradient(180deg, rgba(22, 61, 121, 0.96) 0%, rgba(10, 36, 81, 0.96) 100%);
-      border: 1px solid rgba(126, 183, 255, 0.16);
+      min-height: 118px;
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      background: linear-gradient(180deg, #4b3a90, #2e2068);
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
         0 8px 24px rgba(0,0,0,0.20);
@@ -141,17 +134,17 @@
     }
 
     .stat-title {
-      font-size: 24px;
+      font-size: 18px;
       line-height: 1;
       text-transform: uppercase;
-      font-weight: 900;
-      color: #d7e8ff;
+      font-weight: 700;
+      color: #d6cdf7;
       letter-spacing: 0.6px;
       margin-bottom: 10px;
     }
 
     .stat-value {
-      font-size: 48px;
+      font-size: 36px;
       line-height: 1;
       font-weight: 900;
       color: #ffffff;
@@ -159,15 +152,13 @@
     }
 
     .bonuses-wrap {
-      padding: 0 22px 14px;
+      padding: 0 22px 16px;
     }
 
     .bonuses-bar {
-      border-radius: 20px;
-      background:
-        linear-gradient(180deg, rgba(14, 47, 98, 0.96) 0%, rgba(8, 30, 67, 0.96) 100%);
-      border: 1px solid rgba(126, 183, 255, 0.16);
-      padding: 14px 16px;
+      background: linear-gradient(180deg, #4b3a90, #2e2068);
+      border-radius: 16px;
+      padding: 12px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
         0 8px 24px rgba(0,0,0,0.20);
@@ -175,14 +166,14 @@
 
     .bonuses-top {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 16px;
       margin-bottom: 12px;
     }
 
     .bonuses-title {
-      font-size: 24px;
+      font-size: 18px;
       line-height: 1;
       font-weight: 900;
       text-transform: uppercase;
@@ -190,7 +181,7 @@
     }
 
     .bonuses-count {
-      font-size: 34px;
+      font-size: 28px;
       line-height: 1;
       font-weight: 900;
       color: #ffffff;
@@ -198,22 +189,21 @@
 
     .tag-row {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
+      margin-top: 10px;
     }
 
     .tag {
-      min-width: 205px;
-      height: 54px;
-      padding: 0 18px;
-      border-radius: 16px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      font-size: 24px;
-      line-height: 1;
+      flex: 1;
+      min-width: 180px;
+      border-radius: 12px;
+      padding: 8px 12px;
       font-weight: 900;
+      font-size: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       text-transform: uppercase;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.12),
@@ -221,20 +211,19 @@
     }
 
     .tag.super {
-      background: linear-gradient(180deg, #ffd84f 0%, #b88d11 100%);
-      color: #fff7d0;
+      background: linear-gradient(180deg, #FFD54A, #b88d11);
+      color: #000000;
     }
 
     .tag.epic {
-      background: linear-gradient(180deg, #ff4747 0%, #b00606 100%);
-      color: #ffe5e5;
+      background: linear-gradient(180deg, #ff3b3b, #a80000);
+      color: #ffffff;
     }
 
     .open-line {
-      margin-top: 12px;
-      display: flex;
-      justify-content: flex-end;
-      font-size: 26px;
+      text-align: right;
+      margin-top: 8px;
+      font-size: 18px;
       font-weight: 900;
       color: #ffffff;
     }
@@ -250,16 +239,14 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
       padding-right: 4px;
     }
 
     .slot-card {
-      background:
-        linear-gradient(180deg, rgba(12, 46, 96, 0.95) 0%, rgba(7, 27, 61, 0.95) 100%);
-      border: 1px solid rgba(108, 170, 255, 0.14);
-      border-radius: 22px;
-      padding: 14px;
+      background: linear-gradient(180deg, #3b2a70, #2a1d55);
+      border-radius: 16px;
+      padding: 10px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
         0 10px 24px rgba(0,0,0,0.26);
@@ -271,7 +258,7 @@
       justify-content: space-between;
       align-items: flex-start;
       gap: 16px;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
     }
 
     .slot-title {
@@ -280,7 +267,7 @@
     }
 
     .slot-name {
-      font-size: 28px;
+      font-size: 20px;
       font-weight: 900;
       text-transform: uppercase;
       color: #f4f8ff;
@@ -292,14 +279,15 @@
 
     .slot-bet {
       margin-top: 4px;
-      font-size: 24px;
+      font-size: 16px;
       font-weight: 900;
       color: #dbe8ff;
       line-height: 1;
+      opacity: 0.9;
     }
 
     .slot-index {
-      font-size: 28px;
+      font-size: 18px;
       font-weight: 900;
       color: rgba(255,255,255,0.78);
       flex-shrink: 0;
@@ -308,10 +296,9 @@
 
     .slot-image-wrap {
       width: 100%;
-      border-radius: 18px;
+      border-radius: 10px;
       overflow: hidden;
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.05);
       position: relative;
     }
 
@@ -321,6 +308,7 @@
       object-fit: cover;
       display: block;
       background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border-radius: 10px;
     }
 
     .slot-placeholder {
@@ -335,6 +323,7 @@
       text-transform: uppercase;
       letter-spacing: 0.8px;
       background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border-radius: 10px;
     }
 
     .empty-state {
@@ -345,10 +334,8 @@
       justify-content: center;
       text-align: center;
       padding: 40px;
-      background:
-        linear-gradient(180deg, rgba(12, 46, 96, 0.95) 0%, rgba(7, 27, 61, 0.95) 100%);
-      border: 1px solid rgba(108, 170, 255, 0.14);
-      font-size: 38px;
+      background: linear-gradient(180deg, #3b2a70, #2a1d55);
+      font-size: 26px;
       font-weight: 900;
       color: rgba(255,255,255,0.82);
       text-transform: uppercase;
