@@ -76,7 +76,7 @@
       background: #241F45;
       margin: 50px auto;
       padding: 20px;
-      width: min(500px, 92%);
+      width: min(540px, 92%);
       border-radius: 10px;
       text-align: left;
     }
@@ -94,11 +94,12 @@
     }
 
     .slot-results {
-      max-height: 200px;
+      max-height: 220px;
       overflow-y: auto;
       background: #1E1B3C;
       border-radius: 5px;
       margin: 5px 0;
+      border: 1px solid #3a336a;
     }
 
     .slot-item {
@@ -135,6 +136,21 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
+    }
+
+    .selected-slot-box {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 8px;
+      color: #FFD54A;
+      font-size: 14px;
+    }
+
+    .selected-slot-box span {
+      color: #fff;
+      font-weight: 700;
     }
 
     @media (max-width: 800px) {
@@ -219,6 +235,11 @@
 
       <input type="hidden" id="slotSelecionada">
 
+      <div id="selectedSlotBox" class="selected-slot-box">
+        Slot selecionada: <span id="selectedSlotLabel">nenhuma</span><br>
+        ID selecionado: <span id="selectedSlotId">nenhum</span>
+      </div>
+
       <label for="bonusAposta">Aposta (€):</label>
       <input type="number" id="bonusAposta" step="0.01" placeholder="0.20">
 
@@ -263,9 +284,15 @@
         .replace(/(^-|-$)/g, "");
     }
 
+    function atualizarBoxSlotSelecionada(nome = "nenhuma", id = "nenhum") {
+      document.getElementById("selectedSlotLabel").textContent = nome;
+      document.getElementById("selectedSlotId").textContent = id;
+    }
+
     async function carregarSlots() {
       try {
         todasSlots = await listarSlots();
+        console.log("Slots carregadas:", todasSlots);
       } catch (erro) {
         console.error("Erro ao carregar slots:", erro);
         todasSlots = [];
@@ -431,7 +458,7 @@
         dados.forEach((b) => {
           const slot =
             todasSlots.find((s) => Number(s.id) === Number(b.slot_id)) ||
-            todasSlots.find((s) => String(s.nome).trim().toLowerCase() === String(b.nome).trim().toLowerCase()) ||
+            todasSlots.find((s) => String(s.nome || "").trim().toLowerCase() === String(b.nome || "").trim().toLowerCase()) ||
             {};
 
           html += `
@@ -465,6 +492,7 @@
       }
 
       document.getElementById("modalBonus").style.display = "block";
+      atualizarBoxSlotSelecionada();
     }
 
     function fecharModal() {
@@ -475,6 +503,7 @@
       document.getElementById("bonusAposta").value = "";
       document.getElementById("bonusTipo").value = "Normal";
       document.getElementById("providerFilter").value = "";
+      atualizarBoxSlotSelecionada();
     }
 
     function pesquisarSlots() {
@@ -511,6 +540,8 @@
       document.getElementById("slotSearch").value = slot.nome;
       document.getElementById("slotSelecionada").value = String(slot.id);
       document.getElementById("slotResults").innerHTML = "";
+      atualizarBoxSlotSelecionada(slot.nome, slot.id);
+      console.log("Slot selecionada:", slot.id, slot.nome);
     }
 
     async function confirmarBonus() {
@@ -535,29 +566,37 @@
         );
         if (slotEncontrada) {
           slotId = String(slotEncontrada.id);
+          atualizarBoxSlotSelecionada(slotEncontrada.nome, slotEncontrada.id);
         }
+      }
+
+      if (!slotId) {
+        alert("Tens de selecionar uma slot da lista para guardar o slot_id corretamente.");
+        return;
       }
 
       const dadosBonus = {
         nome: slotNome,
         aposta: aposta,
         tipo: tipo,
-        hunt_id: huntSelecionado,
+        hunt_id: Number(huntSelecionado),
         payout: 0,
-        slot_id: slotId ? Number(slotId) : null
+        slot_id: Number(slotId)
       };
+
+      alert(`A gravar bónus com slot_id = ${slotId}`);
 
       console.log("Bonus a gravar:", dadosBonus);
 
-      const ok = await gravarBonus(dadosBonus);
+      const res = await gravarBonus(dadosBonus);
 
-      if (!ok) {
+      if (!res.ok) {
         alert("Erro ao adicionar o bónus.");
         return;
       }
 
-      await recalcularHunt(huntSelecionado);
       fecharModal();
+      await recalcularHunt(huntSelecionado);
       await verBonus(huntSelecionado);
       await carregarHunts();
     }
@@ -610,6 +649,7 @@
     document.addEventListener("DOMContentLoaded", async function () {
       document.getElementById("slotSearch").addEventListener("input", () => {
         document.getElementById("slotSelecionada").value = "";
+        atualizarBoxSlotSelecionada();
         pesquisarSlots();
       });
 
