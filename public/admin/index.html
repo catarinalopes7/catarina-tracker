@@ -21,7 +21,7 @@
     section {
       margin: 20px auto;
       width: 90%;
-      max-width: 1000px;
+      max-width: 1100px;
     }
 
     table {
@@ -153,6 +153,24 @@
       font-weight: 700;
     }
 
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status-ativa {
+      background: #1f8f55;
+      color: #fff;
+    }
+
+    .status-inativa {
+      background: #5a5678;
+      color: #fff;
+    }
+
     @media (max-width: 800px) {
       .grid-4 {
         grid-template-columns: 1fr;
@@ -193,6 +211,7 @@
       <thead>
         <tr>
           <th>Nome</th>
+          <th>Status</th>
           <th>Saldo Inicial (€)</th>
           <th>Total Pago (€)</th>
           <th>Lucro/Prejuízo (€)</th>
@@ -345,14 +364,19 @@
           const lucro = formatarNumero(h.profit_loss);
           const saldoInicial = formatarNumero(h.start_balance);
           const totalPago = formatarNumero(h.total_pago);
+          const status = String(h.status || "inativa").toLowerCase();
+          const statusClasse = status === "ativa" ? "status-ativa" : "status-inativa";
+          const statusTexto = status === "ativa" ? "Ativa" : "Inativa";
 
           tr.innerHTML = `
             <td>${escapeHtml(h.nome)}</td>
+            <td><span class="status-badge ${statusClasse}">${statusTexto}</span></td>
             <td>${saldoInicial}</td>
             <td>${totalPago}</td>
             <td>${lucro}</td>
             <td class="actions">
               <button onclick="verBonus(${h.id})">🔍 Abrir</button>
+              <button onclick="ativarHuntUI(${h.id})">${status === "ativa" ? "✅ Ativa" : "▶️ Ativar"}</button>
               <button onclick="editarHunt(${h.id}, ${JSON.stringify(h.nome)}, ${Number(h.start_balance || 0)})">✏️</button>
               <button onclick="apagarHuntUI(${h.id})">🗑️</button>
             </td>
@@ -362,6 +386,23 @@
       } catch (erro) {
         console.error("Erro ao carregar hunts:", erro);
       }
+    }
+
+    async function ativarHuntUI(id) {
+      const ok = await ativarHunt(id);
+
+      if (!ok) {
+        alert("Erro ao ativar a caçada.");
+        return;
+      }
+
+      await carregarHunts();
+
+      if (huntSelecionado === id) {
+        await verBonus(id);
+      }
+
+      alert("Caçada ativada com sucesso.");
     }
 
     async function menuNova() {
@@ -375,7 +416,8 @@
         nome,
         start_balance: saldo,
         total_pago: 0,
-        profit_loss: 0
+        profit_loss: 0,
+        status: "inativa"
       });
 
       if (!ok) {
