@@ -5,925 +5,173 @@
   <meta name="viewport" content="width=1080, height=1920" />
   <title>Catarina Tracker Overlay</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg1: #1a1233;
-      --bg2: #23194a;
-      --bg3: #120d22;
-      --panel: rgba(255,255,255,0.08);
-      --panel-2: rgba(255,255,255,0.06);
-      --border: rgba(255,255,255,0.14);
-      --text: #ffffff;
-      --muted: rgba(255,255,255,0.72);
-      --gold: #ffd54a;
-      --gold-2: #ffb92e;
-      --green: #47d97b;
-      --red: #ff5f7d;
-      --blue: #6db6ff;
-      --shadow: 0 18px 40px rgba(0,0,0,0.35);
-      --glow: 0 0 0 1px rgba(255,213,74,0.18), 0 0 30px rgba(255,213,74,0.18);
-    }
-
-    html, body {
-      width: 1080px;
-      height: 1920px;
-      overflow: hidden;
-      font-family: 'Poppins', Arial, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top, rgba(115, 75, 255, 0.22), transparent 28%),
-        linear-gradient(180deg, var(--bg2) 0%, var(--bg1) 42%, var(--bg3) 100%);
-    }
-
     body {
-      padding: 28px;
+      width:1080px;
+      height:1920px;
+      margin:0;
+      font-family:Poppins, sans-serif;
+      color:#fff;
+      background:linear-gradient(180deg,#2c1b5a,#120d22);
+      padding:25px;
     }
 
-    .overlay {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
+    .title {
+      text-align:center;
+      font-size:42px;
+      font-weight:800;
+      color:#ffd54a;
+      margin-bottom:20px;
     }
 
-    .hunt-title {
-      min-height: 96px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 18px 28px;
-      border-radius: 28px;
-      border: 1px solid rgba(255,213,74,0.18);
-      background: linear-gradient(135deg, rgba(255,213,74,0.14), rgba(255,255,255,0.07));
-      box-shadow: var(--shadow);
-      color: var(--gold);
-      font-size: 38px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
+    .grid {
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr;
+      gap:15px;
     }
 
-    .top-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1.2fr;
-      gap: 18px;
-    }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 20px 22px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
+    .box {
+      background:rgba(255,255,255,0.08);
+      border-radius:20px;
+      padding:20px;
+      text-align:center;
     }
 
     .label {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 8px;
+      font-size:14px;
+      opacity:.7;
+      margin-bottom:5px;
     }
 
-    .top-value {
-      font-size: 40px;
-      font-weight: 800;
-      line-height: 1;
+    .value {
+      font-size:32px;
+      font-weight:800;
     }
 
-    .open-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .row {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:15px;
+      margin-top:15px;
     }
 
-    .open-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
+    .list {
+      margin-top:20px;
+      height:900px;
+      overflow:hidden;
     }
 
-    .open-label {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .open-value {
-      font-size: 36px;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .progress {
-      width: 100%;
-      height: 16px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.08);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--gold), var(--gold-2));
-      transition: width 0.35s ease;
-      position: relative;
-    }
-
-    .progress-fill::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-      animation: shimmer 2.5s linear infinite;
-    }
-
-    .main-cards {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-    }
-
-    .mini-card {
-      min-height: 120px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.06));
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 16px 18px;
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .mini-label {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-
-    .mini-value {
-      font-size: 33px;
-      font-weight: 800;
-      line-height: 1.05;
-      word-break: break-word;
-    }
-
-    .gold { color: var(--gold); }
-    .green { color: var(--green); }
-    .red { color: var(--red); }
-    .blue { color: var(--blue); }
-
-    .secondary-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .slot-highlight {
-      min-height: 142px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.05));
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 16px 18px 18px 18px;
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .slot-highlight.best::before,
-    .slot-highlight.worst::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 6px;
-      border-radius: 8px;
-    }
-
-    .slot-highlight.best::before {
-      background: linear-gradient(180deg, var(--green), #78ff9e);
-    }
-
-    .slot-highlight.worst::before {
-      background: linear-gradient(180deg, var(--red), #ff9aae);
-    }
-
-    .slot-name {
-      font-size: 24px;
-      font-weight: 800;
-      line-height: 1.1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-right: 8px;
-    }
-
-    .slot-sub {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
-    .slot-metrics {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 18px;
-      margin-top: 10px;
-    }
-
-    .metric-block {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      min-width: 0;
-    }
-
-    .metric-label {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-
-    .metric-value-x {
-      font-size: 30px;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .metric-value-eur {
-      font-size: 26px;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .list-panel {
-      flex: 1;
-      min-height: 0;
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.04));
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 18px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .list-panel::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 20%, transparent 80%, rgba(255,255,255,0.02));
-    }
-
-    .list-inner {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      will-change: transform;
-    }
-
-    .bonus-card {
-      min-height: 118px;
-      border-radius: 22px;
-      padding: 16px 18px;
-      background: var(--panel-2);
-      border: 1px solid rgba(255,255,255,0.10);
-      display: grid;
-      grid-template-columns: 1.65fr 0.8fr 0.95fr;
-      gap: 12px;
-      align-items: center;
-      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .bonus-card.active {
-      background: linear-gradient(135deg, rgba(255,213,74,0.18), rgba(255,255,255,0.10));
-      border-color: rgba(255,213,74,0.40);
-      box-shadow: var(--glow), var(--shadow);
-      animation: pulseActive 1.8s ease-in-out infinite;
-      transform: scale(1.01);
-    }
-
-    .bonus-card.active::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
-      transform: translateX(-100%);
-      animation: activeSweep 2.8s linear infinite;
-    }
-
-    .bonus-main {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-width: 0;
-    }
-
-    .bonus-title-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-    }
-
-    .bonus-name {
-      font-size: 27px;
-      font-weight: 800;
-      line-height: 1.05;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      min-width: 0;
-    }
-
-    .bonus-meta {
-      font-size: 17px;
-      font-weight: 600;
-      color: var(--muted);
-    }
-
-    .bonus-side {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      justify-content: center;
-      gap: 6px;
-      text-align: right;
-    }
-
-    .bonus-side-label {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-
-    .bonus-side-value {
-      font-size: 26px;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      height: 28px;
-      padding: 0 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .badge-live {
-      color: #1f1600;
-      background: linear-gradient(180deg, var(--gold), #ffbf36);
-      box-shadow: 0 0 16px rgba(255,213,74,0.22);
-    }
-
-    .badge-bigwin {
-      color: #08170e;
-      background: linear-gradient(180deg, #5eff9b, #31d36f);
-      box-shadow: 0 0 18px rgba(71,217,123,0.20);
-    }
-
-    .empty {
-      height: 100%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      font-size: 26px;
-      font-weight: 700;
-      color: var(--muted);
-      padding: 30px;
-    }
-
-    .footer-note {
-      text-align: center;
-      font-size: 14px;
-      color: rgba(255,255,255,0.34);
-      margin-top: 2px;
-    }
-
-    @keyframes shimmer {
-      0% { transform: translateX(-120%); }
-      100% { transform: translateX(120%); }
-    }
-
-    @keyframes pulseActive {
-      0%, 100% {
-        box-shadow: var(--glow), var(--shadow);
-      }
-      50% {
-        box-shadow: 0 0 0 1px rgba(255,213,74,0.28), 0 0 40px rgba(255,213,74,0.24), var(--shadow);
-      }
-    }
-
-    @keyframes activeSweep {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
   </style>
 </head>
 <body>
-  <div class="overlay">
-    <div id="huntTitle" class="hunt-title">A carregar hunt...</div>
 
-    <div class="top-row">
-      <div class="panel">
-        <div class="label">Start</div>
-        <div id="startValue" class="top-value">0.00€</div>
-      </div>
+<div id="title" class="title">A carregar hunt...</div>
 
-      <div class="panel">
-        <div class="label">Total Bónus</div>
-        <div id="totalBonus" class="top-value">0</div>
-      </div>
-
-      <div class="panel">
-        <div class="open-wrap">
-          <div class="open-head">
-            <div class="open-label">Bonus Open</div>
-            <div id="openCount" class="open-value">0/0</div>
-          </div>
-
-          <div class="progress">
-            <div id="progressFill" class="progress-fill"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="main-cards">
-      <div class="mini-card">
-        <div class="mini-label">AVG X</div>
-        <div id="avgX" class="mini-value gold">0.00x</div>
-      </div>
-
-      <div class="mini-card">
-        <div class="mini-label">BE Inicial</div>
-        <div id="beInicial" class="mini-value blue">0%</div>
-      </div>
-
-      <div class="mini-card">
-        <div class="mini-label">Profit / Loss</div>
-        <div id="profitLoss" class="mini-value">0.00€</div>
-      </div>
-
-      <div class="mini-card">
-        <div class="mini-label">Total Pago</div>
-        <div id="totalPago" class="mini-value green">0.00€</div>
-      </div>
-    </div>
-
-    <div class="secondary-cards">
-      <div class="slot-highlight best">
-        <div>
-          <div class="label">Best Slot</div>
-          <div id="bestName" class="slot-name">-</div>
-          <div class="slot-sub">Maior X pela bet</div>
-        </div>
-
-        <div class="slot-metrics">
-          <div class="metric-block">
-            <div class="metric-label">X</div>
-            <div id="bestX" class="metric-value-x green">0.00x</div>
-          </div>
-
-          <div class="metric-block" style="text-align:right;">
-            <div class="metric-label">Pago</div>
-            <div id="bestValue" class="metric-value-eur green">0.00€</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="slot-highlight worst">
-        <div>
-          <div class="label">Worst Slot</div>
-          <div id="worstName" class="slot-name">-</div>
-          <div class="slot-sub">Menor X pela bet</div>
-        </div>
-
-        <div class="slot-metrics">
-          <div class="metric-block">
-            <div class="metric-label">X</div>
-            <div id="worstX" class="metric-value-x red">0.00x</div>
-          </div>
-
-          <div class="metric-block" style="text-align:right;">
-            <div class="metric-label">Pago</div>
-            <div id="worstValue" class="metric-value-eur red">0.00€</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="list-panel">
-      <div id="listInner" class="list-inner"></div>
-      <div id="emptyState" class="empty">Sem bónus para mostrar.</div>
-    </div>
-
-    <div class="footer-note">Catarina Tracker Overlay</div>
+<div class="grid">
+  <div class="box">
+    <div class="label">Start</div>
+    <div id="start">0€</div>
   </div>
 
-  <script>
-    const SUPABASE_URL = "COLOCA_AQUI_O_TEU_SUPABASE_URL";
-    const SUPABASE_KEY = "COLOCA_AQUI_O_TEU_SUPABASE_ANON_KEY";
+  <div class="box">
+    <div class="label">Total Bónus</div>
+    <div id="totalBonus">0</div>
+  </div>
 
-    const HUNTS_TABLE = "hunts";
-    const BONUSES_TABLE = "hunt_bonuses";
+  <div class="box">
+    <div class="label">Bonus Open</div>
+    <div id="open">0/0</div>
+  </div>
+</div>
 
-    const REFRESH_MS = 2500;
-    const AUTOSCROLL_SPEED = 0.45;
+<div class="row">
+  <div class="box">
+    <div class="label">AVG X</div>
+    <div id="avg">0x</div>
+  </div>
 
-    let animationFrame = null;
-    let scrollPos = 0;
+  <div class="box">
+    <div class="label">BE Inicial</div>
+    <div id="be">0%</div>
+  </div>
 
-    function headers() {
-      return {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`,
-        "Content-Type": "application/json",
-        Prefer: "return=representation"
-      };
-    }
+  <div class="box">
+    <div class="label">Profit / Loss</div>
+    <div id="profit">0€</div>
+  </div>
 
-    function safeNumber(value) {
-      const n = Number(value);
-      return Number.isFinite(n) ? n : 0;
-    }
+  <div class="box">
+    <div class="label">Total Pago</div>
+    <div id="paid">0€</div>
+  </div>
+</div>
 
-    function euro(value) {
-      return `${safeNumber(value).toFixed(2)}€`;
-    }
+<script>
+const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
-    function percent(value) {
-      return `${safeNumber(value).toFixed(0)}%`;
-    }
+async function load() {
+  try {
 
-    function xValue(value) {
-      return `${safeNumber(value).toFixed(2)}x`;
-    }
-
-    function escapeHtml(str) {
-      return String(str ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function resetOverlay() {
-      document.getElementById("startValue").textContent = "0.00€";
-      document.getElementById("totalBonus").textContent = "0";
-      document.getElementById("openCount").textContent = "0/0";
-      document.getElementById("progressFill").style.width = "0%";
-      document.getElementById("avgX").textContent = "0.00x";
-      document.getElementById("beInicial").textContent = "0%";
-      document.getElementById("profitLoss").textContent = "0.00€";
-      document.getElementById("profitLoss").classList.remove("green", "red");
-      document.getElementById("totalPago").textContent = "0.00€";
-      document.getElementById("bestName").textContent = "-";
-      document.getElementById("bestX").textContent = "0.00x";
-      document.getElementById("bestValue").textContent = "0.00€";
-      document.getElementById("worstName").textContent = "-";
-      document.getElementById("worstX").textContent = "0.00x";
-      document.getElementById("worstValue").textContent = "0.00€";
-      document.getElementById("listInner").innerHTML = "";
-      document.getElementById("emptyState").style.display = "flex";
-    }
-
-    async function fetchActiveHunt() {
-      const url =
-        `${SUPABASE_URL}/rest/v1/${HUNTS_TABLE}` +
-        `?select=*` +
-        `&is_active=eq.true` +
-        `&order=id.desc` +
-        `&limit=1`;
-
-      const res = await fetch(url, { headers: headers() });
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error("Erro hunt ativa: " + text);
+    const huntRes = await fetch(`${SUPABASE_URL}/rest/v1/hunts?select=*&is_active=eq.true&limit=1`, {
+      headers:{
+        apikey:SUPABASE_KEY,
+        Authorization:`Bearer ${SUPABASE_KEY}`
       }
-      const data = await res.json();
-      return data[0] || null;
+    });
+
+    const huntData = await huntRes.json();
+    const hunt = huntData[0];
+
+    if(!hunt){
+      document.getElementById("title").innerText="Sem hunt ativa";
+      return;
     }
 
-    async function fetchBonuses(huntId) {
-      const url =
-        `${SUPABASE_URL}/rest/v1/${BONUSES_TABLE}` +
-        `?select=*` +
-        `&hunt_id=eq.${huntId}` +
-        `&order=id.asc`;
+    document.getElementById("title").innerText = hunt.nome;
+    document.getElementById("start").innerText = (hunt.start_value || 0) + "€";
 
-      const res = await fetch(url, { headers: headers() });
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error("Erro bónus: " + text);
+    const bonusRes = await fetch(`${SUPABASE_URL}/rest/v1/hunt_bonuses?hunt_id=eq.${hunt.id}`,{
+      headers:{
+        apikey:SUPABASE_KEY,
+        Authorization:`Bearer ${SUPABASE_KEY}`
       }
-      return await res.json();
+    });
+
+    const bonuses = await bonusRes.json();
+
+    document.getElementById("totalBonus").innerText = bonuses.length;
+
+    let opened = bonuses.filter(b => b.payout > 0);
+    document.getElementById("open").innerText = opened.length + "/" + bonuses.length;
+
+    let totalPaid = bonuses.reduce((s,b)=>s+(b.payout||0),0);
+    document.getElementById("paid").innerText = totalPaid.toFixed(2)+"€";
+
+    let profit = totalPaid - (hunt.start_value||0);
+    document.getElementById("profit").innerText = profit.toFixed(2)+"€";
+
+    let avg = 0;
+    if(opened.length){
+      avg = opened.reduce((s,b)=>s+(b.payout/(b.bet||1)),0)/opened.length;
     }
 
-    function getBonusStatus(bonus) {
-      const raw = String(bonus.status || "").toLowerCase();
+    document.getElementById("avg").innerText = avg.toFixed(2)+"x";
 
-      if (raw === "opened" || raw === "open" || raw === "done" || raw === "completed") {
-        return "opened";
-      }
+    let be = (totalPaid/(hunt.start_value||1))*100;
+    document.getElementById("be").innerText = be.toFixed(0)+"%";
 
-      if (raw === "active" || raw === "opening" || raw === "current") {
-        return "active";
-      }
+  } catch(e){
+    console.log(e);
+    document.getElementById("title").innerText="ERRO OVERLAY";
+  }
+}
 
-      return "pending";
-    }
+setInterval(load,2000);
+load();
+</script>
 
-    function getActiveBonus(bonuses) {
-      return bonuses.find(b => getBonusStatus(b) === "active") || null;
-    }
-
-    function getOpenedBonuses(bonuses) {
-      return bonuses.filter(b => {
-        const status = getBonusStatus(b);
-        return status === "opened" || status === "active";
-      });
-    }
-
-    function getOpenedCount(bonuses) {
-      return getOpenedBonuses(bonuses).length;
-    }
-
-    function getPayout(bonus) {
-      return safeNumber(bonus.payout ?? bonus.win_amount ?? 0);
-    }
-
-    function getBet(bonus) {
-      return safeNumber(bonus.bet ?? 0);
-    }
-
-    function getSlotName(bonus, index = 0) {
-      return (
-        bonus.slot_name ||
-        bonus.game_name ||
-        bonus.name ||
-        `Bónus ${index + 1}`
-      );
-    }
-
-    function getBonusMultiplier(bonus) {
-      const bet = getBet(bonus);
-      const payout = getPayout(bonus);
-      if (bet <= 0) return 0;
-      return payout / bet;
-    }
-
-    function getTotalPaid(bonuses) {
-      return bonuses.reduce((sum, b) => sum + getPayout(b), 0);
-    }
-
-    function getAvgX(bonuses) {
-      const opened = getOpenedBonuses(bonuses);
-      if (!opened.length) return 0;
-
-      const totalX = opened.reduce((sum, b) => {
-        const bet = getBet(b);
-        const payout = getPayout(b);
-        if (bet <= 0) return sum;
-        return sum + (payout / bet);
-      }, 0);
-
-      return totalX / opened.length;
-    }
-
-    function getBeInicial(hunt, bonuses) {
-      const startValue = safeNumber(hunt?.start_value);
-      if (startValue <= 0) return 0;
-      return (getTotalPaid(bonuses) / startValue) * 100;
-    }
-
-    function getProfitLoss(hunt, bonuses) {
-      const startValue = safeNumber(hunt?.start_value);
-      return getTotalPaid(bonuses) - startValue;
-    }
-
-    function getBestBonus(bonuses) {
-      if (!bonuses.length) return null;
-      return bonuses.reduce((best, current) => {
-        return getBonusMultiplier(current) > getBonusMultiplier(best) ? current : best;
-      });
-    }
-
-    function getWorstBonus(bonuses) {
-      if (!bonuses.length) return null;
-      return bonuses.reduce((worst, current) => {
-        return getBonusMultiplier(current) < getBonusMultiplier(worst) ? current : worst;
-      });
-    }
-
-    function isBigWin(bonus) {
-      const bet = getBet(bonus);
-      const payout = getPayout(bonus);
-      if (bet <= 0) return false;
-      return (payout / bet) >= 100;
-    }
-
-    function updateTop(hunt, bonuses) {
-      const totalBonus = bonuses.length;
-      const openedCount = getOpenedCount(bonuses);
-      const startValue = safeNumber(hunt?.start_value);
-
-      document.getElementById("huntTitle").textContent =
-        hunt?.nome || "Sem hunt ativa";
-
-      document.getElementById("startValue").textContent = euro(startValue);
-      document.getElementById("totalBonus").textContent = totalBonus;
-      document.getElementById("openCount").textContent = `${openedCount}/${totalBonus}`;
-
-      const pct = totalBonus > 0 ? (openedCount / totalBonus) * 100 : 0;
-      document.getElementById("progressFill").style.width = `${pct}%`;
-    }
-
-    function updateMainCards(hunt, bonuses) {
-      const avg = getAvgX(bonuses);
-      const beInicial = getBeInicial(hunt, bonuses);
-      const profitLoss = getProfitLoss(hunt, bonuses);
-      const totalPago = getTotalPaid(bonuses);
-
-      document.getElementById("avgX").textContent = xValue(avg);
-      document.getElementById("beInicial").textContent = percent(beInicial);
-      document.getElementById("totalPago").textContent = euro(totalPago);
-
-      const profitEl = document.getElementById("profitLoss");
-      profitEl.textContent = euro(profitLoss);
-      profitEl.classList.remove("green", "red", "gold");
-      profitEl.classList.add(profitLoss >= 0 ? "green" : "red");
-    }
-
-    function updateBestWorst(bonuses) {
-      const best = getBestBonus(bonuses);
-      const worst = getWorstBonus(bonuses);
-
-      document.getElementById("bestName").textContent = best ? getSlotName(best) : "-";
-      document.getElementById("bestX").textContent = best ? xValue(getBonusMultiplier(best)) : "0.00x";
-      document.getElementById("bestValue").textContent = best ? euro(getPayout(best)) : "0.00€";
-
-      document.getElementById("worstName").textContent = worst ? getSlotName(worst) : "-";
-      document.getElementById("worstX").textContent = worst ? xValue(getBonusMultiplier(worst)) : "0.00x";
-      document.getElementById("worstValue").textContent = worst ? euro(getPayout(worst)) : "0.00€";
-    }
-
-    function renderBonuses(bonuses) {
-      const listInner = document.getElementById("listInner");
-      const emptyState = document.getElementById("emptyState");
-
-      if (!bonuses.length) {
-        listInner.innerHTML = "";
-        emptyState.style.display = "flex";
-        return;
-      }
-
-      emptyState.style.display = "none";
-
-      const activeBonus = getActiveBonus(bonuses);
-
-      listInner.innerHTML = bonuses.map((bonus, index) => {
-        const isActive = activeBonus && String(activeBonus.id) === String(bonus.id);
-        const title = getSlotName(bonus, index);
-        const bet = getBet(bonus);
-        const payout = getPayout(bonus);
-        const showBigWin = isBigWin(bonus);
-
-        return `
-          <div class="bonus-card ${isActive ? "active" : ""}">
-            <div class="bonus-main">
-              <div class="bonus-title-row">
-                <div class="bonus-name">${escapeHtml(title)}</div>
-                ${isActive ? `<div class="badge badge-live">Live</div>` : ""}
-                ${showBigWin ? `<div class="badge badge-bigwin">Big Win</div>` : ""}
-              </div>
-              <div class="bonus-meta">Bet: ${euro(bet)}</div>
-            </div>
-
-            <div class="bonus-side">
-              <div class="bonus-side-label">Estado</div>
-              <div class="bonus-side-value">${isActive ? "ABRIR" : "NA LISTA"}</div>
-            </div>
-
-            <div class="bonus-side">
-              <div class="bonus-side-label">${isActive ? "Payout" : ""}</div>
-              <div class="bonus-side-value ${payout >= 0 ? "green" : "red"}">
-                ${isActive ? euro(payout) : ""}
-              </div>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      restartAutoScroll();
-    }
-
-    function restartAutoScroll() {
-      const panel = document.querySelector(".list-panel");
-      const listInner = document.getElementById("listInner");
-
-      scrollPos = 0;
-
-      if (animationFrame) {
-        cancelAnimationFrame(animationFrame);
-        animationFrame = null;
-      }
-
-      function step() {
-        const maxScroll = Math.max(0, listInner.scrollHeight - panel.clientHeight + 30);
-
-        if (maxScroll > 0) {
-          scrollPos += AUTOSCROLL_SPEED;
-          if (scrollPos >= maxScroll) {
-            scrollPos = 0;
-          }
-          listInner.style.transform = `translateY(-${scrollPos}px)`;
-        } else {
-          listInner.style.transform = `translateY(0px)`;
-        }
-
-        animationFrame = requestAnimationFrame(step);
-      }
-
-      animationFrame = requestAnimationFrame(step);
-    }
-
-    async function loadOverlay() {
-      try {
-        const hunt = await fetchActiveHunt();
-
-        if (!hunt) {
-          document.getElementById("huntTitle").textContent = "Sem hunt ativa";
-          resetOverlay();
-          return;
-        }
-
-        document.getElementById("huntTitle").textContent = hunt?.nome || "Sem hunt ativa";
-        document.getElementById("startValue").textContent = euro(hunt?.start_value);
-
-        const bonuses = await fetchBonuses(hunt.id);
-
-        updateTop(hunt, bonuses);
-        updateMainCards(hunt, bonuses);
-        updateBestWorst(bonuses);
-        renderBonuses(bonuses);
-      } catch (error) {
-        console.error(error);
-        document.getElementById("huntTitle").textContent = "ERRO OVERLAY";
-        resetOverlay();
-      }
-    }
-
-    loadOverlay();
-    setInterval(loadOverlay, REFRESH_MS);
-  </script>
 </body>
 </html>
