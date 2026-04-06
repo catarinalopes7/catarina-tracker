@@ -473,7 +473,7 @@
       </div>
 
       <div class="moneyBox">
-        <div class="moneyLabel">Average X</div>
+        <div class="moneyLabel">AVG X</div>
         <div class="moneyValue neutral" id="moneyAverageX">0,00x</div>
       </div>
 
@@ -483,7 +483,7 @@
       </div>
 
       <div class="moneyBox">
-        <div class="moneyLabel">Break-even Hunt</div>
+        <div class="moneyLabel">BE Inicial</div>
         <div class="moneyValue warning" id="moneyBreakEvenHunt">€0,00</div>
         <div class="moneySub neutral" id="moneyBreakEvenHuntPct">0,00%</div>
         <div class="progressWrap">
@@ -492,7 +492,7 @@
       </div>
 
       <div class="moneyBox hidden" id="openingBreakEvenBox">
-        <div class="moneyLabel">Break-even Abertura</div>
+        <div class="moneyLabel">BE Abertura</div>
         <div class="moneyValue warning" id="moneyBreakEvenOpening">€0,00</div>
         <div class="moneySub neutral" id="moneyBreakEvenOpeningPct">0,00%</div>
         <div class="progressWrap">
@@ -520,6 +520,13 @@
       const CT_TABLE_HUNTS = "hunts";
       const CT_TABLE_BONUS = "bonus";
       const CT_SCROLL_SPEED = 28;
+
+      /*
+        Multiplicador da compra do bónus.
+        Ex.: bet 0.20 => custo 20.00
+        0.20 * 100 = 20.00
+      */
+      const CT_BONUS_BUY_MULTIPLIER = 100;
 
       const CT_ELS = {
         huntName: document.getElementById("huntName"),
@@ -622,11 +629,19 @@
         );
       }
 
+      function ctGetBonusBetValue(bonus) {
+        return Number(bonus.aposta || 0);
+      }
+
+      function ctGetBonusBuyCost(bonus) {
+        return ctGetBonusBetValue(bonus) * CT_BONUS_BUY_MULTIPLIER;
+      }
+
       function ctGetBonusSub(bonus) {
         const parts = [];
 
         if (bonus.slot_id) parts.push(`ID: ${bonus.slot_id}`);
-        if (bonus.aposta != null && bonus.aposta !== "") parts.push(`Aposta: ${ctFormatPlainNumber(bonus.aposta)}`);
+        if (bonus.aposta != null && bonus.aposta !== "") parts.push(`Bet: ${ctFormatPlainNumber(bonus.aposta)}`);
         if (bonus.payout != null && bonus.payout !== "") parts.push(`Payout: ${ctFormatPlainNumber(bonus.payout)}`);
 
         return parts.join(" • ");
@@ -894,8 +909,9 @@
         }).length;
 
         const totalPago = Number(hunt.total_pago || 0);
+
         const custoTotalHunt = bonuses.reduce((sum, bonus) => {
-          return sum + Number(bonus.aposta || 0);
+          return sum + ctGetBonusBuyCost(bonus);
         }, 0);
 
         const huntBreakEvenFalta = Math.max(custoTotalHunt - totalPago, 0);
@@ -903,7 +919,7 @@
         const huntBreakEvenPctClamped = ctClamp(huntBreakEvenPct, 0, 100);
 
         const activeBonus = bonuses.find(b => ctNormalizeStatus(b.status) === "ativo") || null;
-        const openingCost = Number(activeBonus?.aposta || 0);
+        const openingCost = activeBonus ? ctGetBonusBuyCost(activeBonus) : 0;
         const openingPayout = Number(activeBonus?.payout || 0);
         const openingBreakEvenFalta = Math.max(openingCost - openingPayout, 0);
         const openingBreakEvenPct = openingCost > 0 ? (openingPayout / openingCost) * 100 : 0;
