@@ -150,6 +150,7 @@
     }
 
     .bonusItem {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -313,23 +314,23 @@
 
   <script>
     (() => {
-      const CT_TABLE_HUNTS = 'hunts';
-      const CT_TABLE_BONUSES = 'hunt_bonuses';
+      const CT_TABLE_HUNTS = "hunts";
+      const CT_TABLE_BONUS = "bonus";
       const CT_SCROLL_SPEED = 28;
 
       const CT_ELS = {
-        huntName: document.getElementById('huntName'),
-        huntId: document.getElementById('huntId'),
-        huntStatus: document.getElementById('huntStatus'),
-        statTotal: document.getElementById('statTotal'),
-        statDone: document.getElementById('statDone'),
-        statPending: document.getElementById('statPending'),
-        bonusTrack: document.getElementById('bonusTrack'),
-        bonusViewport: document.getElementById('bonusViewport'),
-        debugBox: document.getElementById('debugBox')
+        huntName: document.getElementById("huntName"),
+        huntId: document.getElementById("huntId"),
+        huntStatus: document.getElementById("huntStatus"),
+        statTotal: document.getElementById("statTotal"),
+        statDone: document.getElementById("statDone"),
+        statPending: document.getElementById("statPending"),
+        bonusTrack: document.getElementById("bonusTrack"),
+        bonusViewport: document.getElementById("bonusViewport"),
+        debugBox: document.getElementById("debugBox")
       };
 
-      let ctLastSignature = '';
+      let ctLastSignature = "";
       let ctScrollRaf = null;
       let ctScrollOffset = 0;
       let ctFirstListHeight = 0;
@@ -337,80 +338,84 @@
       let ctLastTs = 0;
 
       function ctShowDebug(message) {
-        console.error('[CT OVERLAY]', message);
+        console.error("[CT OVERLAY]", message);
         CT_ELS.debugBox.textContent = String(message);
-        CT_ELS.debugBox.classList.add('show');
+        CT_ELS.debugBox.classList.add("show");
       }
 
       function ctHideDebug() {
-        CT_ELS.debugBox.textContent = '';
-        CT_ELS.debugBox.classList.remove('show');
+        CT_ELS.debugBox.textContent = "";
+        CT_ELS.debugBox.classList.remove("show");
       }
 
       function ctEscapeHtml(value) {
-        return String(value ?? '')
-          .replaceAll('&', '&amp;')
-          .replaceAll('<', '&lt;')
-          .replaceAll('>', '&gt;')
-          .replaceAll('"', '&quot;')
-          .replaceAll("'", '&#039;');
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
       }
 
       function ctNormalizeStatus(value) {
-        const raw = String(value || '').trim().toLowerCase();
+        const raw = String(value || "").trim().toLowerCase();
 
         if (
-          raw === 'done' ||
-          raw === 'completed' ||
-          raw === 'complete' ||
-          raw === 'feito' ||
-          raw === 'fechado' ||
-          raw === 'closed'
-        ) return 'feito';
+          raw === "done" ||
+          raw === "completed" ||
+          raw === "complete" ||
+          raw === "feito" ||
+          raw === "fechado" ||
+          raw === "closed"
+        ) return "feito";
 
         if (
-          raw === 'active' ||
-          raw === 'ativo' ||
-          raw === 'ativa' ||
-          raw === 'activa' ||
-          raw === 'running'
-        ) return 'ativo';
+          raw === "active" ||
+          raw === "ativo" ||
+          raw === "ativa" ||
+          raw === "activa" ||
+          raw === "running"
+        ) return "ativo";
 
         if (
-          raw === 'cancelled' ||
-          raw === 'canceled' ||
-          raw === 'cancelado'
-        ) return 'cancelado';
+          raw === "cancelled" ||
+          raw === "canceled" ||
+          raw === "cancelado"
+        ) return "cancelado";
 
-        return 'pendente';
+        return "pendente";
       }
 
       function ctFormatStatusLabel(status) {
         switch (status) {
-          case 'feito': return 'Feito';
-          case 'ativo': return 'Ativo';
-          case 'cancelado': return 'Cancelado';
-          default: return 'Pendente';
+          case "feito": return "Feito";
+          case "ativo": return "Ativo";
+          case "cancelado": return "Cancelado";
+          default: return "Pendente";
         }
       }
 
       function ctGetBonusName(bonus) {
         return (
           bonus.slot_name ||
+          bonus.nome_slot ||
           bonus.name ||
+          bonus.nome ||
           bonus.slot ||
           bonus.title ||
           bonus.slot_id ||
-          `Bónus #${bonus.id ?? ''}`
+          `Bónus #${bonus.id ?? ""}`
         );
       }
 
       function ctGetBonusSub(bonus) {
         const parts = [];
+
         if (bonus.slot_id) parts.push(`ID: ${bonus.slot_id}`);
-        if (bonus.provider) parts.push(bonus.provider);
-        if (bonus.game_name) parts.push(bonus.game_name);
-        return parts.join(' • ');
+        if (bonus.aposta != null && bonus.aposta !== "") parts.push(`Aposta: ${bonus.aposta}`);
+        if (bonus.payout != null && bonus.payout !== "") parts.push(`Payout: ${bonus.payout}`);
+
+        return parts.join(" • ");
       }
 
       function ctStopAutoScroll() {
@@ -423,7 +428,7 @@
         ctFirstListHeight = 0;
         ctIsScrolling = false;
         ctLastTs = 0;
-        CT_ELS.bonusTrack.style.transform = 'translateY(0px)';
+        CT_ELS.bonusTrack.style.transform = "translateY(0px)";
       }
 
       function ctAutoScrollStep(ts) {
@@ -446,7 +451,7 @@
       function ctStartAutoScrollIfNeeded() {
         ctStopAutoScroll();
 
-        const lists = CT_ELS.bonusTrack.querySelectorAll('.bonusList');
+        const lists = CT_ELS.bonusTrack.querySelectorAll(".bonusList");
         if (!lists.length) return;
 
         const firstList = lists[0];
@@ -455,7 +460,7 @@
         const viewportHeight = CT_ELS.bonusViewport.clientHeight;
 
         if (ctFirstListHeight <= viewportHeight) {
-          CT_ELS.bonusTrack.style.transform = 'translateY(0px)';
+          CT_ELS.bonusTrack.style.transform = "translateY(0px)";
           return;
         }
 
@@ -466,23 +471,23 @@
       function ctRenderEmpty(message) {
         ctStopAutoScroll();
         CT_ELS.huntName.textContent = message;
-        CT_ELS.huntId.textContent = 'ID: —';
-        CT_ELS.huntStatus.textContent = 'Estado: —';
-        CT_ELS.statTotal.textContent = '0';
-        CT_ELS.statDone.textContent = '0';
-        CT_ELS.statPending.textContent = '0';
+        CT_ELS.huntId.textContent = "ID: —";
+        CT_ELS.huntStatus.textContent = "Estado: —";
+        CT_ELS.statTotal.textContent = "0";
+        CT_ELS.statDone.textContent = "0";
+        CT_ELS.statPending.textContent = "0";
         CT_ELS.bonusTrack.innerHTML = `<div class="emptyState">${ctEscapeHtml(message)}</div>`;
       }
 
       function ctGetHighlightedIndex(bonuses) {
         if (!bonuses.length) return -1;
 
-        const activeIndex = bonuses.findIndex(b => ctNormalizeStatus(b.status) === 'ativo');
+        const activeIndex = bonuses.findIndex(b => ctNormalizeStatus(b.status) === "ativo");
         if (activeIndex !== -1) return activeIndex;
 
         const pendingIndex = bonuses.findIndex(b => {
           const status = ctNormalizeStatus(b.status);
-          return status !== 'feito' && status !== 'cancelado';
+          return status !== "feito" && status !== "cancelado";
         });
         if (pendingIndex !== -1) return pendingIndex;
 
@@ -499,32 +504,78 @@
               const isHighlight = index === highlightedIndex;
 
               return `
-                <div class="bonusItem${isHighlight ? ' highlight' : ''}">
+                <div class="bonusItem${isHighlight ? " highlight" : ""}">
                   <div class="bonusLeft">
                     <div class="bonusName">${ctEscapeHtml(bonusName)}</div>
-                    <div class="bonusSub">${bonusSub ? ctEscapeHtml(bonusSub) : '&nbsp;'}</div>
+                    <div class="bonusSub">${bonusSub ? ctEscapeHtml(bonusSub) : "&nbsp;"}</div>
                   </div>
                   <div class="bonusStatus status-${status}">
                     ${ctFormatStatusLabel(status)}
                   </div>
                 </div>
               `;
-            }).join('')}
+            }).join("")}
           </div>
         `;
       }
 
+      function ctResolveConfig() {
+        if (window.CT_SUPABASE?.url && window.CT_SUPABASE?.key) {
+          return window.CT_SUPABASE;
+        }
+
+        return null;
+      }
+
+      async function ctFetchJson(url, headers) {
+        const res = await fetch(url, { headers });
+
+        if (!res.ok) {
+          const text = await res.text().catch(() => "");
+          throw new Error(`Erro ${res.status}: ${text || "fetch falhou"}`);
+        }
+
+        return res.json();
+      }
+
+      async function ctGetActiveHunt(baseUrl, headers) {
+        const url = `${baseUrl}/rest/v1/${CT_TABLE_HUNTS}?select=*&status=eq.ativa&order=id.desc&limit=1`;
+        const data = await ctFetchJson(url, headers);
+        return data?.[0] || null;
+      }
+
+      async function ctGetBonusesByHunt(baseUrl, headers, huntId) {
+        const url = `${baseUrl}/rest/v1/${CT_TABLE_BONUS}?select=*&hunt_id=eq.${encodeURIComponent(huntId)}&order=id.asc`;
+        return await ctFetchJson(url, headers);
+      }
+
+      function ctBuildSignature(hunt, bonuses) {
+        return JSON.stringify({
+          huntId: hunt?.id ?? null,
+          huntName: hunt?.name ?? "",
+          huntStatus: hunt?.status ?? "",
+          bonuses: bonuses.map(b => ({
+            id: b.id ?? null,
+            name: ctGetBonusName(b),
+            status: ctNormalizeStatus(b.status),
+            slot_id: b.slot_id ?? null,
+            payout: b.payout ?? null,
+            aposta: b.aposta ?? null
+          }))
+        });
+      }
+
       function ctRenderOverlay(hunt, bonuses) {
         const total = bonuses.length;
-        const done = bonuses.filter(b => ctNormalizeStatus(b.status) === 'feito').length;
+        const done = bonuses.filter(b => ctNormalizeStatus(b.status) === "feito").length;
         const pending = bonuses.filter(b => {
           const status = ctNormalizeStatus(b.status);
-          return status !== 'feito' && status !== 'cancelado';
+          return status !== "feito" && status !== "cancelado";
         }).length;
 
         CT_ELS.huntName.textContent = hunt.name || `Hunt #${hunt.id}`;
-        CT_ELS.huntId.textContent = `ID: ${hunt.id ?? '—'}`;
-        CT_ELS.huntStatus.textContent = 'Estado: Ativa';
+        CT_ELS.huntId.textContent = `ID: ${hunt.id ?? "—"}`;
+        CT_ELS.huntStatus.textContent = `Estado: ${hunt.status || "—"}`;
         CT_ELS.statTotal.textContent = String(total);
         CT_ELS.statDone.textContent = String(done);
         CT_ELS.statPending.textContent = String(pending);
@@ -545,78 +596,13 @@
         });
       }
 
-      function ctResolveConfig() {
-        const configCandidates = [
-          window.CT_SUPABASE,
-          window.__CT_SUPABASE__,
-          window.SUPABASE_CONFIG,
-          window.supabaseConfig
-        ].filter(Boolean);
-
-        for (const cfg of configCandidates) {
-          const url = cfg.url || cfg.SUPABASE_URL;
-          const key = cfg.key || cfg.anonKey || cfg.SUPABASE_ANON_KEY || cfg.SUPABASE_KEY;
-          if (url && key) {
-            return { url, key };
-          }
-        }
-
-        if (window.SUPABASE_URL && (window.SUPABASE_ANON_KEY || window.SUPABASE_KEY)) {
-          return {
-            url: window.SUPABASE_URL,
-            key: window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
-          };
-        }
-
-        return null;
-      }
-
-      async function ctFetchJson(url, headers) {
-        const res = await fetch(url, { headers });
-
-        if (!res.ok) {
-          const text = await res.text().catch(() => '');
-          throw new Error(`Erro ${res.status}: ${text || 'fetch falhou'}`);
-        }
-
-        return res.json();
-      }
-
-      async function ctGetActiveHunt(baseUrl, headers) {
-        const url = `${baseUrl}/rest/v1/${CT_TABLE_HUNTS}?select=*&is_active=eq.true&order=created_at.desc&limit=1`;
-        const data = await ctFetchJson(url, headers);
-        return data?.[0] || null;
-      }
-
-      async function ctGetBonusesByHunt(baseUrl, headers, huntId) {
-        const url = `${baseUrl}/rest/v1/${CT_TABLE_BONUSES}?select=*&hunt_id=eq.${encodeURIComponent(huntId)}&order=created_at.asc`;
-        return await ctFetchJson(url, headers);
-      }
-
-      function ctBuildSignature(hunt, bonuses) {
-        return JSON.stringify({
-          huntId: hunt?.id ?? null,
-          huntName: hunt?.name ?? '',
-          bonuses: bonuses.map(b => ({
-            id: b.id ?? null,
-            name: ctGetBonusName(b),
-            status: ctNormalizeStatus(b.status),
-            slot_id: b.slot_id ?? null
-          }))
-        });
-      }
-
       async function ctRefreshOverlay() {
         try {
           const config = ctResolveConfig();
 
           if (!config) {
-            ctShowDebug(
-              'Overlay sem configuração Supabase.\n\n' +
-              'O teu conexao.js provavelmente não está a expor os dados no window.\n' +
-              'Se isto aparecer, manda-me o ficheiro completo public/admin/conexao.js.'
-            );
-            ctRenderEmpty('Configuração Supabase em falta.');
+            ctShowDebug("Configuração Supabase não encontrada no window.CT_SUPABASE");
+            ctRenderEmpty("Configuração Supabase em falta.");
             return;
           }
 
@@ -625,13 +611,13 @@
           const ctHeaders = {
             apikey: config.key,
             Authorization: `Bearer ${config.key}`,
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
           };
 
           const hunt = await ctGetActiveHunt(config.url, ctHeaders);
 
           if (!hunt) {
-            ctRenderEmpty('Sem hunt ativa.');
+            ctRenderEmpty("Sem hunt ativa.");
             return;
           }
 
@@ -644,7 +630,7 @@
           ctRenderOverlay(hunt, bonuses);
         } catch (error) {
           ctShowDebug(error?.message || error);
-          ctRenderEmpty('Erro ao carregar overlay.');
+          ctRenderEmpty("Erro ao carregar overlay.");
         }
       }
 
