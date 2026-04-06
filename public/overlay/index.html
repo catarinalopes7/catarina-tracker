@@ -3,1046 +3,687 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=1080, height=1920" />
-  <title>CT Overlay - Catarina Tracker</title>
+  <title>Catarina Tracker Overlay</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg1: #1c1533;
+      --bg2: #2a1f4f;
+      --panel: rgba(255,255,255,0.08);
+      --panel-strong: rgba(255,255,255,0.12);
+      --border: rgba(255,255,255,0.16);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.72);
+      --gold: #ffd54a;
+      --green: #44d17a;
+      --red: #ff5c7a;
+      --blue: #69b7ff;
+      --purple: #b58cff;
+      --shadow: 0 18px 50px rgba(0,0,0,0.35);
     }
 
     html, body {
       width: 1080px;
       height: 1920px;
-      margin: 0;
-      padding: 0;
       overflow: hidden;
-      font-family: "Trebuchet MS", "Segoe UI", "Poppins", Arial, sans-serif;
-      background: linear-gradient(180deg, #4F3EC7, #362A7A);
-      color: #fff;
+      font-family: 'Poppins', Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(122, 78, 255, 0.32), transparent 28%),
+        linear-gradient(180deg, #221942 0%, #171126 100%);
     }
 
     body {
-      position: relative;
+      padding: 34px 34px 28px;
     }
 
-    .wrap {
+    .overlay {
       width: 100%;
       height: 100%;
-      padding: 28px 28px 36px;
       display: flex;
       flex-direction: column;
+      gap: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hunt-title {
+      width: 100%;
+      min-height: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 28px;
+      text-align: center;
+      border-radius: 28px;
+      background: linear-gradient(135deg, rgba(255,213,74,0.18), rgba(255,255,255,0.08));
+      border: 1px solid rgba(255,213,74,0.22);
+      box-shadow: var(--shadow);
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 18px;
     }
 
-    #title {
-      font-size: 46px;
-      font-weight: 900;
-      color: #FFD54A;
-      text-align: center;
-      line-height: 1.05;
-      letter-spacing: 0.4px;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.25);
-      margin-top: 8px;
-    }
-
-    #huntCard {
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 26px;
-      padding: 24px 26px;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
-    }
-
-    #huntName {
-      font-size: 36px;
-      font-weight: 900;
-      margin-bottom: 0;
-      text-align: center;
-      word-break: break-word;
-      letter-spacing: 0.2px;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .statBox {
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.16);
+    .stat-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 20px 16px;
-      text-align: center;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.14);
-      min-height: 112px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
     }
 
-    .statLabel {
-      font-size: 21px;
-      opacity: 0.9;
-      margin-bottom: 8px;
+    .stat-label {
+      font-size: 19px;
       font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
     }
 
-    .statValue {
-      font-size: 42px;
-      font-weight: 900;
+    .stat-value {
+      font-size: 38px;
+      font-weight: 800;
       line-height: 1;
     }
 
-    .openProgressBox {
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 24px;
-      padding: 18px 18px;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.14);
+    .progress-wrap {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .openProgressTop {
+    .progress-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
     }
 
-    .openProgressLabel {
-      font-size: 21px;
+    .progress-head .left {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .progress-head .right {
+      font-size: 34px;
       font-weight: 800;
-      opacity: 0.95;
+      color: var(--text);
+      line-height: 1;
     }
 
-    .openProgressValue {
-      font-size: 28px;
-      font-weight: 900;
-      color: #FFD54A;
-    }
-
-    .openProgressWrap {
+    .progress-bar {
       width: 100%;
-      height: 12px;
+      height: 16px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.12);
       overflow: hidden;
-      box-shadow: inset 0 1px 4px rgba(0,0,0,0.18);
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
-    .openProgressBar {
+    .progress-fill {
       height: 100%;
       width: 0%;
       border-radius: 999px;
+      background: linear-gradient(90deg, #ffd54a, #ff9f43);
       transition: width 0.35s ease;
-      background: linear-gradient(90deg, #90CAF9, #42A5F5);
-      box-shadow: 0 0 16px rgba(66,165,245,0.24);
     }
 
-    .moneyStats {
+    .cards-row {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 16px;
     }
 
-    .moneyStats.withOpening {
-      grid-template-columns: repeat(5, 1fr);
-    }
-
-    .moneyBox {
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.16);
+    .mini-card {
+      min-height: 128px;
+      background: var(--panel);
+      border: 1px solid var(--border);
       border-radius: 24px;
-      padding: 18px 14px;
-      text-align: center;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.14);
-      min-height: 132px;
+      padding: 18px 18px 16px;
+      box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
     }
 
-    .moneyBox.hidden {
-      display: none;
+    .mini-label {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
     }
 
-    .moneyLabel {
-      font-size: 17px;
-      opacity: 0.9;
-      margin-bottom: 8px;
+    .mini-value {
+      font-size: 32px;
       font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: 0.2px;
-    }
-
-    .moneyValue {
-      font-size: 29px;
-      font-weight: 900;
       line-height: 1.05;
       word-break: break-word;
-      letter-spacing: 0.2px;
     }
 
-    .progressWrap {
-      margin-top: 12px;
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.10);
-      overflow: hidden;
-      box-shadow: inset 0 1px 4px rgba(0,0,0,0.18);
-    }
+    .value-green { color: var(--green); }
+    .value-red { color: var(--red); }
+    .value-gold { color: var(--gold); }
+    .value-blue { color: var(--blue); }
+    .value-purple { color: var(--purple); }
 
-    .progressBar {
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      transition: width 0.35s ease;
-      background: linear-gradient(90deg, #FFD54A, #FFB300);
-      box-shadow: 0 0 16px rgba(255,213,74,0.22);
-    }
-
-    .progressBar.complete {
-      background: linear-gradient(90deg, #66BB6A, #43A047);
-      box-shadow: 0 0 16px rgba(102,187,106,0.22);
-    }
-
-    .progressBar.low {
-      background: linear-gradient(90deg, #FFA726, #FB8C00);
-      box-shadow: 0 0 16px rgba(255,167,38,0.22);
-    }
-
-    .moneyValue.positive {
-      color: #A5D6A7;
-      text-shadow: 0 0 18px rgba(165,214,167,0.16);
-    }
-
-    .moneyValue.negative {
-      color: #FFAB91;
-      text-shadow: 0 0 18px rgba(255,171,145,0.16);
-    }
-
-    .moneyValue.neutral {
-      color: #fff;
-    }
-
-    .moneyValue.warning {
-      color: #FFE082;
-      text-shadow: 0 0 18px rgba(255,224,130,0.14);
-    }
-
-    #bonusPanel {
+    .list-panel {
       flex: 1;
       min-height: 0;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 28px;
-      overflow: hidden;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
     }
 
-    #bonusHeader {
-      padding: 20px 24px 16px;
-      font-size: 31px;
-      font-weight: 900;
-      color: #FFD54A;
-      text-align: center;
-      border-bottom: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.08);
-      letter-spacing: 0.2px;
-    }
-
-    #bonusViewport {
-      position: relative;
-      flex: 1;
-      min-height: 0;
-      overflow: hidden;
-      padding: 18px;
-    }
-
-    #bonusTrack {
-      position: absolute;
-      top: 18px;
-      left: 18px;
-      right: 18px;
-      will-change: transform;
-    }
-
-    .bonusList {
+    .list-inner {
       display: flex;
       flex-direction: column;
       gap: 14px;
+      will-change: transform;
     }
 
-    .bonusItem {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+    .bonus-card {
+      width: 100%;
+      min-height: 132px;
+      border-radius: 24px;
       padding: 18px 20px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.10);
-      border: 1px solid rgba(255,255,255,0.12);
-      overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.10);
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 12px;
+      align-items: center;
+      transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
     }
 
-    .bonusItem.highlight {
-      background:
-        linear-gradient(90deg, rgba(255,213,74,0.18), rgba(255,255,255,0.12)),
-        rgba(255,255,255,0.10);
-      border-color: rgba(255,213,74,0.95);
-      box-shadow:
-        0 0 0 2px rgba(255,213,74,0.12),
-        0 14px 36px rgba(0,0,0,0.22),
-        0 0 34px rgba(255,213,74,0.20);
-      transform: scale(1.01);
+    .bonus-card.active {
+      background: linear-gradient(135deg, rgba(255,213,74,0.18), rgba(255,255,255,0.10));
+      border: 1px solid rgba(255,213,74,0.42);
+      transform: scale(1.012);
+      box-shadow: 0 0 0 2px rgba(255,213,74,0.14), 0 18px 34px rgba(0,0,0,0.24);
     }
 
-    .bonusItem.highlight::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 10px;
-      bottom: 10px;
-      width: 8px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, #FFD54A, #FFB300);
-      box-shadow: 0 0 18px rgba(255,213,74,0.45);
-    }
-
-    .bonusItem.highlight::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -35%;
-      width: 35%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        rgba(255,255,255,0),
-        rgba(255,255,255,0.16),
-        rgba(255,255,255,0)
-      );
-      transform: skewX(-18deg);
-      animation: highlightShine 3s linear infinite;
-      pointer-events: none;
-    }
-
-    .bonusLeft {
+    .bonus-main {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       min-width: 0;
-      flex: 1;
-      padding-left: 6px;
     }
 
-    .bonusTopRow {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-      flex-wrap: wrap;
-    }
-
-    .bonusName {
-      font-size: 27px;
-      font-weight: 900;
-      line-height: 1.15;
-      word-break: break-word;
-      letter-spacing: 0.2px;
-    }
-
-    .highlightBadge {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: linear-gradient(180deg, #FFE082, #FFD54A);
-      color: #372A79;
-      font-size: 13px;
-      font-weight: 900;
-      letter-spacing: 0.8px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+    .bonus-name {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.05;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .bonusItem.highlight .highlightBadge {
-      display: inline-flex;
-    }
-
-    .bonusSub {
+    .bonus-meta {
       font-size: 18px;
-      opacity: 0.84;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .bonus-side {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      text-align: right;
+    }
+
+    .bonus-side-label {
+      font-size: 15px;
       font-weight: 700;
-      word-break: break-word;
-    }
-
-    .bonusStatus {
-      min-width: 170px;
-      text-align: center;
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-size: 20px;
-      font-weight: 900;
+      color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      border: 1px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.10);
-      flex-shrink: 0;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+      letter-spacing: 0.8px;
     }
 
-    .status-pendente {
-      background: rgba(255, 193, 7, 0.18);
-      color: #FFE082;
+    .bonus-side-value {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
     }
 
-    .status-feito {
-      background: rgba(76, 175, 80, 0.18);
-      color: #A5D6A7;
-    }
-
-    .status-ativo {
-      background: rgba(33, 150, 243, 0.18);
-      color: #90CAF9;
-    }
-
-    .status-cancelado {
-      background: rgba(244, 67, 54, 0.18);
-      color: #FFAB91;
-    }
-
-    .emptyState {
-      height: 100%;
+    .empty {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 40px;
-      font-size: 30px;
-      font-weight: 900;
-      opacity: 0.92;
-    }
-
-    .footerNote {
-      text-align: center;
-      font-size: 18px;
-      opacity: 0.65;
+      font-size: 26px;
       font-weight: 700;
+      color: var(--muted);
+      padding: 30px;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 14px;
+      color: rgba(255,255,255,0.38);
       margin-top: 2px;
-    }
-
-    #debugBox {
-      position: absolute;
-      left: 20px;
-      right: 20px;
-      bottom: 20px;
-      z-index: 20;
-      background: rgba(0,0,0,0.55);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 16px;
-      padding: 12px 14px;
-      font-size: 16px;
-      line-height: 1.4;
-      color: #fff;
-      display: none;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    #debugBox.show {
-      display: block;
-    }
-
-    @keyframes highlightShine {
-      0% { left: -40%; }
-      100% { left: 120%; }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div id="title">Catarina Tracker</div>
+  <div class="overlay">
+    <div class="topbar">
+      <div id="huntTitle" class="hunt-title">A carregar hunt...</div>
 
-    <div id="huntCard">
-      <div id="huntName">A carregar hunt ativa...</div>
-    </div>
-
-    <div class="stats">
-      <div class="statBox">
-        <div class="statLabel">Total Bónus</div>
-        <div class="statValue" id="statTotal">0</div>
-      </div>
-
-      <div class="openProgressBox">
-        <div class="openProgressTop">
-          <div class="openProgressLabel">Abertura</div>
-          <div class="openProgressValue" id="openProgressValue">0/0</div>
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-label">Total Bónus</div>
+          <div id="totalBonus" class="stat-value">0</div>
         </div>
-        <div class="openProgressWrap">
-          <div class="openProgressBar" id="openProgressBar"></div>
-        </div>
-      </div>
-    </div>
 
-    <div class="moneyStats" id="moneyStats">
-      <div class="moneyBox">
-        <div class="moneyLabel">AVG X</div>
-        <div class="moneyValue neutral" id="moneyAverageX">0,00x</div>
-      </div>
-
-      <div class="moneyBox">
-        <div class="moneyLabel">BE Inicial</div>
-        <div class="moneyValue warning" id="moneyBreakEvenHuntPct">0,00%</div>
-        <div class="progressWrap">
-          <div class="progressBar" id="progressBreakEvenHunt"></div>
+        <div class="stat-box">
+          <div class="progress-wrap">
+            <div class="progress-head">
+              <div class="left">Open</div>
+              <div id="openCount" class="right">0/0</div>
+            </div>
+            <div class="progress-bar">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="moneyBox hidden" id="openingBreakEvenBox">
-        <div class="moneyLabel">BE Abertura</div>
-        <div class="moneyValue warning" id="moneyBreakEvenOpeningPct">0,00%</div>
-        <div class="progressWrap">
-          <div class="progressBar" id="progressBreakEvenOpening"></div>
+      <div id="cardsRow" class="cards-row">
+        <div class="mini-card">
+          <div class="mini-label">AVG X</div>
+          <div id="avgX" class="mini-value value-gold">0.00x</div>
+        </div>
+
+        <div class="mini-card">
+          <div class="mini-label">BE Inicial</div>
+          <div id="beInicial" class="mini-value value-blue">0%</div>
+        </div>
+
+        <div id="beAberturaCard" class="mini-card" style="display:none;">
+          <div class="mini-label">BE Abertura</div>
+          <div id="beAbertura" class="mini-value value-purple">0%</div>
+        </div>
+
+        <div class="mini-card">
+          <div class="mini-label">Profit / Loss</div>
+          <div id="profitLoss" class="mini-value">0.00€</div>
+        </div>
+
+        <div class="mini-card">
+          <div class="mini-label">Total Pago</div>
+          <div id="totalPago" class="mini-value value-green">0.00€</div>
         </div>
       </div>
-
-      <div class="moneyBox">
-        <div class="moneyLabel">Profit / Loss</div>
-        <div class="moneyValue neutral" id="moneyProfitLoss">€0,00</div>
-      </div>
-
-      <div class="moneyBox">
-        <div class="moneyLabel">Total Pago</div>
-        <div class="moneyValue neutral" id="moneyTotalPago">€0,00</div>
-      </div>
     </div>
 
-    <div id="bonusPanel">
-      <div id="bonusHeader">Bónus</div>
-      <div id="bonusViewport">
-        <div id="bonusTrack"></div>
-      </div>
+    <div class="list-panel">
+      <div id="listInner" class="list-inner"></div>
+      <div id="emptyState" class="empty" style="display:none;">Sem bónus para mostrar.</div>
     </div>
 
-    <div class="footerNote">Overlay ativo</div>
+    <div class="footer-note">Catarina Tracker Overlay</div>
   </div>
 
-  <div id="debugBox"></div>
-
-  <script src="../admin/conexao.js"></script>
-
   <script>
-    (() => {
-      const CT_TABLE_HUNTS = "hunts";
-      const CT_TABLE_BONUS = "bonus";
-      const CT_SCROLL_SPEED = 28;
-      const CT_BONUS_BUY_MULTIPLIER = 100;
+    const SUPABASE_URL = "COLOCA_AQUI_O_TEU_SUPABASE_URL";
+    const SUPABASE_KEY = "COLOCA_AQUI_O_TEU_SUPABASE_ANON_KEY";
 
-      const CT_ELS = {
-        huntName: document.getElementById("huntName"),
-        statTotal: document.getElementById("statTotal"),
-        openProgressValue: document.getElementById("openProgressValue"),
-        openProgressBar: document.getElementById("openProgressBar"),
-        moneyStats: document.getElementById("moneyStats"),
-        moneyTotalPago: document.getElementById("moneyTotalPago"),
-        moneyAverageX: document.getElementById("moneyAverageX"),
-        moneyProfitLoss: document.getElementById("moneyProfitLoss"),
-        moneyBreakEvenHuntPct: document.getElementById("moneyBreakEvenHuntPct"),
-        progressBreakEvenHunt: document.getElementById("progressBreakEvenHunt"),
-        openingBreakEvenBox: document.getElementById("openingBreakEvenBox"),
-        moneyBreakEvenOpeningPct: document.getElementById("moneyBreakEvenOpeningPct"),
-        progressBreakEvenOpening: document.getElementById("progressBreakEvenOpening"),
-        bonusTrack: document.getElementById("bonusTrack"),
-        bonusViewport: document.getElementById("bonusViewport"),
-        debugBox: document.getElementById("debugBox")
+    const HUNTS_TABLE = "hunts";
+    const BONUSES_TABLE = "hunt_bonuses";
+
+    const REFRESH_MS = 2500;
+    const AUTOSCROLL_SPEED = 0.45;
+
+    let currentActiveHuntId = null;
+    let bonusesCache = [];
+    let scrollPos = 0;
+    let animationFrame = null;
+
+    function headers() {
+      return {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation"
       };
+    }
 
-      let ctLastSignature = "";
-      let ctScrollRaf = null;
-      let ctScrollOffset = 0;
-      let ctFirstListHeight = 0;
-      let ctIsScrolling = false;
-      let ctLastTs = 0;
+    function euro(value) {
+      const num = Number(value || 0);
+      return `${num.toFixed(2)}€`;
+    }
 
-      function ctShowDebug(message) {
-        console.error("[CT OVERLAY]", message);
-        CT_ELS.debugBox.textContent = String(message);
-        CT_ELS.debugBox.classList.add("show");
+    function percent(value) {
+      const num = Number(value || 0);
+      return `${num.toFixed(0)}%`;
+    }
+
+    function xValue(value) {
+      const num = Number(value || 0);
+      return `${num.toFixed(2)}x`;
+    }
+
+    function safeNumber(value) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    async function fetchActiveHunt() {
+      const url =
+        `${SUPABASE_URL}/rest/v1/${HUNTS_TABLE}` +
+        `?select=*` +
+        `&is_active=eq.true` +
+        `&order=created_at.desc` +
+        `&limit=1`;
+
+      const res = await fetch(url, { headers: headers() });
+      if (!res.ok) throw new Error("Erro ao buscar hunt ativa");
+      const data = await res.json();
+      return data[0] || null;
+    }
+
+    async function fetchBonuses(huntId) {
+      const url =
+        `${SUPABASE_URL}/rest/v1/${BONUSES_TABLE}` +
+        `?select=*` +
+        `&hunt_id=eq.${huntId}` +
+        `&order=created_at.asc`;
+
+      const res = await fetch(url, { headers: headers() });
+      if (!res.ok) throw new Error("Erro ao buscar bónus");
+      return await res.json();
+    }
+
+    function getBonusStatus(bonus) {
+      const raw = String(bonus.status || "").toLowerCase();
+
+      if (raw === "opened" || raw === "open" || raw === "done" || raw === "completed") {
+        return "opened";
       }
 
-      function ctHideDebug() {
-        CT_ELS.debugBox.textContent = "";
-        CT_ELS.debugBox.classList.remove("show");
+      if (raw === "active" || raw === "opening" || raw === "current") {
+        return "active";
       }
 
-      function ctEscapeHtml(value) {
-        return String(value ?? "")
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
-      }
+      return "pending";
+    }
 
-      function ctNormalizeStatus(value) {
-        const raw = String(value || "").trim().toLowerCase();
+    function getActiveBonus(bonuses) {
+      return bonuses.find(b => getBonusStatus(b) === "active") || null;
+    }
 
-        if (
-          raw === "done" ||
-          raw === "completed" ||
-          raw === "complete" ||
-          raw === "feito" ||
-          raw === "fechado" ||
-          raw === "closed"
-        ) return "feito";
+    function countOpened(bonuses) {
+      return bonuses.filter(b => {
+        const status = getBonusStatus(b);
+        return status === "opened" || status === "active";
+      }).length;
+    }
 
-        if (
-          raw === "active" ||
-          raw === "ativo" ||
-          raw === "ativa" ||
-          raw === "activa" ||
-          raw === "running"
-        ) return "ativo";
+    function getTotalBonusValue(bonuses) {
+      return bonuses.length;
+    }
 
-        if (
-          raw === "cancelled" ||
-          raw === "canceled" ||
-          raw === "cancelado"
-        ) return "cancelado";
+    function getTotalCost(bonuses) {
+      return bonuses.reduce((sum, b) => sum + safeNumber(b.buy_amount ?? b.cost ?? b.price ?? 0), 0);
+    }
 
-        return "pendente";
-      }
-
-      function ctFormatStatusLabel(status) {
-        switch (status) {
-          case "feito": return "Feito";
-          case "ativo": return "Ativo";
-          case "cancelado": return "Cancelado";
-          default: return "Pendente";
+    function getOpenedCost(bonuses) {
+      return bonuses.reduce((sum, b) => {
+        const status = getBonusStatus(b);
+        if (status === "opened" || status === "active") {
+          return sum + safeNumber(b.buy_amount ?? b.cost ?? b.price ?? 0);
         }
+        return sum;
+      }, 0);
+    }
+
+    function getTotalPaid(bonuses) {
+      return bonuses.reduce((sum, b) => sum + safeNumber(b.payout ?? b.win_amount ?? 0), 0);
+    }
+
+    function getAvgX(bonuses) {
+      const opened = bonuses.filter(b => {
+        const status = getBonusStatus(b);
+        return status === "opened" || status === "active";
+      });
+
+      if (!opened.length) return 0;
+
+      const totalX = opened.reduce((sum, b) => {
+        const bet = safeNumber(b.bet);
+        const payout = safeNumber(b.payout ?? b.win_amount ?? 0);
+        if (bet <= 0) return sum;
+        return sum + (payout / bet);
+      }, 0);
+
+      return totalX / opened.length;
+    }
+
+    function getBeInicial(bonuses) {
+      const totalCost = getTotalCost(bonuses);
+      if (totalCost <= 0) return 0;
+
+      const totalPaid = getTotalPaid(bonuses);
+      return (totalPaid / totalCost) * 100;
+    }
+
+    function getBeAbertura(bonuses) {
+      const openedCost = getOpenedCost(bonuses);
+      if (openedCost <= 0) return 0;
+
+      const totalPaid = getTotalPaid(bonuses);
+      return (totalPaid / openedCost) * 100;
+    }
+
+    function getProfitLoss(bonuses) {
+      return getTotalPaid(bonuses) - getTotalCost(bonuses);
+    }
+
+    function updateTop(hunt, bonuses) {
+      document.getElementById("huntTitle").textContent =
+        hunt?.name || hunt?.title || "Sem hunt ativa";
+
+      const totalBonus = getTotalBonusValue(bonuses);
+      const openedCount = countOpened(bonuses);
+
+      document.getElementById("totalBonus").textContent = totalBonus;
+      document.getElementById("openCount").textContent = `${openedCount}/${totalBonus}`;
+
+      const pct = totalBonus > 0 ? (openedCount / totalBonus) * 100 : 0;
+      document.getElementById("progressFill").style.width = `${pct}%`;
+    }
+
+    function updateCards(bonuses) {
+      const avg = getAvgX(bonuses);
+      const beInicial = getBeInicial(bonuses);
+      const beAbertura = getBeAbertura(bonuses);
+      const profitLoss = getProfitLoss(bonuses);
+      const totalPago = getTotalPaid(bonuses);
+      const activeBonus = getActiveBonus(bonuses);
+
+      document.getElementById("avgX").textContent = xValue(avg);
+      document.getElementById("beInicial").textContent = percent(beInicial);
+      document.getElementById("totalPago").textContent = euro(totalPago);
+
+      const profitEl = document.getElementById("profitLoss");
+      profitEl.textContent = euro(profitLoss);
+      profitEl.classList.remove("value-green", "value-red", "value-gold");
+      profitEl.classList.add(profitLoss >= 0 ? "value-green" : "value-red");
+
+      const beAberturaCard = document.getElementById("beAberturaCard");
+      const beAberturaEl = document.getElementById("beAbertura");
+
+      if (activeBonus) {
+        beAberturaCard.style.display = "flex";
+        beAberturaEl.textContent = percent(beAbertura);
+      } else {
+        beAberturaCard.style.display = "none";
+      }
+    }
+
+    function renderBonuses(bonuses) {
+      const listInner = document.getElementById("listInner");
+      const emptyState = document.getElementById("emptyState");
+
+      if (!bonuses.length) {
+        listInner.innerHTML = "";
+        emptyState.style.display = "flex";
+        return;
       }
 
-      function ctGetBonusName(bonus) {
-        return (
-          bonus.slot_name ||
-          bonus.nome_slot ||
-          bonus.name ||
-          bonus.nome ||
-          bonus.slot ||
-          bonus.title ||
-          `Bónus #${bonus.id ?? ""}`
+      emptyState.style.display = "none";
+
+      const activeBonus = getActiveBonus(bonuses);
+
+      listInner.innerHTML = bonuses.map((bonus, index) => {
+        const isActive = activeBonus && (
+          String(activeBonus.id) === String(bonus.id)
         );
-      }
 
-      function ctGetBonusBetValue(bonus) {
-        return Number(bonus.aposta || 0);
-      }
+        const bet = safeNumber(bonus.bet);
+        const payout = safeNumber(bonus.payout ?? bonus.win_amount ?? 0);
 
-      function ctGetBonusBuyCost(bonus) {
-        return ctGetBonusBetValue(bonus) * CT_BONUS_BUY_MULTIPLIER;
-      }
+        const title =
+          bonus.slot_name ||
+          bonus.game_name ||
+          bonus.name ||
+          `Bónus ${index + 1}`;
 
-      function ctGetBonusSub(bonus) {
-        const parts = [];
-        const status = ctNormalizeStatus(bonus.status);
-
-        if (bonus.aposta != null && bonus.aposta !== "") {
-          parts.push(`Bet: ${ctFormatPlainNumber(bonus.aposta)}`);
-        }
-
-        if (status === "ativo" && bonus.payout != null && bonus.payout !== "") {
-          parts.push(`Payout: ${ctFormatPlainNumber(bonus.payout)}`);
-        }
-
-        return parts.join(" • ");
-      }
-
-      function ctFormatPlainNumber(value, decimals = 2) {
-        const num = Number(value || 0);
-        return num.toLocaleString("pt-PT", {
-          minimumFractionDigits: decimals,
-          maximumFractionDigits: decimals
-        });
-      }
-
-      function ctFormatMoney(value) {
-        const num = Number(value || 0);
-        const abs = Math.abs(num);
-
-        return `€${abs.toLocaleString("pt-PT", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        })}`;
-      }
-
-      function ctFormatMoneySigned(value) {
-        const num = Number(value || 0);
-
-        if (num > 0) return `+${ctFormatMoney(num)}`;
-        if (num < 0) return `-${ctFormatMoney(num)}`;
-        return ctFormatMoney(0);
-      }
-
-      function ctFormatAverageX(value) {
-        const num = Number(value || 0);
-        return `${num.toLocaleString("pt-PT", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        })}x`;
-      }
-
-      function ctFormatPercent(value) {
-        const num = Number(value || 0);
-        return `${num.toLocaleString("pt-PT", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        })}%`;
-      }
-
-      function ctClamp(value, min, max) {
-        return Math.min(Math.max(value, min), max);
-      }
-
-      function ctSetMoneyValue(el, value, formatter) {
-        const num = Number(value || 0);
-
-        el.classList.remove("positive", "negative", "neutral", "warning");
-
-        if (num > 0) {
-          el.classList.add("positive");
-        } else if (num < 0) {
-          el.classList.add("negative");
-        } else {
-          el.classList.add("neutral");
-        }
-
-        el.textContent = formatter(num);
-      }
-
-      function ctSetNeutralValue(el, value, formatter) {
-        el.classList.remove("positive", "negative", "neutral", "warning");
-        el.classList.add("neutral");
-        el.textContent = formatter(Number(value || 0));
-      }
-
-      function ctSetPercentValue(el, pct) {
-        el.classList.remove("positive", "negative", "neutral", "warning");
-
-        if (pct >= 100) {
-          el.classList.add("positive");
-        } else if (pct > 0) {
-          el.classList.add("warning");
-        } else {
-          el.classList.add("neutral");
-        }
-
-        el.textContent = ctFormatPercent(pct);
-      }
-
-      function ctSetProgressBar(el, pct) {
-        const safePct = ctClamp(Number(pct || 0), 0, 100);
-        el.style.width = `${safePct}%`;
-        el.classList.remove("complete", "low");
-
-        if (safePct >= 100) {
-          el.classList.add("complete");
-        } else if (safePct < 40) {
-          el.classList.add("low");
-        }
-      }
-
-      function ctSetOpenProgress(current, total) {
-        const safeTotal = Math.max(Number(total || 0), 0);
-        const safeCurrent = ctClamp(Number(current || 0), 0, safeTotal || 0);
-
-        CT_ELS.openProgressValue.textContent = `${safeCurrent}/${safeTotal}`;
-        const pct = safeTotal > 0 ? (safeCurrent / safeTotal) * 100 : 0;
-        CT_ELS.openProgressBar.style.width = `${ctClamp(pct, 0, 100)}%`;
-      }
-
-      function ctStopAutoScroll() {
-        if (ctScrollRaf) {
-          cancelAnimationFrame(ctScrollRaf);
-          ctScrollRaf = null;
-        }
-
-        ctScrollOffset = 0;
-        ctFirstListHeight = 0;
-        ctIsScrolling = false;
-        ctLastTs = 0;
-        CT_ELS.bonusTrack.style.transform = "translateY(0px)";
-      }
-
-      function ctAutoScrollStep(ts) {
-        if (!ctIsScrolling) return;
-
-        if (!ctLastTs) ctLastTs = ts;
-        const dt = (ts - ctLastTs) / 1000;
-        ctLastTs = ts;
-
-        ctScrollOffset += CT_SCROLL_SPEED * dt;
-
-        if (ctScrollOffset >= ctFirstListHeight) {
-          ctScrollOffset = 0;
-        }
-
-        CT_ELS.bonusTrack.style.transform = `translateY(-${ctScrollOffset}px)`;
-        ctScrollRaf = requestAnimationFrame(ctAutoScrollStep);
-      }
-
-      function ctStartAutoScroll(firstListHeight) {
-        ctStopAutoScroll();
-        ctFirstListHeight = firstListHeight;
-        ctIsScrolling = true;
-        ctScrollRaf = requestAnimationFrame(ctAutoScrollStep);
-      }
-
-      function ctRenderEmpty(message) {
-        ctStopAutoScroll();
-        CT_ELS.huntName.textContent = message;
-        CT_ELS.statTotal.textContent = "0";
-        ctSetOpenProgress(0, 0);
-
-        ctSetNeutralValue(CT_ELS.moneyAverageX, 0, ctFormatAverageX);
-        ctSetPercentValue(CT_ELS.moneyBreakEvenHuntPct, 0);
-        ctSetProgressBar(CT_ELS.progressBreakEvenHunt, 0);
-        CT_ELS.openingBreakEvenBox.classList.add("hidden");
-        CT_ELS.moneyStats.classList.remove("withOpening");
-        ctSetPercentValue(CT_ELS.moneyBreakEvenOpeningPct, 0);
-        ctSetProgressBar(CT_ELS.progressBreakEvenOpening, 0);
-        ctSetMoneyValue(CT_ELS.moneyProfitLoss, 0, ctFormatMoneySigned);
-        ctSetNeutralValue(CT_ELS.moneyTotalPago, 0, ctFormatMoney);
-
-        CT_ELS.bonusTrack.innerHTML = `<div class="emptyState">${ctEscapeHtml(message)}</div>`;
-      }
-
-      function ctGetHighlightedIndex(bonuses) {
-        if (!bonuses.length) return -1;
-
-        const activeIndex = bonuses.findIndex(b => ctNormalizeStatus(b.status) === "ativo");
-        if (activeIndex !== -1) return activeIndex;
-
-        const pendingIndex = bonuses.findIndex(b => {
-          const status = ctNormalizeStatus(b.status);
-          return status !== "feito" && status !== "cancelado";
-        });
-        if (pendingIndex !== -1) return pendingIndex;
-
-        return bonuses.length - 1;
-      }
-
-      function ctRenderBonusListHtml(bonuses, highlightedIndex) {
         return `
-          <div class="bonusList">
-            ${bonuses.map((bonus, index) => {
-              const status = ctNormalizeStatus(bonus.status);
-              const bonusName = ctGetBonusName(bonus);
-              const bonusSub = ctGetBonusSub(bonus);
-              const isHighlight = index === highlightedIndex;
+          <div class="bonus-card ${isActive ? "active" : ""}">
+            <div class="bonus-main">
+              <div class="bonus-name">${escapeHtml(title)}</div>
+              <div class="bonus-meta">Bet: ${euro(bet)}</div>
+            </div>
 
-              return `
-                <div class="bonusItem${isHighlight ? " highlight" : ""}">
-                  <div class="bonusLeft">
-                    <div class="bonusTopRow">
-                      <div class="bonusName">${ctEscapeHtml(bonusName)}</div>
-                      <div class="highlightBadge">EM DESTAQUE</div>
-                    </div>
-                    <div class="bonusSub">${bonusSub ? ctEscapeHtml(bonusSub) : "&nbsp;"}</div>
-                  </div>
-                  <div class="bonusStatus status-${status}">
-                    ${ctFormatStatusLabel(status)}
-                  </div>
-                </div>
-              `;
-            }).join("")}
+            <div class="bonus-side">
+              <div class="bonus-side-label">Estado</div>
+              <div class="bonus-side-value">${isActive ? "AO VIVO" : "NA LISTA"}</div>
+            </div>
+
+            <div class="bonus-side">
+              <div class="bonus-side-label">${isActive ? "Payout" : ""}</div>
+              <div class="bonus-side-value ${payout >= 0 ? "value-green" : "value-red"}">
+                ${isActive ? euro(payout) : ""}
+              </div>
+            </div>
           </div>
         `;
+      }).join("");
+
+      restartAutoScroll();
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function restartAutoScroll() {
+      const panel = document.querySelector(".list-panel");
+      const listInner = document.getElementById("listInner");
+
+      scrollPos = 0;
+
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = null;
       }
 
-      function ctResolveConfig() {
-        if (window.CT_SUPABASE?.url && window.CT_SUPABASE?.key) {
-          return window.CT_SUPABASE;
-        }
-        return null;
-      }
+      function step() {
+        const maxScroll = Math.max(0, listInner.scrollHeight - panel.clientHeight + 40);
 
-      async function ctFetchJson(url, headers) {
-        const res = await fetch(url, { headers });
-
-        if (!res.ok) {
-          const text = await res.text().catch(() => "");
-          throw new Error(`Erro ${res.status}: ${text || "fetch falhou"}`);
-        }
-
-        return res.json();
-      }
-
-      async function ctGetActiveHunt(baseUrl, headers) {
-        const url = `${baseUrl}/rest/v1/${CT_TABLE_HUNTS}?select=*&status=eq.ativa&order=id.desc&limit=1`;
-        const data = await ctFetchJson(url, headers);
-        return data?.[0] || null;
-      }
-
-      async function ctGetBonusesByHunt(baseUrl, headers, huntId) {
-        const url = `${baseUrl}/rest/v1/${CT_TABLE_BONUS}?select=*&hunt_id=eq.${encodeURIComponent(huntId)}&order=id.asc`;
-        return await ctFetchJson(url, headers);
-      }
-
-      function ctBuildSignature(hunt, bonuses) {
-        return JSON.stringify({
-          huntId: hunt?.id ?? null,
-          huntName: hunt?.name ?? "",
-          total_pago: hunt?.total_pago ?? 0,
-          average_x: hunt?.average_x ?? 0,
-          profit_loss: hunt?.profit_loss ?? 0,
-          bonuses: bonuses.map(b => ({
-            id: b.id ?? null,
-            name: ctGetBonusName(b),
-            status: ctNormalizeStatus(b.status),
-            payout: b.payout ?? null,
-            aposta: b.aposta ?? null
-          }))
-        });
-      }
-
-      function ctRenderOverlay(hunt, bonuses) {
-        const total = bonuses.length;
-        const totalPago = Number(hunt.total_pago || 0);
-
-        const custoTotalHunt = bonuses.reduce((sum, bonus) => {
-          return sum + ctGetBonusBuyCost(bonus);
-        }, 0);
-
-        const huntBreakEvenPct = custoTotalHunt > 0 ? (totalPago / custoTotalHunt) * 100 : 0;
-        const huntBreakEvenPctClamped = ctClamp(huntBreakEvenPct, 0, 100);
-
-        const activeBonusIndex = bonuses.findIndex(b => ctNormalizeStatus(b.status) === "ativo");
-        const activeBonus = activeBonusIndex !== -1 ? bonuses[activeBonusIndex] : null;
-
-        const openingCost = activeBonus ? ctGetBonusBuyCost(activeBonus) : 0;
-        const openingPayout = Number(activeBonus?.payout || 0);
-        const openingBreakEvenPct = openingCost > 0 ? (openingPayout / openingCost) * 100 : 0;
-        const openingBreakEvenPctClamped = ctClamp(openingBreakEvenPct, 0, 100);
-        const showOpeningBreakEven = !!activeBonus && openingCost > 0;
-
-        const currentOpenIndex = total > 0
-          ? Math.min(
-              activeBonusIndex !== -1
-                ? activeBonusIndex + 1
-                : bonuses.filter(b => ctNormalizeStatus(b.status) === "feito").length + 1,
-              total
-            )
-          : 0;
-
-        CT_ELS.huntName.textContent = hunt.name || `Hunt #${hunt.id}`;
-        CT_ELS.statTotal.textContent = String(total);
-        ctSetOpenProgress(currentOpenIndex, total);
-
-        ctSetNeutralValue(CT_ELS.moneyAverageX, hunt.average_x ?? 0, ctFormatAverageX);
-        ctSetPercentValue(CT_ELS.moneyBreakEvenHuntPct, huntBreakEvenPctClamped);
-        ctSetProgressBar(CT_ELS.progressBreakEvenHunt, huntBreakEvenPctClamped);
-
-        if (showOpeningBreakEven) {
-          CT_ELS.openingBreakEvenBox.classList.remove("hidden");
-          CT_ELS.moneyStats.classList.add("withOpening");
-          ctSetPercentValue(CT_ELS.moneyBreakEvenOpeningPct, openingBreakEvenPctClamped);
-          ctSetProgressBar(CT_ELS.progressBreakEvenOpening, openingBreakEvenPctClamped);
+        if (maxScroll > 0) {
+          scrollPos += AUTOSCROLL_SPEED;
+          if (scrollPos >= maxScroll) {
+            scrollPos = 0;
+          }
+          listInner.style.transform = `translateY(-${scrollPos}px)`;
         } else {
-          CT_ELS.openingBreakEvenBox.classList.add("hidden");
-          CT_ELS.moneyStats.classList.remove("withOpening");
-          ctSetPercentValue(CT_ELS.moneyBreakEvenOpeningPct, 0);
-          ctSetProgressBar(CT_ELS.progressBreakEvenOpening, 0);
+          listInner.style.transform = `translateY(0px)`;
         }
 
-        ctSetMoneyValue(CT_ELS.moneyProfitLoss, hunt.profit_loss ?? 0, ctFormatMoneySigned);
-        ctSetNeutralValue(CT_ELS.moneyTotalPago, totalPago, ctFormatMoney);
+        animationFrame = requestAnimationFrame(step);
+      }
 
-        if (!bonuses.length) {
-          ctStopAutoScroll();
-          CT_ELS.bonusTrack.innerHTML = `<div class="emptyState">Sem bónus nesta hunt.</div>`;
+      animationFrame = requestAnimationFrame(step);
+    }
+
+    async function loadOverlay() {
+      try {
+        const hunt = await fetchActiveHunt();
+
+        if (!hunt) {
+          currentActiveHuntId = null;
+          bonusesCache = [];
+          document.getElementById("huntTitle").textContent = "Sem hunt ativa";
+          document.getElementById("totalBonus").textContent = "0";
+          document.getElementById("openCount").textContent = "0/0";
+          document.getElementById("progressFill").style.width = "0%";
+          document.getElementById("avgX").textContent = "0.00x";
+          document.getElementById("beInicial").textContent = "0%";
+          document.getElementById("beAberturaCard").style.display = "none";
+          document.getElementById("profitLoss").textContent = "0.00€";
+          document.getElementById("profitLoss").classList.remove("value-green", "value-red");
+          document.getElementById("totalPago").textContent = "0.00€";
+          renderBonuses([]);
           return;
         }
 
-        const highlightedIndex = ctGetHighlightedIndex(bonuses);
-        const listHtml = ctRenderBonusListHtml(bonuses, highlightedIndex);
+        currentActiveHuntId = hunt.id;
+        const bonuses = await fetchBonuses(hunt.id);
+        bonusesCache = bonuses;
 
-        ctStopAutoScroll();
-        CT_ELS.bonusTrack.innerHTML = listHtml;
-
-        requestAnimationFrame(() => {
-          const firstList = CT_ELS.bonusTrack.querySelector(".bonusList");
-          if (!firstList) return;
-
-          const firstListHeight = firstList.offsetHeight;
-          const viewportHeight = CT_ELS.bonusViewport.clientHeight;
-
-          if (firstListHeight > viewportHeight) {
-            CT_ELS.bonusTrack.innerHTML = listHtml + listHtml;
-
-            requestAnimationFrame(() => {
-              const realFirstList = CT_ELS.bonusTrack.querySelector(".bonusList");
-              if (!realFirstList) return;
-              ctStartAutoScroll(realFirstList.offsetHeight);
-            });
-          } else {
-            CT_ELS.bonusTrack.style.transform = "translateY(0px)";
-          }
-        });
+        updateTop(hunt, bonuses);
+        updateCards(bonuses);
+        renderBonuses(bonuses);
+      } catch (error) {
+        console.error(error);
       }
+    }
 
-      async function ctRefreshOverlay() {
-        try {
-          const config = ctResolveConfig();
-
-          if (!config) {
-            ctShowDebug("Configuração Supabase não encontrada no window.CT_SUPABASE");
-            ctRenderEmpty("Configuração Supabase em falta.");
-            return;
-          }
-
-          ctHideDebug();
-
-          const ctHeaders = {
-            apikey: config.key,
-            Authorization: `Bearer ${config.key}`,
-            "Content-Type": "application/json"
-          };
-
-          const hunt = await ctGetActiveHunt(config.url, ctHeaders);
-
-          if (!hunt) {
-            ctRenderEmpty("Sem hunt ativa.");
-            return;
-          }
-
-          const bonuses = await ctGetBonusesByHunt(config.url, ctHeaders, hunt.id);
-          const signature = ctBuildSignature(hunt, bonuses);
-
-          if (signature === ctLastSignature) return;
-          ctLastSignature = signature;
-
-          ctRenderOverlay(hunt, bonuses);
-        } catch (error) {
-          ctShowDebug(error?.message || error);
-          ctRenderEmpty("Erro ao carregar overlay.");
-        }
-      }
-
-      ctRefreshOverlay();
-      setInterval(ctRefreshOverlay, 4000);
-    })();
+    loadOverlay();
+    setInterval(loadOverlay, REFRESH_MS);
   </script>
 </body>
 </html>
