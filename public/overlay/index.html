@@ -24,70 +24,87 @@ body{
 <div id="title" class="title">A carregar hunt...</div>
 
 <div class="grid">
-<div class="box"><div>Start</div><div id="start">0€</div></div>
-<div class="box"><div>Total</div><div id="total">0</div></div>
-<div class="box"><div>Open</div><div id="open">0/0</div></div>
+  <div class="box"><div>Start</div><div id="start">0€</div></div>
+  <div class="box"><div>Total</div><div id="total">0</div></div>
+  <div class="box"><div>Open</div><div id="open">0/0</div></div>
 </div>
 
 <div class="row">
-<div class="box"><div>AVG</div><div id="avg">0x</div></div>
-<div class="box"><div>BE</div><div id="be">0%</div></div>
-<div class="box"><div>Profit</div><div id="profit">0€</div></div>
-<div class="box"><div>Pago</div><div id="paid">0€</div></div>
+  <div class="box"><div>AVG</div><div id="avg">0x</div></div>
+  <div class="box"><div>BE</div><div id="be">0%</div></div>
+  <div class="box"><div>Profit</div><div id="profit">0€</div></div>
+  <div class="box"><div>Pago</div><div id="paid">0€</div></div>
 </div>
 
 <script>
 const SUPABASE_URL="https://cwengomkuhqvrdcpkgwp.supabase.co";
 const SUPABASE_KEY="sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
+function safeNumber(value){
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function getStartFromHunt(hunt){
+  return safeNumber(hunt?.start_value ?? hunt?.start_balance ?? 0);
+}
+
 async function load(){
-try{
+  try{
+    const huntRes = await fetch(`${SUPABASE_URL}/rest/v1/hunts?select=*&is_active=eq.true&order=id.desc&limit=1`,{
+      headers:{
+        apikey:SUPABASE_KEY,
+        Authorization:`Bearer ${SUPABASE_KEY}`
+      }
+    });
 
-const huntRes=await fetch(`${SUPABASE_URL}/rest/v1/hunts?is_active=eq.true&limit=1`,{
-headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}
-});
+    const huntData = await huntRes.json();
+    const hunt = huntData[0];
 
-const huntData=await huntRes.json();
-const hunt=huntData[0];
+    if(!hunt){
+      document.getElementById("title").innerText="Sem hunt ativa";
+      return;
+    }
 
-if(!hunt){
-document.getElementById("title").innerText="Sem hunt ativa";
-return;
-}
+    const startValue = getStartFromHunt(hunt);
 
-document.getElementById("title").innerText=hunt.nome;
-document.getElementById("start").innerText=(hunt.start_value||0)+"€";
+    document.getElementById("title").innerText = hunt.nome || "Sem nome";
+    document.getElementById("start").innerText = startValue.toFixed(2)+"€";
 
-const res=await fetch(`${SUPABASE_URL}/rest/v1/bonus?hunt_id=eq.${hunt.id}`,{
-headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}
-});
+    const bonusRes = await fetch(`${SUPABASE_URL}/rest/v1/bonus?select=*&hunt_id=eq.${hunt.id}&order=id.asc`,{
+      headers:{
+        apikey:SUPABASE_KEY,
+        Authorization:`Bearer ${SUPABASE_KEY}`
+      }
+    });
 
-const data=await res.json();
+    const bonuses = await bonusRes.json();
 
-document.getElementById("total").innerText=data.length;
+    document.getElementById("total").innerText = bonuses.length;
 
-let opened=data.filter(b=>b.payout>0);
-document.getElementById("open").innerText=opened.length+"/"+data.length;
+    let opened = bonuses.filter(b => Number(b.payout || 0) > 0);
+    document.getElementById("open").innerText = opened.length + "/" + bonuses.length;
 
-let totalPaid=data.reduce((s,b)=>s+(b.payout||0),0);
-document.getElementById("paid").innerText=totalPaid.toFixed(2)+"€";
+    let totalPaid = bonuses.reduce((s,b)=>s + Number(b.payout || 0),0);
+    document.getElementById("paid").innerText = totalPaid.toFixed(2)+"€";
 
-let profit=totalPaid-(hunt.start_value||0);
-document.getElementById("profit").innerText=profit.toFixed(2)+"€";
+    let profit = totalPaid - startValue;
+    document.getElementById("profit").innerText = profit.toFixed(2)+"€";
 
-let avg=0;
-if(opened.length){
-avg=opened.reduce((s,b)=>s+(b.payout/(b.bet||1)),0)/opened.length;
-}
-document.getElementById("avg").innerText=avg.toFixed(2)+"x";
+    let avg = 0;
+    if(opened.length){
+      avg = opened.reduce((s,b)=>s + (Number(b.payout || 0) / (Number(b.bet || 1))),0) / opened.length;
+    }
 
-let be=(totalPaid/(hunt.start_value||1))*100;
-document.getElementById("be").innerText=be.toFixed(0)+"%";
+    document.getElementById("avg").innerText = avg.toFixed(2)+"x";
 
-}catch(e){
-console.log(e);
-document.getElementById("title").innerText="ERRO OVERLAY";
-}
+    let be = startValue > 0 ? (totalPaid / startValue) * 100 : 0;
+    document.getElementById("be").innerText = be.toFixed(0)+"%";
+
+  } catch(e){
+    console.log(e);
+    document.getElementById("title").innerText="ERRO OVERLAY";
+  }
 }
 
 setInterval(load,2000);
