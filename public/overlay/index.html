@@ -881,19 +881,30 @@
     const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
     const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
+    let slotsCatalogCache = [];
+    let slotsCatalogLoaded = false;
+
     function parseMoney(value) {
       if (value === null || value === undefined) return 0;
-      let str = String(value).trim().replace(",", ".");
+      const str = String(value).trim().replace(",", ".");
       const num = parseFloat(str);
       return isNaN(num) ? 0 : num;
     }
 
-    function getStartFromHunt(hunt) {
-      const startValue = parseMoney(hunt?.start_value);
-      const startBalance = parseMoney(hunt?.start_balance);
+    function normalizeText(text) {
+      return String(text || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "");
+    }
 
-      if (startValue > 0) return startValue;
+    function getStartFromHunt(hunt) {
+      const startBalance = parseMoney(hunt?.start_balance);
+      const startValue = parseMoney(hunt?.start_value);
+
       if (startBalance > 0) return startBalance;
+      if (startValue > 0) return startValue;
       return 0;
     }
 
@@ -914,12 +925,13 @@
         .replaceAll("'", "&#039;");
     }
 
-    function getBonusTypeLabel(bonus) {
+    function getBonusTypeLabel(item) {
       const raw = String(
-        bonus?.bonus_type ||
-        bonus?.type ||
-        bonus?.categoria ||
-        bonus?.rarity ||
+        item?.bonus_type ||
+        item?.type ||
+        item?.categoria ||
+        item?.rarity ||
+        item?.tipo_slot ||
         ""
       ).trim().toLowerCase();
 
@@ -929,37 +941,107 @@
       return "normal";
     }
 
-    function getImageFromBonus(bonus) {
-      return (
-        bonus?.image_url ||
-        bonus?.imagem_url ||
-        bonus?.image ||
-        bonus?.thumbnail ||
-        bonus?.thumb ||
-        bonus?.cover ||
-        ""
+    function getBonusName(item) {
+      return item?.slot_name || item?.nome || item?.name || "Sem nome";
+    }
+
+    function getBonusBet(item) {
+      return parseMoney(
+        item?.bet_size ??
+        item?.bet ??
+        item?.aposta ??
+        0
       );
     }
 
-    function getBonusName(bonus) {
-      return bonus?.nome || bonus?.name || bonus?.slot_name || "Sem nome";
+    function getBonusPayout(item) {
+      return parseMoney(
+        item?.payout ??
+        item?.valor_pago ??
+        item?.total_pago ??
+        0
+      );
     }
 
-    function getBonusMulti(bonus) {
-      const bet = parseMoney(bonus?.bet);
-      const payout = parseMoney(bonus?.payout);
+    function getBonusMulti(item) {
+      const bet = getBonusBet(item);
+      const payout = getBonusPayout(item);
       if (bet <= 0) return 0;
       return payout / bet;
     }
 
-    function renderMiniCard(prefix, bonus, index) {
+    async function loadSlotsCatalog() {
+      if (slotsCatalogLoaded) return slotsCatalogCache;
+
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/slots?select=name,nome,image_url,imagem_url,image,thumbnail,thumb,cover,slug,tipo_slot`,
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`
+          }
+        }
+      );
+
+      const data = await res.json();
+      slotsCatalogCache = Array.isArray(data) ? data : [];
+      slotsCatalogLoaded = true;
+      return slotsCatalogCache;
+    }
+
+    function getCatalogMatch(item) {
+      const itemName = normalizeText(getBonusName(item));
+      if (!itemName || !slotsCatalogCache.length) return null;
+
+      let exact = slotsCatalogCache.find(slot => {
+        const slotName = normalizeText(slot?.name || slot?.nome || "");
+        return slotName === itemName;
+      });
+
+      if (exact) return exact;
+
+      let slugMatch = slotsCatalogCache.find(slot => {
+        const slug = normalizeText(slot?.slug || "");
+        return slug === itemName;
+      });
+
+      return slugMatch || null;
+    }
+
+    function getImageFromBonus(item) {
+      const direct =
+        item?.image_url ||
+        item?.imagem_url ||
+        item?.image ||
+        item?.thumbnail ||
+        item?.thumb ||
+        item?.cover ||
+        "";
+
+      if (direct) return direct;
+
+      const catalog = getCatalogMatch(item);
+      if (!catalog) return "";
+
+      return (
+        catalog?.image_url ||
+        catalog?.imagem_url ||
+        catalog?.image ||
+        catalog?.thumbnail ||
+        catalog?.thumb ||
+        catalog?.cover ||
+        ""
+      );
+    }
+
+    function renderMiniCard(prefix, item, index) {
       const thumb = document.getElementById(prefix + "Thumb");
       const rank = document.getElementById(prefix + "Rank");
       const name = document.getElementById(prefix + "Name");
       const win = document.getElementById(prefix + "Win");
       const multi = document.getElementById(prefix + "Multi");
 
-      if (!bonus) {
+      if (!item) {
         thumb.innerHTML = `<div class="mini-placeholder">Sem abertura</div>`;
         rank.innerText = "--";
         name.innerText = "À espera";
@@ -968,10 +1050,10 @@
         return;
       }
 
-      const img = getImageFromBonus(bonus);
-      const bonusName = getBonusName(bonus);
-      const payout = parseMoney(bonus.payout);
-      const multiValue = getBonusMulti(bonus);
+      const img = getImageFromBonus(item);
+      const bonusName = getBonusName(item);
+      const payout = getBonusPayout(item);
+      const multiValue = getBonusMulti(item);
 
       thumb.innerHTML = img
         ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(bonusName)}" />`
@@ -991,7 +1073,7 @@
       const multi = document.getElementById("currentMulti");
       const bet = document.getElementById("currentBet");
 
-      if (!item || !item.bonus) {
+      if (!item) {
         box.classList.remove("show");
         thumb.innerHTML = `<div class="current-placeholder">Sem imagem</div>`;
         name.innerText = "À espera de abertura";
@@ -1001,9 +1083,8 @@
         return;
       }
 
-      const bonus = item.bonus;
-      const img = getImageFromBonus(bonus);
-      const bonusName = getBonusName(bonus);
+      const img = getImageFromBonus(item);
+      const bonusName = getBonusName(item);
 
       box.classList.add("show");
       thumb.innerHTML = img
@@ -1011,24 +1092,24 @@
         : `<div class="current-placeholder">Sem imagem</div>`;
 
       name.innerText = bonusName;
-      win.innerText = formatCurrency(bonus.payout);
-      multi.innerText = formatMultiplier(getBonusMulti(bonus));
-      bet.innerText = formatCurrency(bonus.bet);
+      win.innerText = formatCurrency(getBonusPayout(item));
+      multi.innerText = formatMultiplier(getBonusMulti(item));
+      bet.innerText = formatCurrency(getBonusBet(item));
     }
 
-    function renderSlots(bonuses, latestOpenedIndex = -1) {
+    function renderSlots(items, latestOpenedIndex = -1) {
       const list = document.getElementById("slotsList");
 
-      if (!bonuses.length) {
+      if (!items.length) {
         list.innerHTML = '<div class="empty-state">Sem bónus nesta hunt</div>';
         return;
       }
 
-      list.innerHTML = bonuses.map((bonus, index) => {
-        const name = getBonusName(bonus);
-        const bet = parseMoney(bonus.bet);
-        const img = getImageFromBonus(bonus);
-        const payout = parseMoney(bonus.payout);
+      list.innerHTML = items.map((item, index) => {
+        const name = getBonusName(item);
+        const bet = getBonusBet(item);
+        const img = getImageFromBonus(item);
+        const payout = getBonusPayout(item);
 
         const classes = [
           "slot-card",
@@ -1088,17 +1169,19 @@
         );
 
         const huntData = await huntRes.json();
-        const hunt = huntData[0];
+        const hunt = Array.isArray(huntData) ? huntData[0] : null;
 
         if (!hunt) {
           resetOverlayNoHunt("Sem hunt ativa");
           return;
         }
 
+        await loadSlotsCatalog();
+
         const startValue = getStartFromHunt(hunt);
 
-        const bonusRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/bonus?select=*&hunt_id=eq.${hunt.id}&order=id.asc`,
+        const huntSlotsRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/hunt_slots?select=*&hunt_id=eq.${hunt.id}&order=id.asc`,
           {
             headers: {
               apikey: SUPABASE_KEY,
@@ -1107,15 +1190,16 @@
           }
         );
 
-        const bonuses = await bonusRes.json();
+        const huntSlotsData = await huntSlotsRes.json();
+        const bonuses = Array.isArray(huntSlotsData) ? huntSlotsData : [];
 
         const total = bonuses.length;
         const opened = bonuses
           .map((bonus, index) => ({ bonus, index }))
-          .filter(item => parseMoney(item.bonus.payout) > 0);
+          .filter(item => getBonusPayout(item.bonus) > 0);
 
         const latestOpened = opened.length ? opened[opened.length - 1] : null;
-        const totalPaid = bonuses.reduce((sum, b) => sum + parseMoney(b.payout), 0);
+        const totalPaid = bonuses.reduce((sum, b) => sum + getBonusPayout(b), 0);
 
         document.getElementById("huntLabel").innerText = opened.length > 0 ? "BONUS OPENING" : "BONUS HUNT";
         document.getElementById("huntSub").innerText = hunt.nome || "Sem nome";
@@ -1158,7 +1242,7 @@
           });
         }
 
-        renderCurrentOpening(latestOpened);
+        renderCurrentOpening(latestOpened?.bonus || null);
         renderMiniCard("best", bestItem?.bonus || null, bestItem?.index ?? -1);
         renderMiniCard("worst", worstItem?.bonus || null, worstItem?.index ?? -1);
         renderSlots(bonuses, latestOpened?.index ?? -1);
