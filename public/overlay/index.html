@@ -621,7 +621,7 @@
         `${SUPABASE_URL}/rest/v1/${HUNTS_TABLE}` +
         `?select=*` +
         `&is_active=eq.true` +
-        `&order=created_at.desc` +
+        `&order=id.desc` +
         `&limit=1`;
 
       const res = await fetch(url, { headers: headers() });
@@ -635,7 +635,7 @@
         `${SUPABASE_URL}/rest/v1/${BONUSES_TABLE}` +
         `?select=*` +
         `&hunt_id=eq.${huntId}` +
-        `&order=created_at.asc`;
+        `&order=id.asc`;
 
       const res = await fetch(url, { headers: headers() });
       if (!res.ok) throw new Error("Erro ao buscar bónus");
@@ -671,10 +671,6 @@
       return getOpenedBonuses(bonuses).length;
     }
 
-    function getBuyAmount(bonus) {
-      return safeNumber(bonus.buy_amount ?? bonus.cost ?? bonus.price ?? 0);
-    }
-
     function getPayout(bonus) {
       return safeNumber(bonus.payout ?? bonus.win_amount ?? 0);
     }
@@ -697,10 +693,6 @@
       const payout = getPayout(bonus);
       if (bet <= 0) return 0;
       return payout / bet;
-    }
-
-    function getTotalCost(bonuses) {
-      return bonuses.reduce((sum, b) => sum + getBuyAmount(b), 0);
     }
 
     function getTotalPaid(bonuses) {
@@ -759,7 +751,7 @@
       const startValue = safeNumber(hunt?.start_value);
 
       document.getElementById("huntTitle").textContent =
-        hunt?.name || hunt?.title || "Sem hunt ativa";
+        hunt?.nome || hunt?.title || "Sem hunt ativa";
 
       document.getElementById("startValue").textContent = euro(startValue);
       document.getElementById("totalBonus").textContent = totalBonus;
