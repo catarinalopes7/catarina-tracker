@@ -230,6 +230,7 @@
     .editable {
       cursor: pointer;
       transition: 0.18s ease;
+      min-width: 120px;
     }
 
     .editable:hover {
@@ -237,8 +238,13 @@
       border-radius: 8px;
     }
 
+    .editable.editing {
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+    }
+
     .edit-input {
-      width: 100px;
+      width: 110px;
       padding: 9px 10px;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.14);
@@ -384,6 +390,8 @@
 
     let selectedHunt = null;
     let huntsCache = [];
+    let isEditingPayout = false;
+    let refreshTimer = null;
 
     function headers() {
       return {
@@ -402,6 +410,15 @@
 
     function formatMoney(value) {
       return "$" + parseMoney(value).toFixed(2);
+    }
+
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
     function setSelectedHuntBadge() {
@@ -477,22 +494,13 @@
             <td><span class="slot-id">#${slot.id}</span></td>
             <td><span class="slot-name">${escapeHtml(slot.slot_name || "Sem nome")}</span></td>
             <td><span class="slot-bet">${formatMoney(slot.bet_size)}</span></td>
-            <td class="editable" onclick="editPayout(this, ${slot.id}, ${payout})">
+            <td class="editable" data-slot-id="${slot.id}" onclick="editPayout(this, ${slot.id}, ${payout})">
               <span class="slot-payout">${payout.toFixed(2)}</span>
             </td>
             <td>${estado}</td>
           </tr>
         `;
       }).join("");
-    }
-
-    function escapeHtml(text) {
-      return String(text ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
     }
 
     async function loadHunts() {
@@ -533,6 +541,10 @@
         return;
       }
 
+      if (isEditingPayout) {
+        return;
+      }
+
       try {
         const res = await fetch(
           `${SUPABASE_URL}/rest/v1/hunt_slots?hunt_id=eq.${selectedHunt}&select=*&order=id.asc`,
@@ -551,14 +563,25 @@
     }
 
     function openHunt(id) {
+      if (isEditingPayout) return;
+
       selectedHunt = id;
       renderHunts(huntsCache);
       setSelectedHuntBadge();
       loadSlots();
     }
 
+    function finishEditAndReload() {
+      isEditingPayout = false;
+      loadSlots();
+    }
+
     function editPayout(td, id, currentValue) {
+      if (isEditingPayout) return;
       if (td.querySelector("input")) return;
+
+      isEditingPayout = true;
+      td.classList.add("editing");
 
       const input = document.createElement("input");
       input.className = "edit-input";
@@ -569,8 +592,12 @@
       input.focus();
       input.select();
 
+      let handled = false;
+
       input.addEventListener("keydown", async (e) => {
         if (e.key === "Enter") {
+          handled = true;
+
           const newValue = parseMoney(input.value);
 
           try {
@@ -586,23 +613,32 @@
             console.log(err);
           }
 
-          loadSlots();
+          finishEditAndReload();
         }
 
         if (e.key === "Escape") {
-          loadSlots();
+          handled = true;
+          finishEditAndReload();
         }
       });
 
       input.addEventListener("blur", () => {
-        loadSlots();
+        if (handled) return;
+        finishEditAndReload();
       });
     }
 
-    setInterval(() => {
-      if (selectedHunt) loadSlots();
-    }, 2500);
+    function startAutoRefresh() {
+      if (refreshTimer) clearInterval(refreshTimer);
 
+      refreshTimer = setInterval(() => {
+        if (!isEditingPayout && selectedHunt) {
+          loadSlots();
+        }
+      }, 2500);
+    }
+
+    startAutoRefresh();
     loadHunts();
   </script>
 </body>
