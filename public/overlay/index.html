@@ -1,172 +1,93 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=1080, height=1920" />
-  <title>Catarina Tracker Overlay</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1080, height=1920">
+<title>Overlay</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
-
-  <style>
-    body {
-      width:1080px;
-      height:1920px;
-      margin:0;
-      font-family:Poppins, sans-serif;
-      color:#fff;
-      background:linear-gradient(180deg,#2c1b5a,#120d22);
-      padding:25px;
-    }
-
-    .title {
-      text-align:center;
-      font-size:42px;
-      font-weight:800;
-      color:#ffd54a;
-      margin-bottom:20px;
-    }
-
-    .grid {
-      display:grid;
-      grid-template-columns:1fr 1fr 1fr;
-      gap:15px;
-    }
-
-    .box {
-      background:rgba(255,255,255,0.08);
-      border-radius:20px;
-      padding:20px;
-      text-align:center;
-    }
-
-    .label {
-      font-size:14px;
-      opacity:.7;
-      margin-bottom:5px;
-    }
-
-    .value {
-      font-size:32px;
-      font-weight:800;
-    }
-
-    .row {
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:15px;
-      margin-top:15px;
-    }
-
-    .list {
-      margin-top:20px;
-      height:900px;
-      overflow:hidden;
-    }
-
-  </style>
+<style>
+body{
+  width:1080px;height:1920px;margin:0;
+  font-family:Arial;
+  background:#2c1b5a;color:#fff;
+  padding:20px;
+}
+.title{text-align:center;font-size:40px;color:#ffd54a;margin-bottom:20px}
+.box{background:#3b2a70;padding:20px;border-radius:15px;text-align:center}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+</style>
 </head>
+
 <body>
 
 <div id="title" class="title">A carregar hunt...</div>
 
 <div class="grid">
-  <div class="box">
-    <div class="label">Start</div>
-    <div id="start">0€</div>
-  </div>
-
-  <div class="box">
-    <div class="label">Total Bónus</div>
-    <div id="totalBonus">0</div>
-  </div>
-
-  <div class="box">
-    <div class="label">Bonus Open</div>
-    <div id="open">0/0</div>
-  </div>
+<div class="box"><div>Start</div><div id="start">0€</div></div>
+<div class="box"><div>Total</div><div id="total">0</div></div>
+<div class="box"><div>Open</div><div id="open">0/0</div></div>
 </div>
 
 <div class="row">
-  <div class="box">
-    <div class="label">AVG X</div>
-    <div id="avg">0x</div>
-  </div>
-
-  <div class="box">
-    <div class="label">BE Inicial</div>
-    <div id="be">0%</div>
-  </div>
-
-  <div class="box">
-    <div class="label">Profit / Loss</div>
-    <div id="profit">0€</div>
-  </div>
-
-  <div class="box">
-    <div class="label">Total Pago</div>
-    <div id="paid">0€</div>
-  </div>
+<div class="box"><div>AVG</div><div id="avg">0x</div></div>
+<div class="box"><div>BE</div><div id="be">0%</div></div>
+<div class="box"><div>Profit</div><div id="profit">0€</div></div>
+<div class="box"><div>Pago</div><div id="paid">0€</div></div>
 </div>
 
 <script>
-const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
-const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
+const SUPABASE_URL="https://cwengomkuhqvrdcpkgwp.supabase.co";
+const SUPABASE_KEY="sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
-async function load() {
-  try {
+async function load(){
+try{
 
-    const huntRes = await fetch(`${SUPABASE_URL}/rest/v1/hunts?select=*&is_active=eq.true&limit=1`, {
-      headers:{
-        apikey:SUPABASE_KEY,
-        Authorization:`Bearer ${SUPABASE_KEY}`
-      }
-    });
+const huntRes=await fetch(`${SUPABASE_URL}/rest/v1/hunts?is_active=eq.true&limit=1`,{
+headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}
+});
 
-    const huntData = await huntRes.json();
-    const hunt = huntData[0];
+const huntData=await huntRes.json();
+const hunt=huntData[0];
 
-    if(!hunt){
-      document.getElementById("title").innerText="Sem hunt ativa";
-      return;
-    }
+if(!hunt){
+document.getElementById("title").innerText="Sem hunt ativa";
+return;
+}
 
-    document.getElementById("title").innerText = hunt.nome;
-    document.getElementById("start").innerText = (hunt.start_value || 0) + "€";
+document.getElementById("title").innerText=hunt.nome;
+document.getElementById("start").innerText=(hunt.start_value||0)+"€";
 
-    const bonusRes = await fetch(`${SUPABASE_URL}/rest/v1/hunt_bonuses?hunt_id=eq.${hunt.id}`,{
-      headers:{
-        apikey:SUPABASE_KEY,
-        Authorization:`Bearer ${SUPABASE_KEY}`
-      }
-    });
+const res=await fetch(`${SUPABASE_URL}/rest/v1/bonus?hunt_id=eq.${hunt.id}`,{
+headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}
+});
 
-    const bonuses = await bonusRes.json();
+const data=await res.json();
 
-    document.getElementById("totalBonus").innerText = bonuses.length;
+document.getElementById("total").innerText=data.length;
 
-    let opened = bonuses.filter(b => b.payout > 0);
-    document.getElementById("open").innerText = opened.length + "/" + bonuses.length;
+let opened=data.filter(b=>b.payout>0);
+document.getElementById("open").innerText=opened.length+"/"+data.length;
 
-    let totalPaid = bonuses.reduce((s,b)=>s+(b.payout||0),0);
-    document.getElementById("paid").innerText = totalPaid.toFixed(2)+"€";
+let totalPaid=data.reduce((s,b)=>s+(b.payout||0),0);
+document.getElementById("paid").innerText=totalPaid.toFixed(2)+"€";
 
-    let profit = totalPaid - (hunt.start_value||0);
-    document.getElementById("profit").innerText = profit.toFixed(2)+"€";
+let profit=totalPaid-(hunt.start_value||0);
+document.getElementById("profit").innerText=profit.toFixed(2)+"€";
 
-    let avg = 0;
-    if(opened.length){
-      avg = opened.reduce((s,b)=>s+(b.payout/(b.bet||1)),0)/opened.length;
-    }
+let avg=0;
+if(opened.length){
+avg=opened.reduce((s,b)=>s+(b.payout/(b.bet||1)),0)/opened.length;
+}
+document.getElementById("avg").innerText=avg.toFixed(2)+"x";
 
-    document.getElementById("avg").innerText = avg.toFixed(2)+"x";
+let be=(totalPaid/(hunt.start_value||1))*100;
+document.getElementById("be").innerText=be.toFixed(0)+"%";
 
-    let be = (totalPaid/(hunt.start_value||1))*100;
-    document.getElementById("be").innerText = be.toFixed(0)+"%";
-
-  } catch(e){
-    console.log(e);
-    document.getElementById("title").innerText="ERRO OVERLAY";
-  }
+}catch(e){
+console.log(e);
+document.getElementById("title").innerText="ERRO OVERLAY";
+}
 }
 
 setInterval(load,2000);
