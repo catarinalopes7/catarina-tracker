@@ -6,355 +6,490 @@
   <title>Catarina Tracker - Admin</title>
 
   <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #1c1440 0%, #120d2e 100%);
-      color: #fff;
-      padding: 24px;
+    :root{
+      --bg:#0f1221;
+      --panel:#171a2e;
+      --panel-2:#1e223d;
+      --line:rgba(255,255,255,.08);
+      --text:#f4f6ff;
+      --muted:#aab0d3;
+      --gold:#ffd54a;
+      --green:#20d18f;
+      --red:#ff5d73;
+      --blue:#6ea8ff;
+      --purple:#7a5cff;
+      --shadow:0 14px 35px rgba(0,0,0,.28);
+      --radius:18px;
     }
 
-    h1 {
-      margin: 0 0 20px;
-      font-size: 28px;
-      color: #ffd54a;
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(122,92,255,.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(255,213,74,.10), transparent 25%),
+        linear-gradient(180deg, #0c1020, #11152a 55%, #0f1221 100%);
+      color:var(--text);
+      min-height:100vh;
+      padding:24px;
     }
 
-    .layout {
-      display: grid;
-      grid-template-columns: 420px 1fr;
-      gap: 24px;
-      align-items: start;
+    .wrap{
+      max-width:1280px;
+      margin:0 auto;
     }
 
-    .card {
-      background: linear-gradient(180deg, #2a215d, #21194b);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    .topbar{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-bottom:24px;
     }
 
-    .card h2 {
-      margin: 0 0 16px;
-      font-size: 20px;
-      color: #fff;
+    .title-box h1{
+      margin:0;
+      font-size:32px;
+      line-height:1.1;
+      color:var(--gold);
+      font-weight:800;
+      letter-spacing:.2px;
     }
 
-    .field {
-      margin-bottom: 14px;
+    .title-box p{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:14px;
     }
 
-    .field label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 14px;
-      color: #d7cffd;
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
     }
 
-    .field input {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.20);
-      color: #fff;
-      font-size: 15px;
-      outline: none;
+    button{
+      border:0;
+      border-radius:12px;
+      padding:12px 16px;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.18s ease;
     }
 
-    .field input:focus {
-      border-color: rgba(255, 213, 74, 0.55);
-      box-shadow: 0 0 0 3px rgba(255, 213, 74, 0.10);
+    button:hover{
+      transform:translateY(-1px);
+      filter:brightness(1.04);
     }
 
-    .actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 14px;
+    button:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      transform:none;
     }
 
-    button {
-      border: 0;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s ease;
+    .btn-primary{
+      background:linear-gradient(135deg, var(--gold), #ffbf1f);
+      color:#181818;
     }
 
-    button:hover {
-      transform: translateY(-1px);
+    .btn-secondary{
+      background:var(--panel-2);
+      color:var(--text);
+      border:1px solid var(--line);
     }
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
+    .btn-green{
+      background:linear-gradient(135deg, #23d89a, #13b77d);
+      color:#07140f;
     }
 
-    .btn-primary { background: #ffd54a; color: #111; }
-    .btn-secondary { background: #5b7cff; color: #fff; }
-    .btn-danger { background: #ef4444; color: #fff; }
-    .btn-muted { background: #4a4275; color: #fff; }
-    .btn-save { background: #16a34a; color: #fff; padding: 10px 14px; }
-
-    .hunt-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+    .btn-red{
+      background:linear-gradient(135deg, #ff6f82, #f14b62);
+      color:white;
     }
 
-    .hunt-item {
-      background: linear-gradient(180deg, rgba(58, 43, 123, 0.95), rgba(40, 30, 87, 0.95));
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 16px;
+    .btn-blue{
+      background:linear-gradient(135deg, #77b4ff, #4f92ff);
+      color:#071427;
     }
 
-    .hunt-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-      margin-bottom: 10px;
+    .grid{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:20px;
     }
 
-    .hunt-name {
-      font-size: 18px;
-      font-weight: 700;
-      color: #fff;
+    @media (max-width: 980px){
+      .grid{
+        grid-template-columns:1fr;
+      }
     }
 
-    .badge {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
     }
 
-    .badge-active { background: #16a34a; color: #fff; }
-    .badge-closed { background: #ef4444; color: #fff; }
-    .badge-idle { background: #6b628f; color: #fff; }
-
-    .hunt-meta {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 14px;
+    .card-header{
+      padding:18px 20px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
     }
 
-    .meta-box {
-      background: rgba(0,0,0,0.20);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 10px;
+    .card-header h2{
+      margin:0;
+      font-size:18px;
+      font-weight:800;
     }
 
-    .meta-label {
-      font-size: 12px;
-      color: #c9c0f6;
-      margin-bottom: 4px;
-      text-transform: uppercase;
+    .card-body{
+      padding:20px;
     }
 
-    .meta-value {
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
+    .form-grid{
+      display:grid;
+      gap:14px;
     }
 
-    .status {
-      margin-top: 12px;
-      font-size: 14px;
-      color: #ddd;
-      min-height: 20px;
+    .field label{
+      display:block;
+      margin-bottom:7px;
+      font-size:13px;
+      color:var(--muted);
+      font-weight:700;
     }
 
-    .hint {
-      font-size: 13px;
-      color: #c8c1ef;
-      margin-top: 8px;
-      line-height: 1.4;
+    .field input,
+    .field select{
+      width:100%;
+      border:1px solid rgba(255,255,255,.09);
+      background:#11162a;
+      color:var(--text);
+      border-radius:12px;
+      padding:13px 14px;
+      font-size:15px;
+      outline:none;
     }
 
-    .bonus-block {
-      margin-top: 14px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding-top: 14px;
+    .field input:focus,
+    .field select:focus{
+      border-color:rgba(255,213,74,.55);
+      box-shadow:0 0 0 3px rgba(255,213,74,.12);
     }
 
-    .bonus-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: #ffd54a;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
     }
 
-    .bonus-table-wrap {
-      overflow-x: auto;
-      border-radius: 14px;
-      background: rgba(0,0,0,0.16);
-      border: 1px solid rgba(255,255,255,0.06);
+    .statusbar{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:12px;
+      background:#101427;
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-size:13px;
+      min-height:44px;
+      display:flex;
+      align-items:center;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 880px;
+    .status-ok{
+      color:#8df0c6;
     }
 
-    th, td {
-      padding: 12px 12px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-      vertical-align: middle;
+    .status-err{
+      color:#ff9aa7;
     }
 
-    th {
-      font-size: 14px;
-      color: #ffd54a;
-      font-weight: 800;
-      background: rgba(255,255,255,0.03);
+    .table-wrap{
+      overflow:auto;
     }
 
-    td {
-      font-size: 14px;
-      color: #fff;
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:760px;
     }
 
-    .tipo-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 800;
+    thead th{
+      text-align:left;
+      font-size:12px;
+      letter-spacing:.4px;
+      text-transform:uppercase;
+      color:var(--muted);
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.02);
+      position:sticky;
+      top:0;
+      z-index:2;
     }
 
-    .tipo-super {
-      background: rgba(245, 198, 90, 0.18);
-      color: #ffe49e;
-      border: 1px solid rgba(245, 198, 90, 0.20);
+    tbody td{
+      padding:15px 16px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      vertical-align:middle;
+      font-size:14px;
     }
 
-    .tipo-epico {
-      background: rgba(220, 111, 146, 0.18);
-      color: #ffd9e5;
-      border: 1px solid rgba(220, 111, 146, 0.20);
+    tbody tr:hover{
+      background:rgba(255,255,255,.025);
     }
 
-    .tipo-normal {
-      background: rgba(255,255,255,0.08);
-      color: #efefff;
-      border: 1px solid rgba(255,255,255,0.08);
+    .hunt-name{
+      font-weight:800;
+      color:#fff;
     }
 
-    .payout-cell {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .sub{
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      margin-top:4px;
     }
 
-    .payout-input {
-      width: 110px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.20);
-      color: #fff;
-      font-size: 14px;
-      outline: none;
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:88px;
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.2px;
+      border:1px solid transparent;
     }
 
-    .payout-input:focus {
-      border-color: rgba(91, 124, 255, 0.55);
-      box-shadow: 0 0 0 3px rgba(91, 124, 255, 0.12);
+    .pill-active{
+      background:rgba(32,209,143,.14);
+      color:#8df0c6;
+      border-color:rgba(32,209,143,.22);
     }
 
-    .bonus-row-status {
-      font-size: 12px;
-      color: #cfc8f8;
-      min-width: 70px;
+    .pill-closed{
+      background:rgba(255,93,115,.12);
+      color:#ff9aa7;
+      border-color:rgba(255,93,115,.20);
     }
 
-    .empty-hunts,
-    .empty-bonuses {
-      padding: 14px;
-      color: #d8d2fb;
+    .pill-draft{
+      background:rgba(110,168,255,.12);
+      color:#9ec4ff;
+      border-color:rgba(110,168,255,.20);
     }
 
-    .saving {
-      opacity: 0.65;
-      pointer-events: none;
+    .row-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
     }
 
-    @media (max-width: 1100px) {
-      .layout { grid-template-columns: 1fr; }
-      .hunt-meta { grid-template-columns: 1fr 1fr; }
+    .row-actions button{
+      padding:9px 12px;
+      font-size:12px;
+      border-radius:10px;
+    }
+
+    .config-box{
+      margin-top:14px;
+      border-top:1px solid var(--line);
+      padding-top:14px;
+      display:none;
+      gap:12px;
+    }
+
+    .config-box.show{
+      display:grid;
+    }
+
+    .small{
+      font-size:12px;
+    }
+
+    .right-note{
+      color:var(--muted);
+      font-size:12px;
     }
   </style>
 </head>
 <body>
-  <h1>Catarina Tracker - Admin</h1>
-
-  <div class="layout">
-    <div class="card">
-      <h2>Criar Hunt</h2>
-
-      <div class="field">
-        <label for="huntNome">Nome da hunt</label>
-        <input id="huntNome" type="text" placeholder="Ex: Hunt #1" />
-      </div>
-
-      <div class="field">
-        <label for="huntStart">Start</label>
-        <input id="huntStart" type="text" inputmode="decimal" placeholder="Ex: 1000 ou 1000,50" />
-      </div>
-
-      <div class="hint">
-        Ao criar, esta hunt fica ativa automaticamente e o Start fica guardado fixo.
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title-box">
+        <h1>Catarina Tracker — Admin</h1>
+        <p>Gestão de Bonus Hunts com Supabase REST</p>
       </div>
 
       <div class="actions">
-        <button id="createHuntBtn" class="btn-primary">Criar Hunt</button>
-        <button id="refreshBtn" class="btn-muted">Atualizar Lista</button>
+        <button class="btn-secondary" id="toggleConfigBtn">Configuração</button>
+        <button class="btn-secondary" id="refreshBtn">Atualizar lista</button>
       </div>
-
-      <div id="status" class="status"></div>
     </div>
 
-    <div class="card">
-      <h2>Hunts</h2>
-      <div id="huntList" class="hunt-list"></div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-header">
+          <h2>Nova Hunt</h2>
+        </div>
+
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="field">
+              <label for="huntName">Nome da hunt</label>
+              <input id="huntName" type="text" placeholder="Ex: Hunt 2000€ / Gates / Pragmatic" />
+            </div>
+
+            <div class="field">
+              <label for="huntStart">Start</label>
+              <input id="huntStart" type="number" step="0.01" placeholder="2000" />
+            </div>
+
+            <button class="btn-primary" id="createHuntBtn">Criar Hunt</button>
+
+            <div class="muted">
+              Esta versão tenta ser compatível com várias versões da tua tabela no Supabase, para evitar o conflito que ficou no admin.
+            </div>
+
+            <div class="statusbar" id="statusBox">Pronto.</div>
+
+            <div class="config-box" id="configBox">
+              <div class="field">
+                <label for="supabaseUrl">Supabase URL</label>
+                <input id="supabaseUrl" type="text" placeholder="https://xxxxx.supabase.co" />
+              </div>
+
+              <div class="field">
+                <label for="supabaseKey">Anon / Publishable Key</label>
+                <input id="supabaseKey" type="text" placeholder="sb_publishable_..." />
+              </div>
+
+              <button class="btn-blue" id="saveConfigBtn">Guardar configuração</button>
+
+              <div class="small muted">
+                Se já tiveres um <code>conexao.js</code> a definir as credenciais, não precisas preencher isto.  
+                Este fallback existe só para o admin não quebrar.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Hunts</h2>
+          <div class="right-note" id="huntCount">0 hunts</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Start</th>
+                <th>Estado</th>
+                <th>Criada em</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="huntsTableBody">
+              <tr>
+                <td colspan="6" class="muted" style="padding:18px 16px;">A carregar hunts...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
-  <script src="./conexao.js"></script>
   <script>
-    const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
+    // =========================================================
+    // CONFIG
+    // =========================================================
 
-    const huntNomeInput = document.getElementById("huntNome");
+    const CONFIG_STORAGE_KEY = "ct_admin_supabase_config";
+
+    function readSavedConfig() {
+      try {
+        return JSON.parse(localStorage.getItem(CONFIG_STORAGE_KEY) || "{}");
+      } catch {
+        return {};
+      }
+    }
+
+    function saveConfig(url, key) {
+      localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify({ url, key }));
+    }
+
+    function getSupabaseConfig() {
+      const saved = readSavedConfig();
+
+      const url =
+        window.SUPABASE_URL ||
+        window.supabaseUrl ||
+        saved.url ||
+        "";
+
+      const key =
+        window.SUPABASE_ANON_KEY ||
+        window.SUPABASE_KEY ||
+        window.supabaseAnonKey ||
+        saved.key ||
+        "";
+
+      return { url, key };
+    }
+
+    function fillConfigInputs() {
+      const { url, key } = getSupabaseConfig();
+      document.getElementById("supabaseUrl").value = url || "";
+      document.getElementById("supabaseKey").value = key || "";
+    }
+
+    // =========================================================
+    // DOM
+    // =========================================================
+
+    const huntNameInput = document.getElementById("huntName");
     const huntStartInput = document.getElementById("huntStart");
     const createHuntBtn = document.getElementById("createHuntBtn");
     const refreshBtn = document.getElementById("refreshBtn");
-    const huntList = document.getElementById("huntList");
-    const statusEl = document.getElementById("status");
+    const huntsTableBody = document.getElementById("huntsTableBody");
+    const huntCount = document.getElementById("huntCount");
+    const statusBox = document.getElementById("statusBox");
+    const toggleConfigBtn = document.getElementById("toggleConfigBtn");
+    const configBox = document.getElementById("configBox");
+    const saveConfigBtn = document.getElementById("saveConfigBtn");
 
-    function setStatus(message) {
-      statusEl.textContent = message || "";
+    // =========================================================
+    // UTILS
+    // =========================================================
+
+    function setStatus(message, type = "") {
+      statusBox.textContent = message;
+      statusBox.className = "statusbar";
+      if (type === "ok") statusBox.classList.add("status-ok");
+      if (type === "err") statusBox.classList.add("status-err");
     }
 
-    function escapeHtml(text) {
-      return String(text ?? "")
+    function escapeHtml(value) {
+      return String(value ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -362,338 +497,405 @@
         .replaceAll("'", "&#039;");
     }
 
-    function getStatusBadge(hunt) {
-      if (hunt.is_active) return `<span class="badge badge-active">ATIVA</span>`;
-      if (hunt.is_closed) return `<span class="badge badge-closed">FECHADA</span>`;
-      return `<span class="badge badge-idle">PARADA</span>`;
+    function formatMoney(value) {
+      const num = Number(value || 0);
+      return num.toFixed(2);
     }
 
-    function safeMoneyInput(value) {
-      if (value === null || value === undefined) return 0;
-      const normalized = String(value).trim().replace(",", ".");
-      const num = parseFloat(normalized);
-      return Number.isFinite(num) ? num : 0;
+    function formatDate(value) {
+      if (!value) return "-";
+      const d = new Date(value);
+      if (isNaN(d.getTime())) return String(value);
+      return d.toLocaleString("pt-PT");
     }
 
-    function getBonusName(bonus) {
-      return bonus.nome || bonus.name || bonus.slot_name || "Sem nome";
-    }
-
-    function getBonusProvider(bonus) {
-      return bonus.provider || bonus.provedor || "—";
-    }
-
-    function getBonusBet(bonus) {
+    function getStartValue(row) {
       return (
-        bonus.bet ??
-        bonus.aposta ??
-        bonus.bet_value ??
-        bonus.buy_value ??
+        row.start_value ??
+        row.start_balance ??
+        row.start ??
+        row.balance_start ??
+        row.initial_balance ??
         0
       );
     }
 
-    function getBonusType(bonus) {
-      const raw = String(
-        bonus.tipo ||
-        bonus.type ||
-        bonus.bonus_type ||
-        bonus.rarity ||
-        "Normal"
-      ).trim();
-
-      return raw;
-    }
-
-    function normalizeTypeClass(type) {
-      const t = String(type).toLowerCase();
-      if (t.includes("super")) return "tipo-super";
-      if (t.includes("epic") || t.includes("épic") || t.includes("epico") || t.includes("épico") || t.includes("extreme")) return "tipo-epico";
-      return "tipo-normal";
-    }
-
-    async function updateBonusPayout(bonusId, payoutValue) {
-      const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/bonus?id=eq.${bonusId}`,
-        {
-          method: "PATCH",
-          headers: {
-            apikey: SUPABASE_KEY,
-            Authorization: `Bearer ${SUPABASE_KEY}`,
-            "Content-Type": "application/json",
-            Prefer: "return=representation"
-          },
-          body: JSON.stringify({
-            payout: payoutValue
-          })
-        }
+    function getHuntName(row) {
+      return (
+        row.name ??
+        row.title ??
+        row.hunt_name ??
+        `Hunt #${row.id ?? "?"}`
       );
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || "Erro ao atualizar payout.");
-      }
-
-      return response.json();
     }
 
-    function renderBonusTable(bonuses) {
-      if (!bonuses.length) {
-        return `<div class="empty-bonuses">Sem bónus nesta hunt.</div>`;
+    function detectState(row) {
+      const rawStatus = String(row.status ?? "").toLowerCase();
+      const isActive =
+        row.is_active === true ||
+        row.active === true ||
+        rawStatus === "active" ||
+        rawStatus === "opened" ||
+        rawStatus === "open";
+
+      const isClosed =
+        row.is_closed === true ||
+        row.closed === true ||
+        rawStatus === "closed" ||
+        rawStatus === "finished" ||
+        rawStatus === "done" ||
+        rawStatus === "ended";
+
+      if (isActive) {
+        return { key: "active", label: "ATIVA" };
       }
 
-      return `
-        <div class="bonus-table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Provider</th>
-                <th>Aposta (€)</th>
-                <th>Tipo</th>
-                <th>Payout (€)</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${bonuses.map((bonus) => {
-                const type = getBonusType(bonus);
-                const typeClass = normalizeTypeClass(type);
-                const payout = safeMoneyInput(bonus.payout).toFixed(2);
-                const bet = safeMoneyInput(getBonusBet(bonus)).toFixed(2);
+      if (isClosed) {
+        return { key: "closed", label: "FECHADA" };
+      }
 
-                return `
-                  <tr id="bonus-row-${bonus.id}">
-                    <td>${escapeHtml(getBonusName(bonus))}</td>
-                    <td>${escapeHtml(getBonusProvider(bonus))}</td>
-                    <td>${bet}</td>
-                    <td>
-                      <span class="tipo-badge ${typeClass}">
-                        ${escapeHtml(type)}
-                      </span>
-                    </td>
-                    <td>
-                      <input
-                        class="payout-input"
-                        id="payout-input-${bonus.id}"
-                        type="text"
-                        inputmode="decimal"
-                        value="${payout}"
-                        placeholder="0.00"
-                        onkeydown="handlePayoutKeydown(event, ${bonus.id})"
-                      />
-                    </td>
-                    <td>
-                      <div class="payout-cell">
-                        <button class="btn-save" id="save-btn-${bonus.id}" onclick="handleSavePayout(${bonus.id})">
-                          Guardar
-                        </button>
-                        <span class="bonus-row-status" id="bonus-status-${bonus.id}"></span>
-                      </div>
-                    </td>
-                  </tr>
-                `;
-              }).join("")}
-            </tbody>
-          </table>
-        </div>
-      `;
+      return { key: "draft", label: "INATIVA" };
     }
 
-    async function renderHunts() {
+    function getCreatedAt(row) {
+      return row.created_at ?? row.inserted_at ?? row.date_created ?? row.createdAt ?? null;
+    }
+
+    function getHeaders(extra = {}) {
+      const { url, key } = getSupabaseConfig();
+
+      if (!url || !key) {
+        throw new Error("Faltam credenciais Supabase. Abre Configuração e guarda URL + KEY.");
+      }
+
+      return {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+        ...extra
+      };
+    }
+
+    async function fetchJson(path, options = {}) {
+      const { url } = getSupabaseConfig();
+      const res = await fetch(`${url}${path}`, options);
+
+      const text = await res.text();
+      let data = null;
+
       try {
-        huntList.innerHTML = `<div class="hunt-item empty-hunts">A carregar hunts...</div>`;
+        data = text ? JSON.parse(text) : null;
+      } catch {
+        data = text;
+      }
 
-        const hunts = await getAllHunts();
+      if (!res.ok) {
+        const message =
+          (data && data.message) ||
+          (data && data.error) ||
+          (typeof data === "string" ? data : "") ||
+          `Erro HTTP ${res.status}`;
+        throw new Error(message);
+      }
 
-        if (!hunts.length) {
-          huntList.innerHTML = `<div class="hunt-item empty-hunts">Ainda não existem hunts.</div>`;
-          return;
+      return data;
+    }
+
+    // =========================================================
+    // SUPABASE / HUNTS API
+    // =========================================================
+
+    async function listHunts() {
+      const path = `/rest/v1/hunts?select=*&order=id.desc`;
+      return fetchJson(path, {
+        method: "GET",
+        headers: getHeaders()
+      });
+    }
+
+    async function tryCreateWithPayload(payload) {
+      return fetchJson(`/rest/v1/hunts`, {
+        method: "POST",
+        headers: getHeaders({
+          Prefer: "return=representation"
+        }),
+        body: JSON.stringify(payload)
+      });
+    }
+
+    async function createHunt() {
+      const name = huntNameInput.value.trim();
+      const start = Number(huntStartInput.value || 0);
+
+      if (!name) {
+        throw new Error("Escreve um nome para a hunt.");
+      }
+
+      const payloadAttempts = [
+        { name, start_value: start, status: "inactive" },
+        { name, start_balance: start, status: "inactive" },
+        { name, start_value: start, is_active: false },
+        { name, start_balance: start, is_active: false },
+        { name, start: start, status: "inactive" },
+        { name, initial_balance: start, status: "inactive" },
+        { name, start_value: start },
+        { name, start_balance: start },
+        { name, start: start },
+        { name }
+      ];
+
+      let lastError = null;
+
+      for (const payload of payloadAttempts) {
+        try {
+          const created = await tryCreateWithPayload(payload);
+          return created;
+        } catch (err) {
+          lastError = err;
         }
+      }
 
-        const rows = await Promise.all(
-          hunts.map(async (hunt) => {
-            const bonuses = await getBonusesByHunt(hunt.id);
-            const totalBonus = bonuses.length;
-            const totalPaid = getTotalPaid(bonuses);
-            const profitLoss = getProfitLossFromStart(hunt, bonuses);
-            const startValue = getStartFromHunt(hunt);
+      throw lastError || new Error("Não foi possível criar a hunt.");
+    }
 
-            return `
-              <div class="hunt-item">
-                <div class="hunt-top">
-                  <div class="hunt-name">${escapeHtml(hunt.nome || "Sem nome")}</div>
-                  <div>${getStatusBadge(hunt)}</div>
-                </div>
+    async function patchHunt(id, patch) {
+      return fetchJson(`/rest/v1/hunts?id=eq.${id}`, {
+        method: "PATCH",
+        headers: getHeaders({
+          Prefer: "return=representation"
+        }),
+        body: JSON.stringify(patch)
+      });
+    }
 
-                <div class="hunt-meta">
-                  <div class="meta-box">
-                    <div class="meta-label">Start</div>
-                    <div class="meta-value">${euro(startValue)}</div>
-                  </div>
+    async function activateHunt(id) {
+      const all = await listHunts();
 
-                  <div class="meta-box">
-                    <div class="meta-label">Bónus</div>
-                    <div class="meta-value">${totalBonus}</div>
-                  </div>
+      // Primeiro tenta desativar hunts ativas
+      for (const row of all) {
+        const state = detectState(row);
+        if (state.key === "active" && Number(row.id) !== Number(id)) {
+          const offAttempts = [
+            { is_active: false, status: "inactive" },
+            { active: false, status: "inactive" },
+            { is_active: false },
+            { active: false },
+            { status: "inactive" }
+          ];
 
-                  <div class="meta-box">
-                    <div class="meta-label">Total Pago</div>
-                    <div class="meta-value">${euro(totalPaid)}</div>
-                  </div>
+          for (const patch of offAttempts) {
+            try {
+              await patchHunt(row.id, patch);
+              break;
+            } catch (_) {}
+          }
+        }
+      }
 
-                  <div class="meta-box">
-                    <div class="meta-label">Profit/Loss</div>
-                    <div class="meta-value">${euro(profitLoss)}</div>
-                  </div>
-                </div>
+      // Agora ativa a escolhida
+      const onAttempts = [
+        { is_active: true, status: "active", is_closed: false, closed: false },
+        { active: true, status: "active", is_closed: false, closed: false },
+        { is_active: true, status: "active" },
+        { active: true, status: "active" },
+        { is_active: true },
+        { active: true },
+        { status: "active" }
+      ];
 
-                <div class="actions">
-                  <button class="btn-secondary" onclick="handleActivate(${hunt.id})">Ativar</button>
-                  <button class="btn-danger" onclick="handleClose(${hunt.id})">Fechar</button>
-                </div>
+      let lastError = null;
 
-                <div class="bonus-block">
-                  <div class="bonus-title">Bónus da Hunt</div>
-                  ${renderBonusTable(bonuses)}
-                </div>
+      for (const patch of onAttempts) {
+        try {
+          return await patchHunt(id, patch);
+        } catch (err) {
+          lastError = err;
+        }
+      }
+
+      throw lastError || new Error("Não foi possível ativar a hunt.");
+    }
+
+    async function closeHunt(id) {
+      const attempts = [
+        { status: "closed", is_active: false, is_closed: true, closed: true },
+        { status: "closed", active: false, is_closed: true, closed: true },
+        { status: "closed", is_active: false },
+        { status: "closed", active: false },
+        { is_closed: true, is_active: false },
+        { closed: true, active: false },
+        { status: "closed" }
+      ];
+
+      let lastError = null;
+
+      for (const patch of attempts) {
+        try {
+          return await patchHunt(id, patch);
+        } catch (err) {
+          lastError = err;
+        }
+      }
+
+      throw lastError || new Error("Não foi possível fechar a hunt.");
+    }
+
+    // =========================================================
+    // RENDER
+    // =========================================================
+
+    function renderHunts(rows) {
+      huntCount.textContent = `${rows.length} hunt${rows.length === 1 ? "" : "s"}`;
+
+      if (!rows.length) {
+        huntsTableBody.innerHTML = `
+          <tr>
+            <td colspan="6" class="muted" style="padding:18px 16px;">Não existem hunts para mostrar.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      huntsTableBody.innerHTML = rows.map(row => {
+        const state = detectState(row);
+        const pillClass =
+          state.key === "active" ? "pill-active" :
+          state.key === "closed" ? "pill-closed" :
+          "pill-draft";
+
+        const created = getCreatedAt(row);
+
+        return `
+          <tr>
+            <td>${escapeHtml(row.id ?? "-")}</td>
+            <td>
+              <span class="hunt-name">${escapeHtml(getHuntName(row))}</span>
+              ${row.slot_name ? `<span class="sub">${escapeHtml(row.slot_name)}</span>` : ""}
+            </td>
+            <td>${escapeHtml(formatMoney(getStartValue(row)))}</td>
+            <td><span class="pill ${pillClass}">${escapeHtml(state.label)}</span></td>
+            <td>${escapeHtml(formatDate(created))}</td>
+            <td>
+              <div class="row-actions">
+                <button class="btn-green" onclick="handleActivate(${Number(row.id)})">Ativar</button>
+                <button class="btn-red" onclick="handleClose(${Number(row.id)})">Fechar</button>
               </div>
-            `;
-          })
-        );
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
 
-        huntList.innerHTML = rows.join("");
-      } catch (error) {
-        console.error(error);
-        huntList.innerHTML = `<div class="hunt-item empty-hunts">Erro ao carregar hunts.</div>`;
+    async function loadHunts() {
+      huntsTableBody.innerHTML = `
+        <tr>
+          <td colspan="6" class="muted" style="padding:18px 16px;">A carregar hunts...</td>
+        </tr>
+      `;
+
+      try {
+        const hunts = await listHunts();
+        renderHunts(Array.isArray(hunts) ? hunts : []);
+        setStatus("Lista de hunts carregada com sucesso.", "ok");
+      } catch (err) {
+        console.error(err);
+        huntsTableBody.innerHTML = `
+          <tr>
+            <td colspan="6" style="padding:18px 16px; color:#ff9aa7;">
+              Erro ao carregar hunts: ${escapeHtml(err.message || String(err))}
+            </td>
+          </tr>
+        `;
+        setStatus(`Erro ao carregar hunts: ${err.message || err}`, "err");
       }
     }
 
-    async function handleCreateHunt() {
+    // =========================================================
+    // ACTIONS
+    // =========================================================
+
+    async function onCreateHunt() {
+      createHuntBtn.disabled = true;
+
       try {
-        const nome = huntNomeInput.value.trim();
-        const rawStart = huntStartInput.value;
-        const startValue = safeNumber(rawStart);
-
-        if (!nome) {
-          setStatus("Escreve o nome da hunt.");
-          return;
-        }
-
-        if (!rawStart || startValue <= 0) {
-          setStatus("Mete um valor Start válido.");
-          return;
-        }
-
-        createHuntBtn.disabled = true;
         setStatus("A criar hunt...");
-
-        await createHunt({ nome, startValue });
-
-        huntNomeInput.value = "";
+        await createHunt();
+        huntNameInput.value = "";
         huntStartInput.value = "";
-
-        setStatus("Hunt criada e ativada com sucesso.");
-        await renderHunts();
-      } catch (error) {
-        console.error(error);
-        setStatus("Erro ao criar hunt.");
+        setStatus("Hunt criada com sucesso.", "ok");
+        await loadHunts();
+      } catch (err) {
+        console.error(err);
+        setStatus(`Erro ao criar hunt: ${err.message || err}`, "err");
       } finally {
         createHuntBtn.disabled = false;
       }
     }
 
-    async function handleActivate(huntId) {
+    window.handleActivate = async function(id) {
       try {
-        setStatus("A ativar hunt...");
-        await activateHunt(huntId);
-        setStatus("Hunt ativada com sucesso.");
-        await renderHunts();
-      } catch (error) {
-        console.error(error);
-        setStatus("Erro ao ativar hunt.");
+        setStatus(`A ativar hunt #${id}...`);
+        await activateHunt(id);
+        setStatus(`Hunt #${id} ativada com sucesso.`, "ok");
+        await loadHunts();
+      } catch (err) {
+        console.error(err);
+        setStatus(`Erro ao ativar hunt #${id}: ${err.message || err}`, "err");
       }
     }
 
-    async function handleClose(huntId) {
+    window.handleClose = async function(id) {
       try {
-        setStatus("A fechar hunt...");
-        await closeHunt(huntId);
-        setStatus("Hunt fechada com sucesso.");
-        await renderHunts();
-      } catch (error) {
-        console.error(error);
-        setStatus("Erro ao fechar hunt.");
+        setStatus(`A fechar hunt #${id}...`);
+        await closeHunt(id);
+        setStatus(`Hunt #${id} fechada com sucesso.`, "ok");
+        await loadHunts();
+      } catch (err) {
+        console.error(err);
+        setStatus(`Erro ao fechar hunt #${id}: ${err.message || err}`, "err");
       }
     }
 
-    async function handleSavePayout(bonusId) {
-      const input = document.getElementById(`payout-input-${bonusId}`);
-      const button = document.getElementById(`save-btn-${bonusId}`);
-      const status = document.getElementById(`bonus-status-${bonusId}`);
-      const row = document.getElementById(`bonus-row-${bonusId}`);
+    // =========================================================
+    // EVENTS
+    // =========================================================
 
-      if (!input || !button || !status) return;
+    createHuntBtn.addEventListener("click", onCreateHunt);
+    refreshBtn.addEventListener("click", loadHunts);
 
-      const payoutValue = safeMoneyInput(input.value);
-
-      try {
-        row?.classList.add("saving");
-        button.disabled = true;
-        status.textContent = "A guardar...";
-
-        await updateBonusPayout(bonusId, payoutValue);
-
-        input.value = payoutValue.toFixed(2);
-        status.textContent = "Guardado";
-
-        setStatus(`Payout do bónus #${bonusId} atualizado para ${payoutValue.toFixed(2)}€.`);
-        await renderHunts();
-      } catch (error) {
-        console.error(error);
-        status.textContent = "Erro";
-        setStatus("Erro ao guardar payout.");
-      } finally {
-        row?.classList.remove("saving");
-        button.disabled = false;
-
-        setTimeout(() => {
-          const currentStatus = document.getElementById(`bonus-status-${bonusId}`);
-          if (currentStatus) currentStatus.textContent = "";
-        }, 2000);
-      }
-    }
-
-    function handlePayoutKeydown(event, bonusId) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        handleSavePayout(bonusId);
-      }
-    }
-
-    createHuntBtn.addEventListener("click", handleCreateHunt);
-    refreshBtn.addEventListener("click", renderHunts);
-
-    huntStartInput.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        handleCreateHunt();
-      }
+    huntStartInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") onCreateHunt();
     });
 
-    huntNomeInput.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        handleCreateHunt();
-      }
+    huntNameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") onCreateHunt();
     });
 
-    window.handleActivate = handleActivate;
-    window.handleClose = handleClose;
-    window.handleSavePayout = handleSavePayout;
-    window.handlePayoutKeydown = handlePayoutKeydown;
+    toggleConfigBtn.addEventListener("click", () => {
+      configBox.classList.toggle("show");
+    });
 
-    renderHunts();
+    saveConfigBtn.addEventListener("click", () => {
+      const url = document.getElementById("supabaseUrl").value.trim();
+      const key = document.getElementById("supabaseKey").value.trim();
+
+      if (!url || !key) {
+        setStatus("Preenche a URL e a KEY antes de guardar.", "err");
+        return;
+      }
+
+      saveConfig(url, key);
+      setStatus("Configuração guardada com sucesso.", "ok");
+      loadHunts();
+    });
+
+    // =========================================================
+    // INIT
+    // =========================================================
+
+    fillConfigInputs();
+    loadHunts();
   </script>
 </body>
 </html>
