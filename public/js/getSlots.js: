@@ -11,3 +11,10 @@ async function getSlots() {
 
     return data;
 }
+
+<script src="/js/getSlots.js"></script>
+<script>
+getSlots().then(slots => {
+    console.log("Slots carregados:", slots);
+});
+</script>
