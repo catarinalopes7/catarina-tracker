@@ -16,6 +16,8 @@
       --gold:#ffd54a;
       --green:#20d18f;
       --red:#ff5d73;
+      --blue:#6ea8ff;
+      --cyan:#4fd1ff;
       --shadow:0 14px 35px rgba(0,0,0,.28);
       --radius:18px;
     }
@@ -35,7 +37,7 @@
     }
 
     .wrap{
-      max-width:1280px;
+      max-width:1400px;
       margin:0 auto;
     }
 
@@ -111,6 +113,11 @@
       color:white;
     }
 
+    .btn-blue{
+      background:linear-gradient(135deg, #6cb6ff, #3f8cff);
+      color:#071427;
+    }
+
     .grid{
       display:grid;
       grid-template-columns:360px 1fr;
@@ -138,6 +145,7 @@
       align-items:center;
       justify-content:space-between;
       gap:12px;
+      flex-wrap:wrap;
     }
 
     .card-header h2{
@@ -242,6 +250,15 @@
       background:rgba(255,255,255,.025);
     }
 
+    .hunt-row{
+      cursor:pointer;
+    }
+
+    .hunt-row.active-row{
+      background:rgba(79, 209, 255, 0.08);
+      outline:1px solid rgba(79, 209, 255, 0.18);
+    }
+
     .hunt-name{
       font-weight:800;
       color:#fff;
@@ -294,6 +311,81 @@
       color:var(--muted);
       font-size:12px;
     }
+
+    .section-hidden{
+      display:none;
+    }
+
+    .selected-hunt-box{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .selected-hunt-title{
+      font-size:18px;
+      font-weight:800;
+      color:#fff;
+    }
+
+    .selected-hunt-meta{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .empty-state{
+      padding:22px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .slots-toolbar{
+      display:grid;
+      grid-template-columns: 1.2fr .7fr auto;
+      gap:12px;
+      padding:20px;
+      border-bottom:1px solid var(--line);
+    }
+
+    @media (max-width:900px){
+      .slots-toolbar{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .slot-name{
+      font-weight:700;
+      color:#fff;
+    }
+
+    .slot-sub{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+    }
+
+    .slot-open{
+      color:#8df0c6;
+      font-weight:700;
+    }
+
+    .slot-closed{
+      color:#ff9aa7;
+      font-weight:700;
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .click-note{
+      color:var(--cyan);
+      font-size:12px;
+      font-weight:700;
+    }
   </style>
 </head>
 <body>
@@ -330,7 +422,7 @@
             <button class="btn-primary" id="createHuntBtn">Criar Hunt</button>
 
             <div class="muted">
-              Esta versão está ajustada ao schema real da tua tabela <strong>hunts</strong>.
+              Clica numa hunt da tabela para abrir a lista de slots dessa hunt.
             </div>
 
             <div class="statusbar" id="statusBox">Pronto.</div>
@@ -358,7 +450,58 @@
             </thead>
             <tbody id="huntsTableBody">
               <tr>
-                <td colspan="6" class="muted" style="padding:18px 16px;">A carregar hunts...</td>
+                <td colspan="6" class="empty-state">A carregar hunts...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="slotsSection" style="margin-top:20px;">
+      <div class="card-header">
+        <div>
+          <h2>Slots da Hunt</h2>
+          <div class="selected-hunt-meta" id="selectedHuntMeta">Nenhuma hunt selecionada.</div>
+        </div>
+        <div class="click-note">Clica numa hunt acima para abrir</div>
+      </div>
+
+      <div id="slotsContentEmpty" class="empty-state">
+        Seleciona uma hunt para veres e gerires a lista de slots.
+      </div>
+
+      <div id="slotsContentLoaded" class="section-hidden">
+        <div class="slots-toolbar">
+          <div class="field" style="margin:0;">
+            <label for="newSlotName">Nome do slot</label>
+            <input id="newSlotName" type="text" placeholder="Ex: Gates of Olympus" />
+          </div>
+
+          <div class="field" style="margin:0;">
+            <label for="newSlotBet">Bet / aposta</label>
+            <input id="newSlotBet" type="number" step="0.01" placeholder="0.20" />
+          </div>
+
+          <div style="display:flex; align-items:end;">
+            <button class="btn-blue" id="addSlotBtn" style="width:100%;">Adicionar slot</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Slot</th>
+                <th>Bet</th>
+                <th>Payout</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="slotsTableBody">
+              <tr>
+                <td colspan="5" class="empty-state">A carregar slots...</td>
               </tr>
             </tbody>
           </table>
@@ -378,6 +521,19 @@
     const huntsTableBody = document.getElementById("huntsTableBody");
     const huntCount = document.getElementById("huntCount");
     const statusBox = document.getElementById("statusBox");
+
+    const slotsSection = document.getElementById("slotsSection");
+    const slotsContentEmpty = document.getElementById("slotsContentEmpty");
+    const slotsContentLoaded = document.getElementById("slotsContentLoaded");
+    const selectedHuntMeta = document.getElementById("selectedHuntMeta");
+    const slotsTableBody = document.getElementById("slotsTableBody");
+    const newSlotName = document.getElementById("newSlotName");
+    const newSlotBet = document.getElementById("newSlotBet");
+    const addSlotBtn = document.getElementById("addSlotBtn");
+
+    let selectedHuntId = null;
+    let selectedHuntRow = null;
+    let huntsCache = [];
 
     function setStatus(message, type = "") {
       statusBox.textContent = message;
@@ -467,6 +623,22 @@
       return { key: "draft", label: "INATIVA" };
     }
 
+    function getSlotName(row) {
+      return row.slot_name ?? row.nome ?? row.name ?? `Slot #${row.id ?? "?"}`;
+    }
+
+    function getSlotBet(row) {
+      return row.bet_size ?? row.bet ?? row.aposta ?? row.valor_aposta ?? 0;
+    }
+
+    function getSlotPayout(row) {
+      return row.payout ?? row.valor_pago ?? row.total_pago ?? 0;
+    }
+
+    function isSlotOpened(row) {
+      return Number(getSlotPayout(row)) > 0;
+    }
+
     async function listHunts() {
       return fetchJson(`/rest/v1/hunts?select=*&order=id.desc`, {
         method: "GET",
@@ -478,9 +650,7 @@
       const nome = huntNameInput.value.trim();
       const start = Number(huntStartInput.value || 0);
 
-      if (!nome) {
-        throw new Error("Escreve um nome para a hunt.");
-      }
+      if (!nome) throw new Error("Escreve um nome para a hunt.");
 
       return fetchJson(`/rest/v1/hunts`, {
         method: "POST",
@@ -533,13 +703,74 @@
       });
     }
 
+    async function listSlotsForHunt(huntId) {
+      return fetchJson(`/rest/v1/slots?select=*&hunt_id=eq.${huntId}&order=id.asc`, {
+        method: "GET",
+        headers: getHeaders()
+      });
+    }
+
+    async function createSlotForHunt(huntId, slotName, betValue) {
+      const attempts = [
+        {
+          hunt_id: huntId,
+          slot_name: slotName,
+          bet_size: betValue,
+          payout: 0,
+          status: "pending"
+        },
+        {
+          hunt_id: huntId,
+          nome: slotName,
+          aposta: betValue,
+          payout: 0,
+          status: "pending"
+        },
+        {
+          hunt_id: huntId,
+          name: slotName,
+          bet: betValue,
+          payout: 0,
+          status: "pending"
+        },
+        {
+          hunt_id: huntId,
+          slot_name: slotName,
+          bet: betValue,
+          payout: 0
+        },
+        {
+          hunt_id: huntId,
+          name: slotName,
+          bet_size: betValue,
+          payout: 0
+        }
+      ];
+
+      let lastError = null;
+
+      for (const payload of attempts) {
+        try {
+          return await fetchJson(`/rest/v1/slots`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify(payload)
+          });
+        } catch (err) {
+          lastError = err;
+        }
+      }
+
+      throw lastError || new Error("Não foi possível adicionar o slot.");
+    }
+
     function renderHunts(rows) {
       huntCount.textContent = `${rows.length} hunt${rows.length === 1 ? "" : "s"}`;
 
       if (!rows.length) {
         huntsTableBody.innerHTML = `
           <tr>
-            <td colspan="6" class="muted" style="padding:18px 16px;">Não existem hunts para mostrar.</td>
+            <td colspan="6" class="empty-state">Não existem hunts para mostrar.</td>
           </tr>
         `;
         return;
@@ -552,15 +783,17 @@
           state.key === "closed" ? "pill-closed" :
           "pill-draft";
 
+        const rowClass = Number(selectedHuntId) === Number(row.id) ? "hunt-row active-row" : "hunt-row";
+
         return `
-          <tr>
+          <tr class="${rowClass}" onclick="openHunt(${Number(row.id)})">
             <td>${escapeHtml(row.id ?? "-")}</td>
             <td><span class="hunt-name">${escapeHtml(getHuntName(row))}</span></td>
             <td>${escapeHtml(formatMoney(getStartValue(row)))}</td>
             <td><span class="pill ${pillClass}">${escapeHtml(state.label)}</span></td>
             <td>${escapeHtml(formatDate(getCreatedAt(row)))}</td>
             <td>
-              <div class="row-actions">
+              <div class="row-actions" onclick="event.stopPropagation()">
                 <button class="btn-green" onclick="handleActivate(${Number(row.id)})">Ativar</button>
                 <button class="btn-red" onclick="handleClose(${Number(row.id)})">Fechar</button>
               </div>
@@ -570,18 +803,51 @@
       }).join("");
     }
 
+    function renderSlots(rows) {
+      if (!rows.length) {
+        slotsTableBody.innerHTML = `
+          <tr>
+            <td colspan="5" class="empty-state">Esta hunt ainda não tem slots.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      slotsTableBody.innerHTML = rows.map(row => `
+        <tr>
+          <td>${escapeHtml(row.id ?? "-")}</td>
+          <td>
+            <span class="slot-name">${escapeHtml(getSlotName(row))}</span>
+            <span class="slot-sub">hunt_id: ${escapeHtml(row.hunt_id ?? "-")}</span>
+          </td>
+          <td>${escapeHtml(formatMoney(getSlotBet(row)))}</td>
+          <td>${escapeHtml(formatMoney(getSlotPayout(row)))}</td>
+          <td>${isSlotOpened(row) ? '<span class="slot-open">BONUS OPENING</span>' : '<span class="slot-closed">FECHADO</span>'}</td>
+        </tr>
+      `).join("");
+    }
+
     async function loadHunts() {
       huntsTableBody.innerHTML = `
         <tr>
-          <td colspan="6" class="muted" style="padding:18px 16px;">A carregar hunts...</td>
+          <td colspan="6" class="empty-state">A carregar hunts...</td>
         </tr>
       `;
 
       try {
         const hunts = await listHunts();
-        const rows = Array.isArray(hunts) ? hunts : [];
-        renderHunts(rows);
+        huntsCache = Array.isArray(hunts) ? hunts : [];
+        renderHunts(huntsCache);
         setStatus("Lista de hunts carregada com sucesso.", "ok");
+
+        if (selectedHuntId) {
+          const found = huntsCache.find(h => Number(h.id) === Number(selectedHuntId));
+          if (found) {
+            selectedHuntRow = found;
+            renderHunts(huntsCache);
+            await loadSlotsForSelectedHunt();
+          }
+        }
       } catch (err) {
         console.error(err);
         huntsTableBody.innerHTML = `
@@ -594,6 +860,44 @@
         setStatus(`Erro ao carregar hunts: ${err.message || err}`, "err");
       }
     }
+
+    async function loadSlotsForSelectedHunt() {
+      if (!selectedHuntId || !selectedHuntRow) return;
+
+      slotsContentEmpty.classList.add("section-hidden");
+      slotsContentLoaded.classList.remove("section-hidden");
+
+      selectedHuntMeta.textContent = `Hunt #${selectedHuntRow.id} — ${getHuntName(selectedHuntRow)} — Start ${formatMoney(getStartValue(selectedHuntRow))}`;
+
+      slotsTableBody.innerHTML = `
+        <tr>
+          <td colspan="5" class="empty-state">A carregar slots...</td>
+        </tr>
+      `;
+
+      try {
+        const slots = await listSlotsForHunt(selectedHuntId);
+        renderSlots(Array.isArray(slots) ? slots : []);
+        setStatus(`Hunt #${selectedHuntId} aberta com sucesso.`, "ok");
+      } catch (err) {
+        console.error(err);
+        slotsTableBody.innerHTML = `
+          <tr>
+            <td colspan="5" style="padding:18px 16px; color:#ff9aa7;">
+              Erro ao carregar slots da hunt: ${escapeHtml(err.message || String(err))}
+            </td>
+          </tr>
+        `;
+        setStatus(`Erro ao carregar slots: ${err.message || err}`, "err");
+      }
+    }
+
+    window.openHunt = async function(id) {
+      selectedHuntId = id;
+      selectedHuntRow = huntsCache.find(h => Number(h.id) === Number(id)) || null;
+      renderHunts(huntsCache);
+      await loadSlotsForSelectedHunt();
+    };
 
     async function onCreateHunt() {
       createHuntBtn.disabled = true;
@@ -610,6 +914,37 @@
         setStatus(`Erro ao criar hunt: ${err.message || err}`, "err");
       } finally {
         createHuntBtn.disabled = false;
+      }
+    }
+
+    async function onAddSlot() {
+      if (!selectedHuntId) {
+        setStatus("Seleciona primeiro uma hunt.", "err");
+        return;
+      }
+
+      const slotName = newSlotName.value.trim();
+      const betValue = Number(newSlotBet.value || 0);
+
+      if (!slotName) {
+        setStatus("Escreve o nome do slot.", "err");
+        return;
+      }
+
+      addSlotBtn.disabled = true;
+
+      try {
+        setStatus("A adicionar slot...");
+        await createSlotForHunt(selectedHuntId, slotName, betValue);
+        newSlotName.value = "";
+        newSlotBet.value = "";
+        setStatus("Slot adicionado com sucesso.", "ok");
+        await loadSlotsForSelectedHunt();
+      } catch (err) {
+        console.error(err);
+        setStatus(`Erro ao adicionar slot: ${err.message || err}`, "err");
+      } finally {
+        addSlotBtn.disabled = false;
       }
     }
 
@@ -639,6 +974,7 @@
 
     createHuntBtn.addEventListener("click", onCreateHunt);
     refreshBtn.addEventListener("click", loadHunts);
+    addSlotBtn.addEventListener("click", onAddSlot);
 
     huntNameInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") onCreateHunt();
@@ -646,6 +982,14 @@
 
     huntStartInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") onCreateHunt();
+    });
+
+    newSlotName.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") onAddSlot();
+    });
+
+    newSlotBet.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") onAddSlot();
     });
 
     loadHunts();
