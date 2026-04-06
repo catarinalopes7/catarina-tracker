@@ -16,7 +16,7 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
-      font-family: 'Poppins', Arial, sans-serif;
+      font-family: "Trebuchet MS", "Segoe UI", "Poppins", Arial, sans-serif;
       background: linear-gradient(180deg, #4F3EC7, #362A7A);
       color: #fff;
     }
@@ -35,11 +35,12 @@
     }
 
     #title {
-      font-size: 42px;
-      font-weight: 800;
+      font-size: 46px;
+      font-weight: 900;
       color: #FFD54A;
       text-align: center;
-      line-height: 1.1;
+      line-height: 1.05;
+      letter-spacing: 0.4px;
       text-shadow: 0 2px 10px rgba(0,0,0,0.25);
       margin-top: 8px;
     }
@@ -54,11 +55,12 @@
     }
 
     #huntName {
-      font-size: 34px;
-      font-weight: 800;
-      margin-bottom: 10px;
+      font-size: 36px;
+      font-weight: 900;
+      margin-bottom: 12px;
       text-align: center;
       word-break: break-word;
+      letter-spacing: 0.2px;
     }
 
     .metaRow {
@@ -74,12 +76,12 @@
       border-radius: 999px;
       padding: 10px 18px;
       font-size: 22px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 16px;
     }
 
@@ -90,19 +92,72 @@
       padding: 20px 16px;
       text-align: center;
       box-shadow: 0 10px 24px rgba(0,0,0,0.14);
+      min-height: 112px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .statLabel {
       font-size: 21px;
       opacity: 0.9;
       margin-bottom: 8px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .statValue {
       font-size: 42px;
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1;
+    }
+
+    .openProgressBox {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 24px;
+      padding: 18px 18px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.14);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .openProgressTop {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .openProgressLabel {
+      font-size: 21px;
+      font-weight: 800;
+      opacity: 0.95;
+    }
+
+    .openProgressValue {
+      font-size: 28px;
+      font-weight: 900;
+      color: #FFD54A;
+    }
+
+    .openProgressWrap {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      overflow: hidden;
+      box-shadow: inset 0 1px 4px rgba(0,0,0,0.18);
+    }
+
+    .openProgressBar {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.35s ease;
+      background: linear-gradient(90deg, #90CAF9, #42A5F5);
+      box-shadow: 0 0 16px rgba(66,165,245,0.24);
     }
 
     .moneyStats {
@@ -136,26 +191,21 @@
       font-size: 17px;
       opacity: 0.9;
       margin-bottom: 8px;
-      font-weight: 700;
+      font-weight: 800;
       line-height: 1.15;
+      letter-spacing: 0.2px;
     }
 
     .moneyValue {
-      font-size: 27px;
+      font-size: 29px;
       font-weight: 900;
       line-height: 1.05;
       word-break: break-word;
-    }
-
-    .moneySub {
-      margin-top: 8px;
-      font-size: 17px;
-      font-weight: 800;
-      opacity: 0.92;
+      letter-spacing: 0.2px;
     }
 
     .progressWrap {
-      margin-top: 10px;
+      margin-top: 12px;
       width: 100%;
       height: 10px;
       border-radius: 999px;
@@ -183,25 +233,21 @@
       box-shadow: 0 0 16px rgba(255,167,38,0.22);
     }
 
-    .moneyValue.positive,
-    .moneySub.positive {
+    .moneyValue.positive {
       color: #A5D6A7;
       text-shadow: 0 0 18px rgba(165,214,167,0.16);
     }
 
-    .moneyValue.negative,
-    .moneySub.negative {
+    .moneyValue.negative {
       color: #FFAB91;
       text-shadow: 0 0 18px rgba(255,171,145,0.16);
     }
 
-    .moneyValue.neutral,
-    .moneySub.neutral {
+    .moneyValue.neutral {
       color: #fff;
     }
 
-    .moneyValue.warning,
-    .moneySub.warning {
+    .moneyValue.warning {
       color: #FFE082;
       text-shadow: 0 0 18px rgba(255,224,130,0.14);
     }
@@ -220,12 +266,13 @@
 
     #bonusHeader {
       padding: 20px 24px 16px;
-      font-size: 30px;
-      font-weight: 800;
+      font-size: 31px;
+      font-weight: 900;
       color: #FFD54A;
       text-align: center;
       border-bottom: 1px solid rgba(255,255,255,0.12);
       background: rgba(0,0,0,0.08);
+      letter-spacing: 0.2px;
     }
 
     #bonusViewport {
@@ -324,10 +371,11 @@
     }
 
     .bonusName {
-      font-size: 26px;
-      font-weight: 800;
+      font-size: 27px;
+      font-weight: 900;
       line-height: 1.15;
       word-break: break-word;
+      letter-spacing: 0.2px;
     }
 
     .highlightBadge {
@@ -351,8 +399,8 @@
 
     .bonusSub {
       font-size: 18px;
-      opacity: 0.82;
-      font-weight: 600;
+      opacity: 0.84;
+      font-weight: 700;
       word-break: break-word;
     }
 
@@ -362,9 +410,9 @@
       border-radius: 999px;
       padding: 12px 18px;
       font-size: 20px;
-      font-weight: 800;
+      font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.5px;
       border: 1px solid rgba(255,255,255,0.15);
       background: rgba(255,255,255,0.10);
       flex-shrink: 0;
@@ -399,7 +447,7 @@
       text-align: center;
       padding: 40px;
       font-size: 30px;
-      font-weight: 700;
+      font-weight: 900;
       opacity: 0.92;
     }
 
@@ -407,7 +455,7 @@
       text-align: center;
       font-size: 18px;
       opacity: 0.65;
-      font-weight: 600;
+      font-weight: 700;
       margin-top: 2px;
     }
 
@@ -453,33 +501,25 @@
 
     <div class="stats">
       <div class="statBox">
-        <div class="statLabel">Total</div>
+        <div class="statLabel">Total Bónus</div>
         <div class="statValue" id="statTotal">0</div>
       </div>
-      <div class="statBox">
-        <div class="statLabel">Feitos</div>
-        <div class="statValue" id="statDone">0</div>
-      </div>
-      <div class="statBox">
-        <div class="statLabel">Pendentes</div>
-        <div class="statValue" id="statPending">0</div>
+
+      <div class="openProgressBox">
+        <div class="openProgressTop">
+          <div class="openProgressLabel">Abertura</div>
+          <div class="openProgressValue" id="openProgressValue">0/0</div>
+        </div>
+        <div class="openProgressWrap">
+          <div class="openProgressBar" id="openProgressBar"></div>
+        </div>
       </div>
     </div>
 
     <div class="moneyStats" id="moneyStats">
       <div class="moneyBox">
-        <div class="moneyLabel">Total Pago</div>
-        <div class="moneyValue neutral" id="moneyTotalPago">€0,00</div>
-      </div>
-
-      <div class="moneyBox">
         <div class="moneyLabel">AVG X</div>
         <div class="moneyValue neutral" id="moneyAverageX">0,00x</div>
-      </div>
-
-      <div class="moneyBox">
-        <div class="moneyLabel">Profit / Loss</div>
-        <div class="moneyValue neutral" id="moneyProfitLoss">€0,00</div>
       </div>
 
       <div class="moneyBox">
@@ -496,6 +536,16 @@
         <div class="progressWrap">
           <div class="progressBar" id="progressBreakEvenOpening"></div>
         </div>
+      </div>
+
+      <div class="moneyBox">
+        <div class="moneyLabel">Profit / Loss</div>
+        <div class="moneyValue neutral" id="moneyProfitLoss">€0,00</div>
+      </div>
+
+      <div class="moneyBox">
+        <div class="moneyLabel">Total Pago</div>
+        <div class="moneyValue neutral" id="moneyTotalPago">€0,00</div>
       </div>
     </div>
 
@@ -525,8 +575,8 @@
         huntId: document.getElementById("huntId"),
         huntStatus: document.getElementById("huntStatus"),
         statTotal: document.getElementById("statTotal"),
-        statDone: document.getElementById("statDone"),
-        statPending: document.getElementById("statPending"),
+        openProgressValue: document.getElementById("openProgressValue"),
+        openProgressBar: document.getElementById("openProgressBar"),
         moneyStats: document.getElementById("moneyStats"),
         moneyTotalPago: document.getElementById("moneyTotalPago"),
         moneyAverageX: document.getElementById("moneyAverageX"),
@@ -731,6 +781,15 @@
         }
       }
 
+      function ctSetOpenProgress(current, total) {
+        const safeTotal = Math.max(Number(total || 0), 0);
+        const safeCurrent = ctClamp(Number(current || 0), 0, safeTotal || 0);
+
+        CT_ELS.openProgressValue.textContent = `${safeCurrent}/${safeTotal}`;
+        const pct = safeTotal > 0 ? (safeCurrent / safeTotal) * 100 : 0;
+        CT_ELS.openProgressBar.style.width = `${ctClamp(pct, 0, 100)}%`;
+      }
+
       function ctStopAutoScroll() {
         if (ctScrollRaf) {
           cancelAnimationFrame(ctScrollRaf);
@@ -774,19 +833,17 @@
         CT_ELS.huntId.textContent = "ID: —";
         CT_ELS.huntStatus.textContent = "Estado: —";
         CT_ELS.statTotal.textContent = "0";
-        CT_ELS.statDone.textContent = "0";
-        CT_ELS.statPending.textContent = "0";
+        ctSetOpenProgress(0, 0);
 
-        ctSetNeutralValue(CT_ELS.moneyTotalPago, 0, ctFormatMoney);
         ctSetNeutralValue(CT_ELS.moneyAverageX, 0, ctFormatAverageX);
-        ctSetMoneyValue(CT_ELS.moneyProfitLoss, 0, ctFormatMoneySigned);
         ctSetPercentValue(CT_ELS.moneyBreakEvenHuntPct, 0);
         ctSetProgressBar(CT_ELS.progressBreakEvenHunt, 0);
-
         CT_ELS.openingBreakEvenBox.classList.add("hidden");
         CT_ELS.moneyStats.classList.remove("withOpening");
         ctSetPercentValue(CT_ELS.moneyBreakEvenOpeningPct, 0);
         ctSetProgressBar(CT_ELS.progressBreakEvenOpening, 0);
+        ctSetMoneyValue(CT_ELS.moneyProfitLoss, 0, ctFormatMoneySigned);
+        ctSetNeutralValue(CT_ELS.moneyTotalPago, 0, ctFormatMoney);
 
         CT_ELS.bonusTrack.innerHTML = `<div class="emptyState">${ctEscapeHtml(message)}</div>`;
       }
@@ -838,7 +895,6 @@
         if (window.CT_SUPABASE?.url && window.CT_SUPABASE?.key) {
           return window.CT_SUPABASE;
         }
-
         return null;
       }
 
@@ -885,12 +941,6 @@
 
       function ctRenderOverlay(hunt, bonuses) {
         const total = bonuses.length;
-        const done = bonuses.filter(b => ctNormalizeStatus(b.status) === "feito").length;
-        const pending = bonuses.filter(b => {
-          const status = ctNormalizeStatus(b.status);
-          return status !== "feito" && status !== "cancelado";
-        }).length;
-
         const totalPago = Number(hunt.total_pago || 0);
 
         const custoTotalHunt = bonuses.reduce((sum, bonus) => {
@@ -907,33 +957,39 @@
         const openingBreakEvenPctClamped = ctClamp(openingBreakEvenPct, 0, 100);
         const showOpeningBreakEven = !!activeBonus && openingCost > 0;
 
+        const currentOpenIndex = total > 0
+          ? Math.min(
+              bonuses.findIndex(b => ctNormalizeStatus(b.status) === "ativo") !== -1
+                ? bonuses.findIndex(b => ctNormalizeStatus(b.status) === "ativo") + 1
+                : bonuses.filter(b => ctNormalizeStatus(b.status) === "feito").length + 1,
+              total
+            )
+          : 0;
+
         CT_ELS.huntName.textContent = hunt.name || `Hunt #${hunt.id}`;
         CT_ELS.huntId.textContent = `ID: ${hunt.id ?? "—"}`;
         CT_ELS.huntStatus.textContent = `Estado: ${hunt.status || "—"}`;
         CT_ELS.statTotal.textContent = String(total);
-        CT_ELS.statDone.textContent = String(done);
-        CT_ELS.statPending.textContent = String(pending);
+        ctSetOpenProgress(currentOpenIndex, total);
 
-        ctSetNeutralValue(CT_ELS.moneyTotalPago, totalPago, ctFormatMoney);
         ctSetNeutralValue(CT_ELS.moneyAverageX, hunt.average_x ?? 0, ctFormatAverageX);
-        ctSetMoneyValue(CT_ELS.moneyProfitLoss, hunt.profit_loss ?? 0, ctFormatMoneySigned);
-
         ctSetPercentValue(CT_ELS.moneyBreakEvenHuntPct, huntBreakEvenPctClamped);
         ctSetProgressBar(CT_ELS.progressBreakEvenHunt, huntBreakEvenPctClamped);
 
         if (showOpeningBreakEven) {
           CT_ELS.openingBreakEvenBox.classList.remove("hidden");
           CT_ELS.moneyStats.classList.add("withOpening");
-
           ctSetPercentValue(CT_ELS.moneyBreakEvenOpeningPct, openingBreakEvenPctClamped);
           ctSetProgressBar(CT_ELS.progressBreakEvenOpening, openingBreakEvenPctClamped);
         } else {
           CT_ELS.openingBreakEvenBox.classList.add("hidden");
           CT_ELS.moneyStats.classList.remove("withOpening");
-
           ctSetPercentValue(CT_ELS.moneyBreakEvenOpeningPct, 0);
           ctSetProgressBar(CT_ELS.progressBreakEvenOpening, 0);
         }
+
+        ctSetMoneyValue(CT_ELS.moneyProfitLoss, hunt.profit_loss ?? 0, ctFormatMoneySigned);
+        ctSetNeutralValue(CT_ELS.moneyTotalPago, totalPago, ctFormatMoney);
 
         if (!bonuses.length) {
           ctStopAutoScroll();
@@ -960,7 +1016,6 @@
             requestAnimationFrame(() => {
               const realFirstList = CT_ELS.bonusTrack.querySelector(".bonusList");
               if (!realFirstList) return;
-
               ctStartAutoScroll(realFirstList.offsetHeight);
             });
           } else {
