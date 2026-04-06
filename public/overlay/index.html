@@ -150,7 +150,6 @@
     }
 
     .bonusItem {
-      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -159,7 +158,6 @@
       border-radius: 22px;
       background: rgba(255,255,255,0.10);
       border: 1px solid rgba(255,255,255,0.12);
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
       overflow: hidden;
     }
 
@@ -173,46 +171,12 @@
       transform: scale(1.01);
     }
 
-    .bonusItem.highlight::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: -35%;
-      width: 35%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        rgba(255,255,255,0),
-        rgba(255,255,255,0.18),
-        rgba(255,255,255,0)
-      );
-      transform: skewX(-18deg);
-      animation: shine 2.8s linear infinite;
-      pointer-events: none;
-    }
-
-    .bonusItem.highlight::after {
-      content: "EM DESTAQUE";
-      position: absolute;
-      top: 10px;
-      right: 12px;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      color: #2D215F;
-      background: #FFD54A;
-      padding: 5px 10px;
-      border-radius: 999px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
-    }
-
     .bonusLeft {
       display: flex;
       flex-direction: column;
       gap: 6px;
       min-width: 0;
       flex: 1;
-      padding-right: 6px;
     }
 
     .bonusName {
@@ -220,7 +184,6 @@
       font-weight: 800;
       line-height: 1.15;
       word-break: break-word;
-      padding-right: 120px;
     }
 
     .bonusSub {
@@ -284,13 +247,26 @@
       margin-top: 2px;
     }
 
-    @keyframes shine {
-      0% {
-        left: -40%;
-      }
-      100% {
-        left: 120%;
-      }
+    #debugBox {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      z-index: 20;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 16px;
+      line-height: 1.4;
+      color: #fff;
+      display: none;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    #debugBox.show {
+      display: block;
     }
   </style>
 </head>
@@ -331,315 +307,350 @@
     <div class="footerNote">Overlay ativo</div>
   </div>
 
+  <div id="debugBox"></div>
+
   <script src="../admin/conexao.js"></script>
 
   <script>
-    const SUPABASE_BASE_URL = window.SUPABASE_URL;
-    const SUPABASE_API_KEY = window.SUPABASE_ANON_KEY || window.SUPABASE_KEY;
+    (() => {
+      const CT_TABLE_HUNTS = 'hunts';
+      const CT_TABLE_BONUSES = 'hunt_bonuses';
+      const CT_SCROLL_SPEED = 28;
 
-    const TABLE_HUNTS = 'hunts';
-    const TABLE_BONUSES = 'hunt_bonuses';
+      const CT_ELS = {
+        huntName: document.getElementById('huntName'),
+        huntId: document.getElementById('huntId'),
+        huntStatus: document.getElementById('huntStatus'),
+        statTotal: document.getElementById('statTotal'),
+        statDone: document.getElementById('statDone'),
+        statPending: document.getElementById('statPending'),
+        bonusTrack: document.getElementById('bonusTrack'),
+        bonusViewport: document.getElementById('bonusViewport'),
+        debugBox: document.getElementById('debugBox')
+      };
 
-    const headers = {
-      apikey: SUPABASE_API_KEY,
-      Authorization: `Bearer ${SUPABASE_API_KEY}`,
-      'Content-Type': 'application/json'
-    };
+      let ctLastSignature = '';
+      let ctScrollRaf = null;
+      let ctScrollOffset = 0;
+      let ctFirstListHeight = 0;
+      let ctIsScrolling = false;
+      let ctLastTs = 0;
 
-    const els = {
-      huntName: document.getElementById('huntName'),
-      huntId: document.getElementById('huntId'),
-      huntStatus: document.getElementById('huntStatus'),
-      statTotal: document.getElementById('statTotal'),
-      statDone: document.getElementById('statDone'),
-      statPending: document.getElementById('statPending'),
-      bonusTrack: document.getElementById('bonusTrack'),
-      bonusViewport: document.getElementById('bonusViewport')
-    };
-
-    let activeHuntId = null;
-    let lastSignature = '';
-    let scrollRaf = null;
-    let scrollOffset = 0;
-    let firstListHeight = 0;
-    let isScrolling = false;
-    let lastTs = 0;
-
-    const SCROLL_SPEED = 28;
-
-    function normalizeStatus(value) {
-      const raw = String(value || '').trim().toLowerCase();
-
-      if (
-        raw === 'done' ||
-        raw === 'completed' ||
-        raw === 'complete' ||
-        raw === 'feito' ||
-        raw === 'fechado' ||
-        raw === 'closed'
-      ) {
-        return 'feito';
+      function ctShowDebug(message) {
+        console.error('[CT OVERLAY]', message);
+        CT_ELS.debugBox.textContent = String(message);
+        CT_ELS.debugBox.classList.add('show');
       }
 
-      if (
-        raw === 'active' ||
-        raw === 'ativo' ||
-        raw === 'activa' ||
-        raw === 'ativa' ||
-        raw === 'running'
-      ) {
-        return 'ativo';
+      function ctHideDebug() {
+        CT_ELS.debugBox.textContent = '';
+        CT_ELS.debugBox.classList.remove('show');
       }
 
-      if (
-        raw === 'cancelled' ||
-        raw === 'canceled' ||
-        raw === 'cancelado'
-      ) {
-        return 'cancelado';
+      function ctEscapeHtml(value) {
+        return String(value ?? '')
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;');
       }
 
-      return 'pendente';
-    }
+      function ctNormalizeStatus(value) {
+        const raw = String(value || '').trim().toLowerCase();
 
-    function formatStatusLabel(status) {
-      switch (status) {
-        case 'feito': return 'Feito';
-        case 'ativo': return 'Ativo';
-        case 'cancelado': return 'Cancelado';
-        default: return 'Pendente';
-      }
-    }
+        if (
+          raw === 'done' ||
+          raw === 'completed' ||
+          raw === 'complete' ||
+          raw === 'feito' ||
+          raw === 'fechado' ||
+          raw === 'closed'
+        ) return 'feito';
 
-    function getBonusName(bonus) {
-      return (
-        bonus.slot_name ||
-        bonus.name ||
-        bonus.slot ||
-        bonus.title ||
-        bonus.slot_id ||
-        `Bónus #${bonus.id ?? ''}`
-      );
-    }
+        if (
+          raw === 'active' ||
+          raw === 'ativo' ||
+          raw === 'ativa' ||
+          raw === 'activa' ||
+          raw === 'running'
+        ) return 'ativo';
 
-    function getBonusSub(bonus) {
-      const parts = [];
+        if (
+          raw === 'cancelled' ||
+          raw === 'canceled' ||
+          raw === 'cancelado'
+        ) return 'cancelado';
 
-      if (bonus.slot_id) parts.push(`ID: ${bonus.slot_id}`);
-      if (bonus.provider) parts.push(bonus.provider);
-      if (bonus.game_name) parts.push(bonus.game_name);
-
-      return parts.join(' • ');
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
-    }
-
-    function stopAutoScroll() {
-      if (scrollRaf) {
-        cancelAnimationFrame(scrollRaf);
-        scrollRaf = null;
+        return 'pendente';
       }
 
-      scrollOffset = 0;
-      firstListHeight = 0;
-      isScrolling = false;
-      lastTs = 0;
-      els.bonusTrack.style.transform = 'translateY(0px)';
-    }
-
-    function autoScrollStep(ts) {
-      if (!isScrolling) return;
-
-      if (!lastTs) lastTs = ts;
-      const dt = (ts - lastTs) / 1000;
-      lastTs = ts;
-
-      scrollOffset += SCROLL_SPEED * dt;
-
-      if (scrollOffset >= firstListHeight) {
-        scrollOffset = 0;
+      function ctFormatStatusLabel(status) {
+        switch (status) {
+          case 'feito': return 'Feito';
+          case 'ativo': return 'Ativo';
+          case 'cancelado': return 'Cancelado';
+          default: return 'Pendente';
+        }
       }
 
-      els.bonusTrack.style.transform = `translateY(-${scrollOffset}px)`;
-      scrollRaf = requestAnimationFrame(autoScrollStep);
-    }
-
-    function startAutoScrollIfNeeded() {
-      stopAutoScroll();
-
-      const lists = els.bonusTrack.querySelectorAll('.bonusList');
-      if (!lists.length) return;
-
-      const firstList = lists[0];
-      firstListHeight = firstList.offsetHeight;
-
-      const viewportHeight = els.bonusViewport.clientHeight;
-
-      if (firstListHeight <= viewportHeight) {
-        els.bonusTrack.style.transform = 'translateY(0px)';
-        return;
+      function ctGetBonusName(bonus) {
+        return (
+          bonus.slot_name ||
+          bonus.name ||
+          bonus.slot ||
+          bonus.title ||
+          bonus.slot_id ||
+          `Bónus #${bonus.id ?? ''}`
+        );
       }
 
-      isScrolling = true;
-      scrollRaf = requestAnimationFrame(autoScrollStep);
-    }
-
-    function renderEmpty(message) {
-      stopAutoScroll();
-      els.huntName.textContent = message;
-      els.huntId.textContent = 'ID: —';
-      els.huntStatus.textContent = 'Estado: —';
-      els.statTotal.textContent = '0';
-      els.statDone.textContent = '0';
-      els.statPending.textContent = '0';
-      els.bonusTrack.innerHTML = `<div class="emptyState">${message}</div>`;
-    }
-
-    function getHighlightedIndex(bonuses) {
-      if (!bonuses.length) return -1;
-
-      const activeIndex = bonuses.findIndex(b => normalizeStatus(b.status) === 'ativo');
-      if (activeIndex !== -1) return activeIndex;
-
-      const pendingIndex = bonuses.findIndex(b => {
-        const status = normalizeStatus(b.status);
-        return status !== 'feito' && status !== 'cancelado';
-      });
-      if (pendingIndex !== -1) return pendingIndex;
-
-      return bonuses.length - 1;
-    }
-
-    function renderBonusListHtml(bonuses, highlightedIndex) {
-      return `
-        <div class="bonusList">
-          ${bonuses.map((bonus, index) => {
-            const status = normalizeStatus(bonus.status);
-            const bonusName = getBonusName(bonus);
-            const bonusSub = getBonusSub(bonus);
-            const isHighlight = index === highlightedIndex;
-
-            return `
-              <div class="bonusItem${isHighlight ? ' highlight' : ''}">
-                <div class="bonusLeft">
-                  <div class="bonusName">${escapeHtml(bonusName)}</div>
-                  <div class="bonusSub">${bonusSub ? escapeHtml(bonusSub) : '&nbsp;'}</div>
-                </div>
-                <div class="bonusStatus status-${status}">
-                  ${formatStatusLabel(status)}
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      `;
-    }
-
-    function renderOverlay(hunt, bonuses) {
-      const total = bonuses.length;
-      const done = bonuses.filter(b => normalizeStatus(b.status) === 'feito').length;
-      const pending = bonuses.filter(b => {
-        const status = normalizeStatus(b.status);
-        return status !== 'feito' && status !== 'cancelado';
-      }).length;
-
-      els.huntName.textContent = hunt.name || `Hunt #${hunt.id}`;
-      els.huntId.textContent = `ID: ${hunt.id ?? '—'}`;
-      els.huntStatus.textContent = 'Estado: Ativa';
-
-      els.statTotal.textContent = String(total);
-      els.statDone.textContent = String(done);
-      els.statPending.textContent = String(pending);
-
-      if (!bonuses.length) {
-        stopAutoScroll();
-        els.bonusTrack.innerHTML = `<div class="emptyState">Sem bónus nesta hunt.</div>`;
-        return;
+      function ctGetBonusSub(bonus) {
+        const parts = [];
+        if (bonus.slot_id) parts.push(`ID: ${bonus.slot_id}`);
+        if (bonus.provider) parts.push(bonus.provider);
+        if (bonus.game_name) parts.push(bonus.game_name);
+        return parts.join(' • ');
       }
 
-      const highlightedIndex = getHighlightedIndex(bonuses);
-      const listHtml = renderBonusListHtml(bonuses, highlightedIndex);
-
-      els.bonusTrack.innerHTML = listHtml + listHtml;
-
-      requestAnimationFrame(() => {
-        startAutoScrollIfNeeded();
-      });
-    }
-
-    async function fetchJson(url) {
-      const res = await fetch(url, { headers });
-
-      if (!res.ok) {
-        const text = await res.text().catch(() => '');
-        throw new Error(`Erro ${res.status}: ${text || 'fetch falhou'}`);
-      }
-
-      return res.json();
-    }
-
-    async function getActiveHunt() {
-      const url = `${SUPABASE_BASE_URL}/rest/v1/${TABLE_HUNTS}?select=*&is_active=eq.true&order=created_at.desc&limit=1`;
-      const data = await fetchJson(url);
-      return data?.[0] || null;
-    }
-
-    async function getBonusesByHunt(huntId) {
-      const url = `${SUPABASE_BASE_URL}/rest/v1/${TABLE_BONUSES}?select=*&hunt_id=eq.${encodeURIComponent(huntId)}&order=created_at.asc`;
-      return await fetchJson(url);
-    }
-
-    function buildSignature(hunt, bonuses) {
-      return JSON.stringify({
-        huntId: hunt?.id ?? null,
-        huntName: hunt?.name ?? '',
-        bonuses: bonuses.map(b => ({
-          id: b.id ?? null,
-          name: getBonusName(b),
-          status: normalizeStatus(b.status),
-          slot_id: b.slot_id ?? null
-        }))
-      });
-    }
-
-    async function refreshOverlay() {
-      try {
-        if (!SUPABASE_BASE_URL || !SUPABASE_API_KEY) {
-          throw new Error('SUPABASE_URL ou SUPABASE_API_KEY não encontrados no conexao.js');
+      function ctStopAutoScroll() {
+        if (ctScrollRaf) {
+          cancelAnimationFrame(ctScrollRaf);
+          ctScrollRaf = null;
         }
 
-        const hunt = await getActiveHunt();
+        ctScrollOffset = 0;
+        ctFirstListHeight = 0;
+        ctIsScrolling = false;
+        ctLastTs = 0;
+        CT_ELS.bonusTrack.style.transform = 'translateY(0px)';
+      }
 
-        if (!hunt) {
-          activeHuntId = null;
-          lastSignature = '';
-          renderEmpty('Sem hunt ativa.');
+      function ctAutoScrollStep(ts) {
+        if (!ctIsScrolling) return;
+
+        if (!ctLastTs) ctLastTs = ts;
+        const dt = (ts - ctLastTs) / 1000;
+        ctLastTs = ts;
+
+        ctScrollOffset += CT_SCROLL_SPEED * dt;
+
+        if (ctScrollOffset >= ctFirstListHeight) {
+          ctScrollOffset = 0;
+        }
+
+        CT_ELS.bonusTrack.style.transform = `translateY(-${ctScrollOffset}px)`;
+        ctScrollRaf = requestAnimationFrame(ctAutoScrollStep);
+      }
+
+      function ctStartAutoScrollIfNeeded() {
+        ctStopAutoScroll();
+
+        const lists = CT_ELS.bonusTrack.querySelectorAll('.bonusList');
+        if (!lists.length) return;
+
+        const firstList = lists[0];
+        ctFirstListHeight = firstList.offsetHeight;
+
+        const viewportHeight = CT_ELS.bonusViewport.clientHeight;
+
+        if (ctFirstListHeight <= viewportHeight) {
+          CT_ELS.bonusTrack.style.transform = 'translateY(0px)';
           return;
         }
 
-        activeHuntId = hunt.id;
-        const bonuses = await getBonusesByHunt(activeHuntId);
-
-        const signature = buildSignature(hunt, bonuses);
-        if (signature === lastSignature) return;
-
-        lastSignature = signature;
-        renderOverlay(hunt, bonuses);
-      } catch (error) {
-        console.error('[OVERLAY ERROR]', error);
-        renderEmpty('Erro ao carregar overlay.');
+        ctIsScrolling = true;
+        ctScrollRaf = requestAnimationFrame(ctAutoScrollStep);
       }
-    }
 
-    refreshOverlay();
-    setInterval(refreshOverlay, 4000);
+      function ctRenderEmpty(message) {
+        ctStopAutoScroll();
+        CT_ELS.huntName.textContent = message;
+        CT_ELS.huntId.textContent = 'ID: —';
+        CT_ELS.huntStatus.textContent = 'Estado: —';
+        CT_ELS.statTotal.textContent = '0';
+        CT_ELS.statDone.textContent = '0';
+        CT_ELS.statPending.textContent = '0';
+        CT_ELS.bonusTrack.innerHTML = `<div class="emptyState">${ctEscapeHtml(message)}</div>`;
+      }
+
+      function ctGetHighlightedIndex(bonuses) {
+        if (!bonuses.length) return -1;
+
+        const activeIndex = bonuses.findIndex(b => ctNormalizeStatus(b.status) === 'ativo');
+        if (activeIndex !== -1) return activeIndex;
+
+        const pendingIndex = bonuses.findIndex(b => {
+          const status = ctNormalizeStatus(b.status);
+          return status !== 'feito' && status !== 'cancelado';
+        });
+        if (pendingIndex !== -1) return pendingIndex;
+
+        return bonuses.length - 1;
+      }
+
+      function ctRenderBonusListHtml(bonuses, highlightedIndex) {
+        return `
+          <div class="bonusList">
+            ${bonuses.map((bonus, index) => {
+              const status = ctNormalizeStatus(bonus.status);
+              const bonusName = ctGetBonusName(bonus);
+              const bonusSub = ctGetBonusSub(bonus);
+              const isHighlight = index === highlightedIndex;
+
+              return `
+                <div class="bonusItem${isHighlight ? ' highlight' : ''}">
+                  <div class="bonusLeft">
+                    <div class="bonusName">${ctEscapeHtml(bonusName)}</div>
+                    <div class="bonusSub">${bonusSub ? ctEscapeHtml(bonusSub) : '&nbsp;'}</div>
+                  </div>
+                  <div class="bonusStatus status-${status}">
+                    ${ctFormatStatusLabel(status)}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      function ctRenderOverlay(hunt, bonuses) {
+        const total = bonuses.length;
+        const done = bonuses.filter(b => ctNormalizeStatus(b.status) === 'feito').length;
+        const pending = bonuses.filter(b => {
+          const status = ctNormalizeStatus(b.status);
+          return status !== 'feito' && status !== 'cancelado';
+        }).length;
+
+        CT_ELS.huntName.textContent = hunt.name || `Hunt #${hunt.id}`;
+        CT_ELS.huntId.textContent = `ID: ${hunt.id ?? '—'}`;
+        CT_ELS.huntStatus.textContent = 'Estado: Ativa';
+        CT_ELS.statTotal.textContent = String(total);
+        CT_ELS.statDone.textContent = String(done);
+        CT_ELS.statPending.textContent = String(pending);
+
+        if (!bonuses.length) {
+          ctStopAutoScroll();
+          CT_ELS.bonusTrack.innerHTML = `<div class="emptyState">Sem bónus nesta hunt.</div>`;
+          return;
+        }
+
+        const highlightedIndex = ctGetHighlightedIndex(bonuses);
+        const listHtml = ctRenderBonusListHtml(bonuses, highlightedIndex);
+
+        CT_ELS.bonusTrack.innerHTML = listHtml + listHtml;
+
+        requestAnimationFrame(() => {
+          ctStartAutoScrollIfNeeded();
+        });
+      }
+
+      function ctResolveConfig() {
+        const configCandidates = [
+          window.CT_SUPABASE,
+          window.__CT_SUPABASE__,
+          window.SUPABASE_CONFIG,
+          window.supabaseConfig
+        ].filter(Boolean);
+
+        for (const cfg of configCandidates) {
+          const url = cfg.url || cfg.SUPABASE_URL;
+          const key = cfg.key || cfg.anonKey || cfg.SUPABASE_ANON_KEY || cfg.SUPABASE_KEY;
+          if (url && key) {
+            return { url, key };
+          }
+        }
+
+        if (window.SUPABASE_URL && (window.SUPABASE_ANON_KEY || window.SUPABASE_KEY)) {
+          return {
+            url: window.SUPABASE_URL,
+            key: window.SUPABASE_ANON_KEY || window.SUPABASE_KEY
+          };
+        }
+
+        return null;
+      }
+
+      async function ctFetchJson(url, headers) {
+        const res = await fetch(url, { headers });
+
+        if (!res.ok) {
+          const text = await res.text().catch(() => '');
+          throw new Error(`Erro ${res.status}: ${text || 'fetch falhou'}`);
+        }
+
+        return res.json();
+      }
+
+      async function ctGetActiveHunt(baseUrl, headers) {
+        const url = `${baseUrl}/rest/v1/${CT_TABLE_HUNTS}?select=*&is_active=eq.true&order=created_at.desc&limit=1`;
+        const data = await ctFetchJson(url, headers);
+        return data?.[0] || null;
+      }
+
+      async function ctGetBonusesByHunt(baseUrl, headers, huntId) {
+        const url = `${baseUrl}/rest/v1/${CT_TABLE_BONUSES}?select=*&hunt_id=eq.${encodeURIComponent(huntId)}&order=created_at.asc`;
+        return await ctFetchJson(url, headers);
+      }
+
+      function ctBuildSignature(hunt, bonuses) {
+        return JSON.stringify({
+          huntId: hunt?.id ?? null,
+          huntName: hunt?.name ?? '',
+          bonuses: bonuses.map(b => ({
+            id: b.id ?? null,
+            name: ctGetBonusName(b),
+            status: ctNormalizeStatus(b.status),
+            slot_id: b.slot_id ?? null
+          }))
+        });
+      }
+
+      async function ctRefreshOverlay() {
+        try {
+          const config = ctResolveConfig();
+
+          if (!config) {
+            ctShowDebug(
+              'Overlay sem configuração Supabase.\n\n' +
+              'O teu conexao.js provavelmente não está a expor os dados no window.\n' +
+              'Se isto aparecer, manda-me o ficheiro completo public/admin/conexao.js.'
+            );
+            ctRenderEmpty('Configuração Supabase em falta.');
+            return;
+          }
+
+          ctHideDebug();
+
+          const ctHeaders = {
+            apikey: config.key,
+            Authorization: `Bearer ${config.key}`,
+            'Content-Type': 'application/json'
+          };
+
+          const hunt = await ctGetActiveHunt(config.url, ctHeaders);
+
+          if (!hunt) {
+            ctRenderEmpty('Sem hunt ativa.');
+            return;
+          }
+
+          const bonuses = await ctGetBonusesByHunt(config.url, ctHeaders, hunt.id);
+          const signature = ctBuildSignature(hunt, bonuses);
+
+          if (signature === ctLastSignature) return;
+          ctLastSignature = signature;
+
+          ctRenderOverlay(hunt, bonuses);
+        } catch (error) {
+          ctShowDebug(error?.message || error);
+          ctRenderEmpty('Erro ao carregar overlay.');
+        }
+      }
+
+      ctRefreshOverlay();
+      setInterval(ctRefreshOverlay, 4000);
+    })();
   </script>
 </body>
 </html>
