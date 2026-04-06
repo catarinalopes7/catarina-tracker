@@ -484,8 +484,7 @@
 
       <div class="moneyBox">
         <div class="moneyLabel">BE Inicial</div>
-        <div class="moneyValue warning" id="moneyBreakEvenHunt">€0,00</div>
-        <div class="moneySub neutral" id="moneyBreakEvenHuntPct">0,00%</div>
+        <div class="moneyValue warning" id="moneyBreakEvenHuntPct">0,00%</div>
         <div class="progressWrap">
           <div class="progressBar" id="progressBreakEvenHunt"></div>
         </div>
@@ -493,8 +492,7 @@
 
       <div class="moneyBox hidden" id="openingBreakEvenBox">
         <div class="moneyLabel">BE Abertura</div>
-        <div class="moneyValue warning" id="moneyBreakEvenOpening">€0,00</div>
-        <div class="moneySub neutral" id="moneyBreakEvenOpeningPct">0,00%</div>
+        <div class="moneyValue warning" id="moneyBreakEvenOpeningPct">0,00%</div>
         <div class="progressWrap">
           <div class="progressBar" id="progressBreakEvenOpening"></div>
         </div>
@@ -520,12 +518,6 @@
       const CT_TABLE_HUNTS = "hunts";
       const CT_TABLE_BONUS = "bonus";
       const CT_SCROLL_SPEED = 28;
-
-      /*
-        Multiplicador da compra do bónus.
-        Ex.: bet 0.20 => custo 20.00
-        0.20 * 100 = 20.00
-      */
       const CT_BONUS_BUY_MULTIPLIER = 100;
 
       const CT_ELS = {
@@ -539,11 +531,9 @@
         moneyTotalPago: document.getElementById("moneyTotalPago"),
         moneyAverageX: document.getElementById("moneyAverageX"),
         moneyProfitLoss: document.getElementById("moneyProfitLoss"),
-        moneyBreakEvenHunt: document.getElementById("moneyBreakEvenHunt"),
         moneyBreakEvenHuntPct: document.getElementById("moneyBreakEvenHuntPct"),
         progressBreakEvenHunt: document.getElementById("progressBreakEvenHunt"),
         openingBreakEvenBox: document.getElementById("openingBreakEvenBox"),
-        moneyBreakEvenOpening: document.getElementById("moneyBreakEvenOpening"),
         moneyBreakEvenOpeningPct: document.getElementById("moneyBreakEvenOpeningPct"),
         progressBreakEvenOpening: document.getElementById("progressBreakEvenOpening"),
         bonusTrack: document.getElementById("bonusTrack"),
@@ -715,13 +705,7 @@
         el.textContent = formatter(Number(value || 0));
       }
 
-      function ctSetWarningValue(el, value, formatter) {
-        el.classList.remove("positive", "negative", "neutral", "warning");
-        el.classList.add("warning");
-        el.textContent = formatter(Number(value || 0));
-      }
-
-      function ctSetPercentState(el, pct) {
+      function ctSetPercentValue(el, pct) {
         el.classList.remove("positive", "negative", "neutral", "warning");
 
         if (pct >= 100) {
@@ -731,6 +715,8 @@
         } else {
           el.classList.add("neutral");
         }
+
+        el.textContent = ctFormatPercent(pct);
       }
 
       function ctSetProgressBar(el, pct) {
@@ -794,15 +780,12 @@
         ctSetNeutralValue(CT_ELS.moneyTotalPago, 0, ctFormatMoney);
         ctSetNeutralValue(CT_ELS.moneyAverageX, 0, ctFormatAverageX);
         ctSetMoneyValue(CT_ELS.moneyProfitLoss, 0, ctFormatMoneySigned);
-
-        ctSetWarningValue(CT_ELS.moneyBreakEvenHunt, 0, ctFormatMoney);
-        ctSetNeutralValue(CT_ELS.moneyBreakEvenHuntPct, 0, ctFormatPercent);
+        ctSetPercentValue(CT_ELS.moneyBreakEvenHuntPct, 0);
         ctSetProgressBar(CT_ELS.progressBreakEvenHunt, 0);
 
         CT_ELS.openingBreakEvenBox.classList.add("hidden");
         CT_ELS.moneyStats.classList.remove("withOpening");
-        ctSetWarningValue(CT_ELS.moneyBreakEvenOpening, 0, ctFormatMoney);
-        ctSetNeutralValue(CT_ELS.moneyBreakEvenOpeningPct, 0, ctFormatPercent);
+        ctSetPercentValue(CT_ELS.moneyBreakEvenOpeningPct, 0);
         ctSetProgressBar(CT_ELS.progressBreakEvenOpening, 0);
 
         CT_ELS.bonusTrack.innerHTML = `<div class="emptyState">${ctEscapeHtml(message)}</div>`;
@@ -914,14 +897,12 @@
           return sum + ctGetBonusBuyCost(bonus);
         }, 0);
 
-        const huntBreakEvenFalta = Math.max(custoTotalHunt - totalPago, 0);
         const huntBreakEvenPct = custoTotalHunt > 0 ? (totalPago / custoTotalHunt) * 100 : 0;
         const huntBreakEvenPctClamped = ctClamp(huntBreakEvenPct, 0, 100);
 
         const activeBonus = bonuses.find(b => ctNormalizeStatus(b.status) === "ativo") || null;
         const openingCost = activeBonus ? ctGetBonusBuyCost(activeBonus) : 0;
         const openingPayout = Number(activeBonus?.payout || 0);
-        const openingBreakEvenFalta = Math.max(openingCost - openingPayout, 0);
         const openingBreakEvenPct = openingCost > 0 ? (openingPayout / openingCost) * 100 : 0;
         const openingBreakEvenPctClamped = ctClamp(openingBreakEvenPct, 0, 100);
         const showOpeningBreakEven = !!activeBonus && openingCost > 0;
@@ -937,26 +918,20 @@
         ctSetNeutralValue(CT_ELS.moneyAverageX, hunt.average_x ?? 0, ctFormatAverageX);
         ctSetMoneyValue(CT_ELS.moneyProfitLoss, hunt.profit_loss ?? 0, ctFormatMoneySigned);
 
-        ctSetWarningValue(CT_ELS.moneyBreakEvenHunt, huntBreakEvenFalta, ctFormatMoney);
-        CT_ELS.moneyBreakEvenHuntPct.textContent = ctFormatPercent(huntBreakEvenPctClamped);
-        ctSetPercentState(CT_ELS.moneyBreakEvenHuntPct, huntBreakEvenPctClamped);
+        ctSetPercentValue(CT_ELS.moneyBreakEvenHuntPct, huntBreakEvenPctClamped);
         ctSetProgressBar(CT_ELS.progressBreakEvenHunt, huntBreakEvenPctClamped);
 
         if (showOpeningBreakEven) {
           CT_ELS.openingBreakEvenBox.classList.remove("hidden");
           CT_ELS.moneyStats.classList.add("withOpening");
 
-          ctSetWarningValue(CT_ELS.moneyBreakEvenOpening, openingBreakEvenFalta, ctFormatMoney);
-          CT_ELS.moneyBreakEvenOpeningPct.textContent = ctFormatPercent(openingBreakEvenPctClamped);
-          ctSetPercentState(CT_ELS.moneyBreakEvenOpeningPct, openingBreakEvenPctClamped);
+          ctSetPercentValue(CT_ELS.moneyBreakEvenOpeningPct, openingBreakEvenPctClamped);
           ctSetProgressBar(CT_ELS.progressBreakEvenOpening, openingBreakEvenPctClamped);
         } else {
           CT_ELS.openingBreakEvenBox.classList.add("hidden");
           CT_ELS.moneyStats.classList.remove("withOpening");
 
-          ctSetWarningValue(CT_ELS.moneyBreakEvenOpening, 0, ctFormatMoney);
-          CT_ELS.moneyBreakEvenOpeningPct.textContent = ctFormatPercent(0);
-          ctSetPercentState(CT_ELS.moneyBreakEvenOpeningPct, 0);
+          ctSetPercentValue(CT_ELS.moneyBreakEvenOpeningPct, 0);
           ctSetProgressBar(CT_ELS.progressBreakEvenOpening, 0);
         }
 
