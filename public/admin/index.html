@@ -16,6 +16,7 @@
       --gold:#ffd54a;
       --green:#20d18f;
       --red:#ff5d73;
+      --blue:#6ea8ff;
       --shadow:0 14px 35px rgba(0,0,0,.28);
       --radius:18px;
     }
@@ -111,6 +112,11 @@
       color:white;
     }
 
+    .btn-blue{
+      background:linear-gradient(135deg, #77b4ff, #4f92ff);
+      color:#071427;
+    }
+
     .grid{
       display:grid;
       grid-template-columns: 360px 1fr;
@@ -196,6 +202,7 @@
       min-height:44px;
       display:flex;
       align-items:center;
+      white-space:pre-wrap;
     }
 
     .status-ok{
@@ -204,7 +211,6 @@
 
     .status-err{
       color:#ff9aa7;
-      white-space:pre-wrap;
     }
 
     .table-wrap{
@@ -214,7 +220,7 @@
     table{
       width:100%;
       border-collapse:collapse;
-      min-width:760px;
+      min-width:860px;
     }
 
     thead th{
@@ -295,6 +301,18 @@
       font-size:12px;
     }
 
+    .debug-box{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:12px;
+      background:#0e1325;
+      border:1px solid var(--line);
+      color:#9ec4ff;
+      font-size:12px;
+      line-height:1.5;
+      white-space:pre-wrap;
+    }
+
     code{
       background:rgba(255,255,255,.06);
       padding:2px 6px;
@@ -336,11 +354,11 @@
             <button class="btn-primary" id="createHuntBtn">Criar Hunt</button>
 
             <div class="muted">
-              Esta versão não depende do <code>conexao.js</code>.  
-              Fica tudo ligado diretamente aqui para eliminar o conflito.
+              Esta versão tenta casar automaticamente com mais formatos de colunas da tabela <code>hunts</code>.
             </div>
 
             <div class="statusbar" id="statusBox">Pronto.</div>
+            <div class="debug-box" id="debugBox">Debug: à espera de dados...</div>
           </div>
         </div>
       </div>
@@ -375,15 +393,9 @@
   </div>
 
   <script>
-    // =========================================================
-    // SUPABASE DIRETO NO FICHEIRO
-    // =========================================================
     const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
     const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
-    // =========================================================
-    // DOM
-    // =========================================================
     const huntNameInput = document.getElementById("huntName");
     const huntStartInput = document.getElementById("huntStart");
     const createHuntBtn = document.getElementById("createHuntBtn");
@@ -391,15 +403,33 @@
     const huntsTableBody = document.getElementById("huntsTableBody");
     const huntCount = document.getElementById("huntCount");
     const statusBox = document.getElementById("statusBox");
+    const debugBox = document.getElementById("debugBox");
 
-    // =========================================================
-    // UTILS
-    // =========================================================
+    const NAME_KEYS = [
+      "name", "title", "hunt_name", "hunt_title", "label", "display_name",
+      "nome", "hunt", "hunt_label", "bonus_hunt_name"
+    ];
+
+    const START_KEYS = [
+      "start_value", "start_balance", "start", "balance_start", "initial_balance",
+      "starting_balance", "starting_value", "start_amount", "hunt_start",
+      "initial_value", "bankroll_start", "bankroll_initial", "opening_balance",
+      "start_bankroll", "valor_inicial"
+    ];
+
+    const CREATED_KEYS = [
+      "created_at", "inserted_at", "date_created", "createdAt", "created_on", "created"
+    ];
+
     function setStatus(message, type = "") {
       statusBox.textContent = message;
       statusBox.className = "statusbar";
       if (type === "ok") statusBox.classList.add("status-ok");
       if (type === "err") statusBox.classList.add("status-err");
+    }
+
+    function setDebug(message) {
+      debugBox.textContent = message;
     }
 
     function escapeHtml(value) {
@@ -413,7 +443,7 @@
 
     function formatMoney(value) {
       const num = Number(value || 0);
-      return num.toFixed(2);
+      return Number.isFinite(num) ? num.toFixed(2) : "0.00";
     }
 
     function formatDate(value) {
@@ -457,30 +487,36 @@
       return data;
     }
 
-    // =========================================================
-    // HELPERS HUNTS
-    // =========================================================
+    function firstExisting(row, keys) {
+      for (const key of keys) {
+        if (row[key] !== undefined && row[key] !== null && row[key] !== "") {
+          return row[key];
+        }
+      }
+      return null;
+    }
+
     function getStartValue(row) {
-      return (
-        row.start_value ??
-        row.start_balance ??
-        row.start ??
-        row.balance_start ??
-        row.initial_balance ??
-        0
-      );
+      const value = firstExisting(row, START_KEYS);
+      return value ?? 0;
     }
 
     function getHuntName(row) {
-      return row.name ?? row.title ?? row.hunt_name ?? `Hunt #${row.id ?? "?"}`;
+      const value = firstExisting(row, NAME_KEYS);
+      return value ?? `Hunt #${row.id ?? "?"}`;
+    }
+
+    function getCreatedAt(row) {
+      return firstExisting(row, CREATED_KEYS);
     }
 
     function detectState(row) {
-      const rawStatus = String(row.status ?? "").toLowerCase();
+      const rawStatus = String(row.status ?? row.state ?? "").toLowerCase();
 
       const isActive =
         row.is_active === true ||
         row.active === true ||
+        row.open === true ||
         rawStatus === "active" ||
         rawStatus === "opened" ||
         rawStatus === "open";
@@ -488,6 +524,7 @@
       const isClosed =
         row.is_closed === true ||
         row.closed === true ||
+        row.finished === true ||
         rawStatus === "closed" ||
         rawStatus === "finished" ||
         rawStatus === "done" ||
@@ -498,60 +535,11 @@
       return { key: "draft", label: "INATIVA" };
     }
 
-    function getCreatedAt(row) {
-      return row.created_at ?? row.inserted_at ?? row.date_created ?? row.createdAt ?? null;
-    }
-
-    // =========================================================
-    // API HUNTS
-    // =========================================================
     async function listHunts() {
       return fetchJson(`/rest/v1/hunts?select=*&order=id.desc`, {
         method: "GET",
         headers: getHeaders()
       });
-    }
-
-    async function tryCreateWithPayload(payload) {
-      return fetchJson(`/rest/v1/hunts`, {
-        method: "POST",
-        headers: getHeaders(),
-        body: JSON.stringify(payload)
-      });
-    }
-
-    async function createHunt() {
-      const name = huntNameInput.value.trim();
-      const start = Number(huntStartInput.value || 0);
-
-      if (!name) {
-        throw new Error("Escreve um nome para a hunt.");
-      }
-
-      const payloadAttempts = [
-        { name, start_value: start, status: "inactive" },
-        { name, start_balance: start, status: "inactive" },
-        { name, start_value: start, is_active: false },
-        { name, start_balance: start, is_active: false },
-        { name, start: start, status: "inactive" },
-        { name, initial_balance: start, status: "inactive" },
-        { name, start_value: start },
-        { name, start_balance: start },
-        { name, start: start },
-        { name }
-      ];
-
-      let lastError = null;
-
-      for (const payload of payloadAttempts) {
-        try {
-          return await tryCreateWithPayload(payload);
-        } catch (err) {
-          lastError = err;
-        }
-      }
-
-      throw lastError || new Error("Não foi possível criar a hunt.");
     }
 
     async function patchHunt(id, patch) {
@@ -560,6 +548,96 @@
         headers: getHeaders(),
         body: JSON.stringify(patch)
       });
+    }
+
+    async function createMinimalHunt() {
+      const attempts = [
+        { status: "inactive", is_active: false, is_closed: false },
+        { status: "inactive", active: false, closed: false },
+        { status: "inactive" },
+        { is_active: false },
+        { active: false },
+        {}
+      ];
+
+      let lastError = null;
+
+      for (const payload of attempts) {
+        try {
+          const created = await fetchJson(`/rest/v1/hunts`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify(payload)
+          });
+
+          if (Array.isArray(created) && created[0]) return created[0];
+          if (created && !Array.isArray(created)) return created;
+        } catch (err) {
+          lastError = err;
+        }
+      }
+
+      throw lastError || new Error("Não foi possível criar a hunt.");
+    }
+
+    async function enrichCreatedHunt(createdRow, name, start) {
+      const id = createdRow.id;
+      if (!id) return;
+
+      const patchAttempts = [
+        { name, start_value: start },
+        { name, start_balance: start },
+        { name, start: start },
+        { name, starting_balance: start },
+        { name, initial_balance: start },
+        { name, start_amount: start },
+        { name, hunt_start: start },
+        { hunt_name: name, start_value: start },
+        { hunt_name: name, start_balance: start },
+        { hunt_name: name, start: start },
+        { title: name, start_value: start },
+        { title: name, start_balance: start },
+        { title: name, start: start },
+        { hunt_title: name, start_value: start },
+        { hunt_title: name, start_balance: start },
+        { label: name, start_value: start },
+        { label: name, start_balance: start },
+        { nome: name, valor_inicial: start },
+        { nome: name, start: start },
+        { display_name: name, opening_balance: start },
+        { bonus_hunt_name: name, bankroll_start: start },
+        { name },
+        { hunt_name: name },
+        { title: name },
+        { hunt_title: name },
+        { label: name },
+        { nome: name },
+        { start_value: start },
+        { start_balance: start },
+        { start: start },
+        { starting_balance: start },
+        { initial_balance: start },
+        { opening_balance: start },
+        { bankroll_start: start },
+        { valor_inicial: start }
+      ];
+
+      for (const patch of patchAttempts) {
+        try {
+          await patchHunt(id, patch);
+        } catch (_) {}
+      }
+    }
+
+    async function createHunt() {
+      const name = huntNameInput.value.trim();
+      const start = Number(huntStartInput.value || 0);
+
+      if (!name) throw new Error("Escreve um nome para a hunt.");
+
+      const created = await createMinimalHunt();
+      await enrichCreatedHunt(created, name, start);
+      return created;
     }
 
     async function activateHunt(id) {
@@ -574,7 +652,8 @@
             { active: false, status: "inactive" },
             { is_active: false },
             { active: false },
-            { status: "inactive" }
+            { status: "inactive" },
+            { open: false }
           ];
 
           for (const patch of offAttempts) {
@@ -593,7 +672,8 @@
         { active: true, status: "active" },
         { is_active: true },
         { active: true },
-        { status: "active" }
+        { status: "active" },
+        { open: true }
       ];
 
       let lastError = null;
@@ -617,7 +697,8 @@
         { status: "closed", active: false },
         { is_closed: true, is_active: false },
         { closed: true, active: false },
-        { status: "closed" }
+        { status: "closed" },
+        { open: false }
       ];
 
       let lastError = null;
@@ -633,9 +714,6 @@
       throw lastError || new Error("Não foi possível fechar a hunt.");
     }
 
-    // =========================================================
-    // RENDER
-    // =========================================================
     function renderHunts(rows) {
       huntCount.textContent = `${rows.length} hunt${rows.length === 1 ? "" : "s"}`;
 
@@ -673,9 +751,23 @@
       }).join("");
     }
 
-    // =========================================================
-    // LOAD
-    // =========================================================
+    function showDebug(rows) {
+      if (!rows.length) {
+        setDebug("Debug: sem hunts para analisar.");
+        return;
+      }
+
+      const row = rows[0];
+      const keys = Object.keys(row).sort();
+
+      setDebug(
+        "Primeira hunt recebida do Supabase:\n\n" +
+        JSON.stringify(row, null, 2) +
+        "\n\nChaves detetadas:\n" +
+        keys.join(", ")
+      );
+    }
+
     async function loadHunts() {
       huntsTableBody.innerHTML = `
         <tr>
@@ -685,7 +777,9 @@
 
       try {
         const hunts = await listHunts();
-        renderHunts(Array.isArray(hunts) ? hunts : []);
+        const rows = Array.isArray(hunts) ? hunts : [];
+        renderHunts(rows);
+        showDebug(rows);
         setStatus("Lista de hunts carregada com sucesso.", "ok");
       } catch (err) {
         console.error(err);
@@ -697,12 +791,10 @@
           </tr>
         `;
         setStatus(`Erro ao carregar hunts: ${err.message || err}`, "err");
+        setDebug(`Erro debug:\n${err.message || err}`);
       }
     }
 
-    // =========================================================
-    // ACTIONS
-    // =========================================================
     async function onCreateHunt() {
       createHuntBtn.disabled = true;
 
@@ -737,7 +829,7 @@
       try {
         setStatus(`A fechar hunt #${id}...`);
         await closeHunt(id);
-        setStatus(`Erro ao fechar hunt #${id}: ${err.message || err}`, "err");
+        setStatus(`Hunt #${id} fechada com sucesso.`, "ok");
         await loadHunts();
       } catch (err) {
         console.error(err);
