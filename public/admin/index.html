@@ -353,6 +353,15 @@
       statusEl.textContent = message || "";
     }
 
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
     function getStatusBadge(hunt) {
       if (hunt.is_active) return `<span class="badge badge-active">ATIVA</span>`;
       if (hunt.is_closed) return `<span class="badge badge-closed">FECHADA</span>`;
@@ -428,7 +437,7 @@
       return response.json();
     }
 
-    function renderBonusTable(bonuses, huntId) {
+    function renderBonusTable(bonuses) {
       if (!bonuses.length) {
         return `<div class="empty-bonuses">Sem bónus nesta hunt.</div>`;
       }
@@ -546,7 +555,7 @@
 
                 <div class="bonus-block">
                   <div class="bonus-title">Bónus da Hunt</div>
-                  ${renderBonusTable(bonuses, hunt.id)}
+                  ${renderBonusTable(bonuses)}
                 </div>
               </div>
             `;
