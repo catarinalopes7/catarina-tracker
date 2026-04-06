@@ -368,6 +368,11 @@
           const statusClasse = status === "ativa" ? "status-ativa" : "status-inativa";
           const statusTexto = status === "ativa" ? "Ativa" : "Inativa";
 
+          let botaoStatus = `<button onclick="ativarHuntUI(${h.id})">▶️ Ativar</button>`;
+          if (status === "ativa") {
+            botaoStatus = `<button onclick="fecharHuntUI(${h.id})">⏹️ Fechar</button>`;
+          }
+
           tr.innerHTML = `
             <td>${escapeHtml(h.nome)}</td>
             <td><span class="status-badge ${statusClasse}">${statusTexto}</span></td>
@@ -376,11 +381,7 @@
             <td>${lucro}</td>
             <td class="actions">
               <button onclick="verBonus(${h.id})">🔍 Abrir</button>
-              ${
-                status === "ativa"
-                  ? `<button onclick="fecharHuntUI(${h.id})">⏹️ Fechar</button>`
-                  : `<button onclick="ativarHuntUI(${h.id})">▶️ Ativar</button>`
-              }
+              ${botaoStatus}
               <button onclick="editarHunt(${h.id}, ${JSON.stringify(h.nome)}, ${Number(h.start_balance || 0)})">✏️</button>
               <button onclick="apagarHuntUI(${h.id})">🗑️</button>
             </td>
@@ -410,8 +411,7 @@
     }
 
     async function fecharHuntUI(id) {
-      const confirmar = confirm("Fechar esta caçada ativa?");
-      if (!confirmar) return;
+      if (!confirm("Fechar esta caçada ativa?")) return;
 
       const ok = await fecharHunt(id);
 
@@ -433,11 +433,10 @@
       if (isNaN(saldo)) return;
 
       const ok = await gravarHunt({
-        nome,
+        nome: nome,
         start_balance: saldo,
         total_pago: 0,
-        profit_loss: 0,
-        status: "inativa"
+        profit_loss: 0
       });
 
       if (!ok) {
