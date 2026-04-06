@@ -721,14 +721,15 @@
       return totalX / opened.length;
     }
 
-    function getBeInicial(bonuses) {
-      const totalCost = getTotalCost(bonuses);
-      if (totalCost <= 0) return 0;
-      return (getTotalPaid(bonuses) / totalCost) * 100;
+    function getBeInicial(hunt, bonuses) {
+      const startValue = safeNumber(hunt?.start_value);
+      if (startValue <= 0) return 0;
+      return (getTotalPaid(bonuses) / startValue) * 100;
     }
 
-    function getProfitLoss(bonuses) {
-      return getTotalPaid(bonuses) - getTotalCost(bonuses);
+    function getProfitLoss(hunt, bonuses) {
+      const startValue = safeNumber(hunt?.start_value);
+      return getTotalPaid(bonuses) - startValue;
     }
 
     function getBestBonus(bonuses) {
@@ -753,14 +754,14 @@
     }
 
     function updateTop(hunt, bonuses) {
+      const totalBonus = bonuses.length;
+      const openedCount = getOpenedCount(bonuses);
+      const startValue = safeNumber(hunt?.start_value);
+
       document.getElementById("huntTitle").textContent =
         hunt?.name || hunt?.title || "Sem hunt ativa";
 
-      const totalBonus = bonuses.length;
-      const openedCount = getOpenedCount(bonuses);
-      const totalCost = getTotalCost(bonuses);
-
-      document.getElementById("startValue").textContent = euro(totalCost);
+      document.getElementById("startValue").textContent = euro(startValue);
       document.getElementById("totalBonus").textContent = totalBonus;
       document.getElementById("openCount").textContent = `${openedCount}/${totalBonus}`;
 
@@ -768,10 +769,10 @@
       document.getElementById("progressFill").style.width = `${pct}%`;
     }
 
-    function updateMainCards(bonuses) {
+    function updateMainCards(hunt, bonuses) {
       const avg = getAvgX(bonuses);
-      const beInicial = getBeInicial(bonuses);
-      const profitLoss = getProfitLoss(bonuses);
+      const beInicial = getBeInicial(hunt, bonuses);
+      const profitLoss = getProfitLoss(hunt, bonuses);
       const totalPago = getTotalPaid(bonuses);
 
       document.getElementById("avgX").textContent = xValue(avg);
@@ -892,15 +893,12 @@
           document.getElementById("profitLoss").textContent = "0.00€";
           document.getElementById("profitLoss").classList.remove("green", "red");
           document.getElementById("totalPago").textContent = "0.00€";
-
           document.getElementById("bestName").textContent = "-";
           document.getElementById("bestX").textContent = "0.00x";
           document.getElementById("bestValue").textContent = "0.00€";
-
           document.getElementById("worstName").textContent = "-";
           document.getElementById("worstX").textContent = "0.00x";
           document.getElementById("worstValue").textContent = "0.00€";
-
           renderBonuses([]);
           return;
         }
@@ -908,7 +906,7 @@
         const bonuses = await fetchBonuses(hunt.id);
 
         updateTop(hunt, bonuses);
-        updateMainCards(bonuses);
+        updateMainCards(hunt, bonuses);
         updateBestWorst(bonuses);
         renderBonuses(bonuses);
       } catch (error) {
