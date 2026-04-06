@@ -14,7 +14,9 @@ function supabaseHeaders() {
 }
 
 function safeNumber(value) {
-  const n = Number(value);
+  if (value === null || value === undefined) return 0;
+  const normalized = String(value).replace(",", ".").trim();
+  const n = Number(normalized);
   return Number.isFinite(n) ? n : 0;
 }
 
@@ -138,10 +140,6 @@ async function getBonusesByHunt(huntId) {
 
 function getPayout(bonus) {
   return safeNumber(bonus.payout ?? bonus.win_amount ?? 0);
-}
-
-function getBet(bonus) {
-  return safeNumber(bonus.bet ?? 0);
 }
 
 function getTotalPaid(bonuses) {
