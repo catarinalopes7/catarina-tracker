@@ -131,24 +131,14 @@
       margin-bottom: 20px;
     }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
     .grid-4 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
     }
 
-    .full {
-      grid-column: 1 / -1;
-    }
-
     @media (max-width: 800px) {
-      .grid-2, .grid-4 {
+      .grid-4 {
         grid-template-columns: 1fr;
       }
     }
@@ -439,8 +429,11 @@
         `;
 
         dados.forEach((b) => {
-          const slot = todasSlots.find((s) => Number(s.id) === Number(b.slot_id)) ||
-                       todasSlots.find((s) => s.nome === b.nome) || {};
+          const slot =
+            todasSlots.find((s) => Number(s.id) === Number(b.slot_id)) ||
+            todasSlots.find((s) => s.nome === b.nome) ||
+            {};
+
           html += `
             <tr>
               <td>${escapeHtml(b.nome)}</td>
@@ -497,7 +490,9 @@
       }
 
       if (termo) {
-        slots = slots.filter((s) => String(s.nome || "").toLowerCase().includes(termo));
+        slots = slots.filter((s) =>
+          String(s.nome || "").toLowerCase().includes(termo)
+        );
       }
 
       const results = document.getElementById("slotResults");
