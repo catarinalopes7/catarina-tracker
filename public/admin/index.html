@@ -376,7 +376,11 @@
             <td>${lucro}</td>
             <td class="actions">
               <button onclick="verBonus(${h.id})">🔍 Abrir</button>
-              <button onclick="ativarHuntUI(${h.id})">${status === "ativa" ? "✅ Ativa" : "▶️ Ativar"}</button>
+              ${
+                status === "ativa"
+                  ? `<button onclick="fecharHuntUI(${h.id})">⏹️ Fechar</button>`
+                  : `<button onclick="ativarHuntUI(${h.id})">▶️ Ativar</button>`
+              }
               <button onclick="editarHunt(${h.id}, ${JSON.stringify(h.nome)}, ${Number(h.start_balance || 0)})">✏️</button>
               <button onclick="apagarHuntUI(${h.id})">🗑️</button>
             </td>
@@ -403,6 +407,22 @@
       }
 
       alert("Caçada ativada com sucesso.");
+    }
+
+    async function fecharHuntUI(id) {
+      const confirmar = confirm("Fechar esta caçada ativa?");
+      if (!confirmar) return;
+
+      const ok = await fecharHunt(id);
+
+      if (!ok) {
+        alert("Erro ao fechar a caçada.");
+        return;
+      }
+
+      await carregarHunts();
+
+      alert("Caçada fechada com sucesso.");
     }
 
     async function menuNova() {
