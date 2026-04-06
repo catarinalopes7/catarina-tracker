@@ -64,13 +64,30 @@ async function getAllHunts() {
   return await apiFetch(url);
 }
 
+async function setAllHuntsInactive() {
+  const url =
+    `${SUPABASE_URL}/rest/v1/${HUNTS_TABLE}` +
+    `?is_active=eq.true`;
+
+  await apiFetch(url, {
+    method: "PATCH",
+    body: JSON.stringify({ is_active: false })
+  });
+}
+
 async function createHunt({ nome, startValue }) {
+  const parsedStart = safeNumber(startValue);
+
+  await setAllHuntsInactive();
+
   const body = [
     {
       nome: String(nome || "").trim(),
-      start_value: safeNumber(startValue),
-      is_active: false,
-      is_closed: false
+      start_value: parsedStart,
+      start_balance: parsedStart,
+      is_active: true,
+      is_closed: false,
+      status: "active"
     }
   ];
 
@@ -81,17 +98,6 @@ async function createHunt({ nome, startValue }) {
   });
 
   return data[0];
-}
-
-async function setAllHuntsInactive() {
-  const url =
-    `${SUPABASE_URL}/rest/v1/${HUNTS_TABLE}` +
-    `?is_active=eq.true`;
-
-  await apiFetch(url, {
-    method: "PATCH",
-    body: JSON.stringify({ is_active: false })
-  });
 }
 
 async function activateHunt(huntId) {
@@ -105,7 +111,8 @@ async function activateHunt(huntId) {
     method: "PATCH",
     body: JSON.stringify({
       is_active: true,
-      is_closed: false
+      is_closed: false,
+      status: "active"
     })
   });
 
@@ -121,7 +128,8 @@ async function closeHunt(huntId) {
     method: "PATCH",
     body: JSON.stringify({
       is_active: false,
-      is_closed: true
+      is_closed: true,
+      status: "closed"
     })
   });
 
@@ -146,6 +154,10 @@ function getTotalPaid(bonuses) {
   return bonuses.reduce((sum, b) => sum + getPayout(b), 0);
 }
 
+function getStartFromHunt(hunt) {
+  return safeNumber(hunt?.start_value ?? hunt?.start_balance ?? 0);
+}
+
 function getProfitLossFromStart(hunt, bonuses) {
-  return getTotalPaid(bonuses) - safeNumber(hunt?.start_value);
+  return getTotalPaid(bonuses) - getStartFromHunt(hunt);
 }
