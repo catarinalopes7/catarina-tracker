@@ -70,18 +70,26 @@ body{
 const SUPABASE_URL="https://cwengomkuhqvrdcpkgwp.supabase.co";
 const SUPABASE_KEY="sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
-function safeNumber(value){
-  const n = Number(value);
-  return Number.isFinite(n) ? n : 0;
+// 🔥 parse seguro MESMO
+function parseMoney(value){
+  if(value === null || value === undefined) return 0;
+
+  let str = String(value).trim();
+
+  // troca vírgula por ponto (ex: 2000,50)
+  str = str.replace(",", ".");
+
+  const num = parseFloat(str);
+  return isNaN(num) ? 0 : num;
 }
 
 // 🔥 FIX DEFINITIVO DO START
 function getStartFromHunt(hunt){
-  const startValue = safeNumber(hunt?.start_value);
-  const startBalance = safeNumber(hunt?.start_balance);
+  const startValue = parseMoney(hunt?.start_value);
+  const startBalance = parseMoney(hunt?.start_balance);
 
-  if (startValue > 0) return startValue;
-  if (startBalance > 0) return startBalance;
+  if(startValue > 0) return startValue;
+  if(startBalance > 0) return startBalance;
 
   return 0;
 }
@@ -126,10 +134,10 @@ async function load(){
 
     document.getElementById("total").innerText = bonuses.length;
 
-    let opened = bonuses.filter(b => Number(b.payout || 0) > 0);
+    let opened = bonuses.filter(b => parseMoney(b.payout) > 0);
     document.getElementById("open").innerText = opened.length + "/" + bonuses.length;
 
-    let totalPaid = bonuses.reduce((s,b)=>s + Number(b.payout || 0),0);
+    let totalPaid = bonuses.reduce((s,b)=>s + parseMoney(b.payout),0);
     document.getElementById("paid").innerText = totalPaid.toFixed(2)+"€";
 
     let profit = totalPaid - startValue;
@@ -137,7 +145,7 @@ async function load(){
 
     let avg = 0;
     if(opened.length){
-      avg = opened.reduce((s,b)=>s + (Number(b.payout || 0) / (Number(b.bet || 1))),0) / opened.length;
+      avg = opened.reduce((s,b)=>s + (parseMoney(b.payout) / (parseMoney(b.bet) || 1)),0) / opened.length;
     }
 
     document.getElementById("avg").innerText = avg.toFixed(2)+"x";
