@@ -105,6 +105,53 @@
       line-height: 1;
     }
 
+    .moneyStats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .moneyBox {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 24px;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.14);
+      min-height: 122px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .moneyLabel {
+      font-size: 20px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .moneyValue {
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1.05;
+      word-break: break-word;
+    }
+
+    .moneyValue.positive {
+      color: #A5D6A7;
+      text-shadow: 0 0 18px rgba(165,214,167,0.14);
+    }
+
+    .moneyValue.negative {
+      color: #FFAB91;
+      text-shadow: 0 0 18px rgba(255,171,145,0.14);
+    }
+
+    .moneyValue.neutral {
+      color: #fff;
+    }
+
     #bonusPanel {
       flex: 1;
       min-height: 0;
@@ -369,6 +416,21 @@
       </div>
     </div>
 
+    <div class="moneyStats">
+      <div class="moneyBox">
+        <div class="moneyLabel">Total Pago</div>
+        <div class="moneyValue neutral" id="moneyTotalPago">0.00</div>
+      </div>
+      <div class="moneyBox">
+        <div class="moneyLabel">Average X</div>
+        <div class="moneyValue neutral" id="moneyAverageX">0.00x</div>
+      </div>
+      <div class="moneyBox">
+        <div class="moneyLabel">Profit / Loss</div>
+        <div class="moneyValue neutral" id="moneyProfitLoss">0.00</div>
+      </div>
+    </div>
+
     <div id="bonusPanel">
       <div id="bonusHeader">Bónus</div>
       <div id="bonusViewport">
@@ -396,6 +458,9 @@
         statTotal: document.getElementById("statTotal"),
         statDone: document.getElementById("statDone"),
         statPending: document.getElementById("statPending"),
+        moneyTotalPago: document.getElementById("moneyTotalPago"),
+        moneyAverageX: document.getElementById("moneyAverageX"),
+        moneyProfitLoss: document.getElementById("moneyProfitLoss"),
         bonusTrack: document.getElementById("bonusTrack"),
         bonusViewport: document.getElementById("bonusViewport"),
         debugBox: document.getElementById("debugBox")
@@ -489,6 +554,33 @@
         return parts.join(" • ");
       }
 
+      function ctFormatNumber(value, decimals = 2) {
+        const num = Number(value || 0);
+        return num.toFixed(decimals);
+      }
+
+      function ctSetMoneyValue(el, value, suffix = "") {
+        const num = Number(value || 0);
+
+        el.classList.remove("positive", "negative", "neutral");
+
+        if (num > 0) {
+          el.classList.add("positive");
+        } else if (num < 0) {
+          el.classList.add("negative");
+        } else {
+          el.classList.add("neutral");
+        }
+
+        el.textContent = `${ctFormatNumber(num)}${suffix}`;
+      }
+
+      function ctSetNeutralValue(el, value, suffix = "") {
+        el.classList.remove("positive", "negative", "neutral");
+        el.classList.add("neutral");
+        el.textContent = `${ctFormatNumber(value)}${suffix}`;
+      }
+
       function ctStopAutoScroll() {
         if (ctScrollRaf) {
           cancelAnimationFrame(ctScrollRaf);
@@ -534,6 +626,9 @@
         CT_ELS.statTotal.textContent = "0";
         CT_ELS.statDone.textContent = "0";
         CT_ELS.statPending.textContent = "0";
+        ctSetNeutralValue(CT_ELS.moneyTotalPago, 0);
+        ctSetNeutralValue(CT_ELS.moneyAverageX, 0, "x");
+        ctSetMoneyValue(CT_ELS.moneyProfitLoss, 0);
         CT_ELS.bonusTrack.innerHTML = `<div class="emptyState">${ctEscapeHtml(message)}</div>`;
       }
 
@@ -615,6 +710,9 @@
           huntId: hunt?.id ?? null,
           huntName: hunt?.name ?? "",
           huntStatus: hunt?.status ?? "",
+          total_pago: hunt?.total_pago ?? 0,
+          average_x: hunt?.average_x ?? 0,
+          profit_loss: hunt?.profit_loss ?? 0,
           bonuses: bonuses.map(b => ({
             id: b.id ?? null,
             name: ctGetBonusName(b),
@@ -640,6 +738,10 @@
         CT_ELS.statTotal.textContent = String(total);
         CT_ELS.statDone.textContent = String(done);
         CT_ELS.statPending.textContent = String(pending);
+
+        ctSetNeutralValue(CT_ELS.moneyTotalPago, hunt.total_pago ?? 0);
+        ctSetNeutralValue(CT_ELS.moneyAverageX, hunt.average_x ?? 0, "x");
+        ctSetMoneyValue(CT_ELS.moneyProfitLoss, hunt.profit_loss ?? 0);
 
         if (!bonuses.length) {
           ctStopAutoScroll();
