@@ -126,12 +126,7 @@
       font-weight: 700;
     }
 
-    .épico {
-      color: #FF5C5C;
-      font-weight: 700;
-    }
-
-    .epico {
+    .épico, .epico {
       color: #FF5C5C;
       font-weight: 700;
     }
@@ -199,15 +194,45 @@
           return;
         }
         todasSlots = await resp.json();
+        console.log("Slots carregadas:", todasSlots);
       } catch (erro) {
         console.error("Erro de ligação ao carregar slots:", erro);
         todasSlots = [];
       }
     }
 
-    function obterSlot(nomeSlot) {
-      return todasSlots.find((s) => s.nome === nomeSlot) || {
-        nome: nomeSlot,
+    function obterImagemSlot(slot) {
+      return (
+        slot?.imagem_url ||
+        slot?.imagem ||
+        slot?.image_url ||
+        slot?.image ||
+        PLACEHOLDER_80
+      );
+    }
+
+    function obterSlotPorBonus(bonus) {
+      let slot = null;
+
+      if (bonus.slot_id) {
+        slot = todasSlots.find((s) => Number(s.id) === Number(bonus.slot_id));
+      }
+
+      if (!slot && bonus.nome) {
+        slot = todasSlots.find(
+          (s) => String(s.nome || "").trim().toLowerCase() === String(bonus.nome || "").trim().toLowerCase()
+        );
+      }
+
+      if (!slot && bonus.nome) {
+        slot = todasSlots.find(
+          (s) => String(s.nome || "").toLowerCase().includes(String(bonus.nome || "").toLowerCase()) ||
+                 String(bonus.nome || "").toLowerCase().includes(String(s.nome || "").toLowerCase())
+        );
+      }
+
+      return slot || {
+        nome: bonus.nome || "Slot",
         provider: "N/A",
         imagem_url: PLACEHOLDER_80
       };
@@ -241,7 +266,7 @@
         const lucro = numero(atual.profit_loss);
         const corLucro = lucro >= 0 ? "lawngreen" : "#FF5C5C";
 
-        const breakevenX = start > 0 ? start / (pago || 1) : 0;
+        const breakevenX = pago > 0 ? start / pago : start;
         const averageX = start > 0 ? pago / start : 0;
 
         document.getElementById("stats").innerHTML = `
@@ -287,8 +312,14 @@
         lista.innerHTML = "";
 
         for (const b of [...bonus].reverse()) {
-          const slot = obterSlot(b.nome);
-          const imagem = slot.imagem_url || PLACEHOLDER_60;
+          const slot = obterSlotPorBonus(b);
+          const imagem = (
+            slot?.imagem_url ||
+            slot?.imagem ||
+            slot?.image_url ||
+            slot?.image ||
+            PLACEHOLDER_60
+          );
           const tipoClass = getTipoClass(b.tipo);
 
           const div = document.createElement("div");
@@ -327,9 +358,9 @@
         return;
       }
 
-      const slot = mostrandoMelhor ? melhorSlot : piorSlot;
+      const slotBonus = mostrandoMelhor ? melhorSlot : piorSlot;
 
-      if (!slot) {
+      if (!slotBonus) {
         slideDiv.className = "slot-card";
         slideDiv.innerHTML = "<span style='color:#888;'>Sem dados suficientes</span>";
         mostrandoMelhor = !mostrandoMelhor;
@@ -340,24 +371,24 @@
       const label = mostrandoMelhor ? "Melhor" : "Pior";
       const classe = mostrandoMelhor ? "best" : "worst";
 
-      const slotInfo = obterSlot(slot.nome);
-      const imagem = slotInfo.imagem_url || PLACEHOLDER_80;
-      const mult = numero(slot.aposta) > 0 ? numero(slot.payout) / numero(slot.aposta) : 0;
-      const tipoClass = getTipoClass(slot.tipo);
+      const slotInfo = obterSlotPorBonus(slotBonus);
+      const imagem = obterImagemSlot(slotInfo);
+      const mult = numero(slotBonus.aposta) > 0 ? numero(slotBonus.payout) / numero(slotBonus.aposta) : 0;
+      const tipoClass = getTipoClass(slotBonus.tipo);
 
       slideDiv.className = `slot-card ${classe}`;
       slideDiv.innerHTML = `
         <div class="slot-img">
           <img
             src="${imagem}"
-            alt="${slot.nome}"
+            alt="${slotBonus.nome}"
             onerror="this.src='${PLACEHOLDER_80}'"
           >
         </div>
         <div class="slot-info">
           ${emoji} ${label} Slot<br>
-          <b>${slot.nome}</b> <span class="${tipoClass}">${slot.tipo || ""}</span><br>
-          Bet: ${numero(slot.aposta).toFixed(2)}€ | Mult: ${mult.toFixed(2)}×<br>
+          <b>${slotBonus.nome}</b> <span class="${tipoClass}">${slotBonus.tipo || ""}</span><br>
+          Bet: ${numero(slotBonus.aposta).toFixed(2)}€ | Mult: ${mult.toFixed(2)}×<br>
           <small style="color:#BBB;">${slotInfo.provider || "N/A"}</small>
         </div>
       `;
