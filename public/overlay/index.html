@@ -303,12 +303,185 @@
       border: 1px solid rgba(223, 133, 164, 0.22);
     }
 
-    .open-line {
-      text-align: right;
-      margin-top: 10px;
+    .progress-wrap {
+      margin-top: 14px;
+    }
+
+    .progress-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 12px;
+    }
+
+    .progress-label {
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.84);
+      letter-spacing: 0.4px;
+    }
+
+    .progress-count {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 16px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(11, 7, 34, 0.42);
+      box-shadow:
+        inset 0 2px 6px rgba(0,0,0,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #a574ff 0%, #6fceff 100%);
+      box-shadow: 0 0 16px rgba(129, 194, 255, 0.22);
+      transition: width 0.35s ease;
+    }
+
+    .bestworst-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .mini-card {
+      background: linear-gradient(180deg, rgba(58, 40, 128, 0.92), rgba(36, 24, 85, 0.96));
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 8px 20px rgba(0,0,0,0.18);
+      min-height: 128px;
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+      overflow: hidden;
+    }
+
+    .mini-card.best {
+      border: 1px solid rgba(117, 224, 165, 0.20);
+    }
+
+    .mini-card.worst {
+      border: 1px solid rgba(236, 132, 156, 0.20);
+    }
+
+    .mini-thumb {
+      width: 108px;
+      min-width: 108px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.05);
+      align-self: stretch;
+    }
+
+    .mini-thumb img,
+    .mini-thumb .mini-placeholder {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .mini-placeholder {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 8px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .mini-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .mini-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .mini-label {
+      font-size: 16px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .mini-card.best .mini-label {
+      color: #9ff2bd;
+    }
+
+    .mini-card.worst .mini-label {
+      color: #ffb2c4;
+    }
+
+    .mini-badge {
+      font-size: 13px;
+      font-weight: 900;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.85);
+      white-space: nowrap;
+    }
+
+    .mini-name {
       font-size: 18px;
       font-weight: 900;
-      color: rgba(255,255,255,0.92);
+      color: #ffffff;
+      line-height: 1.05;
+      text-transform: uppercase;
+      word-break: break-word;
+    }
+
+    .mini-stats {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .mini-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .mini-stat-label {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .mini-stat-value {
+      font-size: 18px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
     }
 
     .slots-section {
@@ -491,8 +664,71 @@
             </div>
           </div>
 
-          <div class="open-line">
-            <span id="open">0/0</span>
+          <div class="progress-wrap">
+            <div class="progress-head">
+              <div class="progress-label">Opening Progress</div>
+              <div id="open" class="progress-count">0/0</div>
+            </div>
+
+            <div class="progress-track">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
+          </div>
+
+          <div class="bestworst-grid">
+            <div class="mini-card best" id="bestCard">
+              <div class="mini-thumb" id="bestThumb">
+                <div class="mini-placeholder">Sem abertura</div>
+              </div>
+
+              <div class="mini-content">
+                <div class="mini-topline">
+                  <div class="mini-label">Best Slot</div>
+                  <div class="mini-badge" id="bestRank">--</div>
+                </div>
+
+                <div class="mini-name" id="bestName">À espera</div>
+
+                <div class="mini-stats">
+                  <div class="mini-stat">
+                    <div class="mini-stat-label">Win</div>
+                    <div class="mini-stat-value" id="bestWin">$0.00</div>
+                  </div>
+
+                  <div class="mini-stat">
+                    <div class="mini-stat-label">Multi</div>
+                    <div class="mini-stat-value" id="bestMulti">0.00x</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mini-card worst" id="worstCard">
+              <div class="mini-thumb" id="worstThumb">
+                <div class="mini-placeholder">Sem abertura</div>
+              </div>
+
+              <div class="mini-content">
+                <div class="mini-topline">
+                  <div class="mini-label">Worst Slot</div>
+                  <div class="mini-badge" id="worstRank">--</div>
+                </div>
+
+                <div class="mini-name" id="worstName">À espera</div>
+
+                <div class="mini-stats">
+                  <div class="mini-stat">
+                    <div class="mini-stat-label">Win</div>
+                    <div class="mini-stat-value" id="worstWin">$0.00</div>
+                  </div>
+
+                  <div class="mini-stat">
+                    <div class="mini-stat-label">Multi</div>
+                    <div class="mini-stat-value" id="worstMulti">0.00x</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -571,6 +807,48 @@
       );
     }
 
+    function getBonusName(bonus) {
+      return bonus?.nome || bonus?.name || bonus?.slot_name || "Sem nome";
+    }
+
+    function getBonusMulti(bonus) {
+      const bet = parseMoney(bonus?.bet);
+      const payout = parseMoney(bonus?.payout);
+      if (bet <= 0) return 0;
+      return payout / bet;
+    }
+
+    function renderMiniCard(prefix, bonus, index) {
+      const thumb = document.getElementById(prefix + "Thumb");
+      const rank = document.getElementById(prefix + "Rank");
+      const name = document.getElementById(prefix + "Name");
+      const win = document.getElementById(prefix + "Win");
+      const multi = document.getElementById(prefix + "Multi");
+
+      if (!bonus) {
+        thumb.innerHTML = `<div class="mini-placeholder">Sem abertura</div>`;
+        rank.innerText = "--";
+        name.innerText = "À espera";
+        win.innerText = "$0.00";
+        multi.innerText = "0.00x";
+        return;
+      }
+
+      const img = getImageFromBonus(bonus);
+      const bonusName = getBonusName(bonus);
+      const payout = parseMoney(bonus.payout);
+      const multiValue = getBonusMulti(bonus);
+
+      thumb.innerHTML = img
+        ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(bonusName)}" />`
+        : `<div class="mini-placeholder">Sem imagem</div>`;
+
+      rank.innerText = "#" + (index + 1);
+      name.innerText = bonusName;
+      win.innerText = formatCurrency(payout);
+      multi.innerText = formatMultiplier(multiValue);
+    }
+
     function renderSlots(bonuses) {
       const list = document.getElementById("slotsList");
 
@@ -580,7 +858,7 @@
       }
 
       list.innerHTML = bonuses.map((bonus, index) => {
-        const name = bonus.nome || bonus.name || bonus.slot_name || "Sem nome";
+        const name = getBonusName(bonus);
         const bet = parseMoney(bonus.bet);
         const img = getImageFromBonus(bonus);
 
@@ -606,6 +884,22 @@
       }).join("");
     }
 
+    function resetOverlayNoHunt(message = "Sem hunt ativa") {
+      document.getElementById("huntLabel").innerText = "BONUS HUNT";
+      document.getElementById("huntSub").innerText = message;
+      document.getElementById("huntId").innerText = "#000";
+      document.getElementById("start").innerText = "$0.00";
+      document.getElementById("be").innerText = "0.00x";
+      document.getElementById("total").innerText = "0";
+      document.getElementById("superCount").innerText = "0";
+      document.getElementById("epicCount").innerText = "0";
+      document.getElementById("open").innerText = "0/0";
+      document.getElementById("progressFill").style.width = "0%";
+      renderMiniCard("best", null, -1);
+      renderMiniCard("worst", null, -1);
+      document.getElementById("slotsList").innerHTML = `<div class="empty-state">${message}</div>`;
+    }
+
     async function load() {
       try {
         const huntRes = await fetch(
@@ -622,16 +916,7 @@
         const hunt = huntData[0];
 
         if (!hunt) {
-          document.getElementById("huntLabel").innerText = "BONUS HUNT";
-          document.getElementById("huntSub").innerText = "Sem hunt ativa";
-          document.getElementById("huntId").innerText = "#000";
-          document.getElementById("start").innerText = "$0.00";
-          document.getElementById("be").innerText = "0.00x";
-          document.getElementById("total").innerText = "0";
-          document.getElementById("superCount").innerText = "0";
-          document.getElementById("epicCount").innerText = "0";
-          document.getElementById("open").innerText = "0/0";
-          document.getElementById("slotsList").innerHTML = '<div class="empty-state">Sem hunt ativa</div>';
+          resetOverlayNoHunt("Sem hunt ativa");
           return;
         }
 
@@ -655,7 +940,10 @@
         const bonuses = await bonusRes.json();
 
         const total = bonuses.length;
-        const opened = bonuses.filter(b => parseMoney(b.payout) > 0);
+        const opened = bonuses
+          .map((bonus, index) => ({ bonus, index }))
+          .filter(item => parseMoney(item.bonus.payout) > 0);
+
         const totalPaid = bonuses.reduce((sum, b) => sum + parseMoney(b.payout), 0);
 
         let superCount = 0;
@@ -672,20 +960,36 @@
         document.getElementById("epicCount").innerText = epicCount;
         document.getElementById("open").innerText = opened.length + "/" + total;
 
+        const progress = total > 0 ? (opened.length / total) * 100 : 0;
+        document.getElementById("progressFill").style.width = progress + "%";
+
         const breakEvenX = totalPaid > 0 && startValue > 0
           ? startValue / totalPaid
           : 0;
 
         document.getElementById("be").innerText = formatMultiplier(breakEvenX);
 
+        let bestItem = null;
+        let worstItem = null;
+
+        if (opened.length) {
+          bestItem = opened.reduce((best, current) => {
+            return getBonusMulti(current.bonus) > getBonusMulti(best.bonus) ? current : best;
+          });
+
+          worstItem = opened.reduce((worst, current) => {
+            return getBonusMulti(current.bonus) < getBonusMulti(worst.bonus) ? current : worst;
+          });
+        }
+
+        renderMiniCard("best", bestItem?.bonus || null, bestItem?.index ?? -1);
+        renderMiniCard("worst", worstItem?.bonus || null, worstItem?.index ?? -1);
+
         renderSlots(bonuses);
 
       } catch (e) {
         console.log(e);
-        document.getElementById("huntLabel").innerText = "BONUS HUNT";
-        document.getElementById("huntSub").innerText = "Erro overlay";
-        document.getElementById("huntId").innerText = "#000";
-        document.getElementById("slotsList").innerHTML = '<div class="empty-state">Erro ao carregar overlay</div>';
+        resetOverlayNoHunt("Erro overlay");
       }
     }
 
