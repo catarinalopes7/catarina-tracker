@@ -1,167 +1,620 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=1080, height=1920">
-<title>Overlay</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1080, height=1920" />
+  <title>Catarina Tracker Overlay</title>
 
-<style>
-body{
-  width:1080px;height:1920px;margin:0;
-  font-family:Arial;
-  background:#2c1b5a;color:#fff;
-  padding:20px;
-}
-.title{
-  text-align:center;
-  font-size:40px;
-  color:#ffd54a;
-  margin-bottom:20px
-}
-.box{
-  background:#3b2a70;
-  padding:20px;
-  border-radius:15px;
-  text-align:center
-}
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:10px
-}
-.row{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  margin-top:10px
-}
-</style>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 1080px;
+      height: 1920px;
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at top, rgba(88, 146, 255, 0.18), transparent 30%),
+        linear-gradient(180deg, #07162f 0%, #071e44 40%, #04152f 100%);
+    }
+
+    body {
+      padding: 22px;
+    }
+
+    #app {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(11, 42, 89, 0.96) 0%, rgba(7, 28, 61, 0.96) 100%);
+      border: 2px solid rgba(92, 155, 255, 0.22);
+      border-radius: 26px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 16px 40px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 18px 22px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .logo {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 30% 30%, #1ca9ff 0%, #0c62d9 50%, #07378a 100%);
+      box-shadow:
+        inset 0 0 0 3px rgba(255,255,255,0.08),
+        0 8px 18px rgba(0,0,0,0.35);
+      font-size: 30px;
+      font-weight: 900;
+      color: #dff3ff;
+    }
+
+    .hunt-meta {
+      min-width: 0;
+    }
+
+    .hunt-label {
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #f5f9ff;
+      line-height: 1;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 760px;
+    }
+
+    .hunt-sub {
+      margin-top: 6px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #7fc4ff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 760px;
+    }
+
+    .hunt-id {
+      font-size: 36px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 1px;
+      font-style: italic;
+      flex-shrink: 0;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      padding: 0 22px 14px;
+    }
+
+    .stat-card {
+      min-height: 126px;
+      border-radius: 22px;
+      padding: 18px 18px 14px;
+      background:
+        linear-gradient(180deg, rgba(22, 61, 121, 0.96) 0%, rgba(10, 36, 81, 0.96) 100%);
+      border: 1px solid rgba(126, 183, 255, 0.16);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 8px 24px rgba(0,0,0,0.20);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .stat-title {
+      font-size: 24px;
+      line-height: 1;
+      text-transform: uppercase;
+      font-weight: 900;
+      color: #d7e8ff;
+      letter-spacing: 0.6px;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: 48px;
+      line-height: 1;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.28);
+    }
+
+    .bonuses-wrap {
+      padding: 0 22px 14px;
+    }
+
+    .bonuses-bar {
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(14, 47, 98, 0.96) 0%, rgba(8, 30, 67, 0.96) 100%);
+      border: 1px solid rgba(126, 183, 255, 0.16);
+      padding: 14px 16px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 8px 24px rgba(0,0,0,0.20);
+    }
+
+    .bonuses-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    .bonuses-title {
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .bonuses-count {
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      min-width: 205px;
+      height: 54px;
+      padding: 0 18px;
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 900;
+      text-transform: uppercase;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.12),
+        0 6px 18px rgba(0,0,0,0.25);
+    }
+
+    .tag.super {
+      background: linear-gradient(180deg, #ffd84f 0%, #b88d11 100%);
+      color: #fff7d0;
+    }
+
+    .tag.epic {
+      background: linear-gradient(180deg, #ff4747 0%, #b00606 100%);
+      color: #ffe5e5;
+    }
+
+    .open-line {
+      margin-top: 12px;
+      display: flex;
+      justify-content: flex-end;
+      font-size: 26px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .slots-section {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .slots-list {
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-right: 4px;
+    }
+
+    .slot-card {
+      background:
+        linear-gradient(180deg, rgba(12, 46, 96, 0.95) 0%, rgba(7, 27, 61, 0.95) 100%);
+      border: 1px solid rgba(108, 170, 255, 0.14);
+      border-radius: 22px;
+      padding: 14px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 10px 24px rgba(0,0,0,0.26);
+      overflow: hidden;
+    }
+
+    .slot-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+
+    .slot-title {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .slot-name {
+      font-size: 28px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #f4f8ff;
+      line-height: 1.05;
+      font-style: italic;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      word-break: break-word;
+    }
+
+    .slot-bet {
+      margin-top: 4px;
+      font-size: 24px;
+      font-weight: 900;
+      color: #dbe8ff;
+      line-height: 1;
+    }
+
+    .slot-index {
+      font-size: 28px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.78);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .slot-image-wrap {
+      width: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+    }
+
+    .slot-image {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      display: block;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    }
+
+    .slot-placeholder {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    }
+
+    .empty-state {
+      height: 100%;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      background:
+        linear-gradient(180deg, rgba(12, 46, 96, 0.95) 0%, rgba(7, 27, 61, 0.95) 100%);
+      border: 1px solid rgba(108, 170, 255, 0.14);
+      font-size: 38px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.82);
+      text-transform: uppercase;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 10px 24px rgba(0,0,0,0.26);
+    }
+
+    .muted {
+      opacity: 0.55;
+    }
+
+    .footer-space {
+      height: 4px;
+      flex-shrink: 0;
+    }
+  </style>
 </head>
 
 <body>
+  <div id="app">
+    <div class="panel">
+      <div class="header">
+        <div class="header-left">
+          <div class="logo">✦</div>
 
-<div id="title" class="title">A carregar hunt...</div>
+          <div class="hunt-meta">
+            <div id="huntLabel" class="hunt-label">BONUS HUNT</div>
+            <div id="huntSub" class="hunt-sub">A carregar...</div>
+          </div>
+        </div>
 
-<div class="grid">
-  <div class="box">
-    <div>Start</div>
-    <div id="start">0€</div>
+        <div id="huntId" class="hunt-id">#000</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-title">Start</div>
+          <div id="start" class="stat-value">$0.00</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-title">Breakeven</div>
+          <div id="be" class="stat-value">0.00x</div>
+        </div>
+      </div>
+
+      <div class="bonuses-wrap">
+        <div class="bonuses-bar">
+          <div class="bonuses-top">
+            <div class="bonuses-title">Bonuses</div>
+            <div id="total" class="bonuses-count">0</div>
+          </div>
+
+          <div class="tag-row">
+            <div class="tag super">
+              <span>Super</span>
+              <span id="superCount">0</span>
+            </div>
+
+            <div class="tag epic">
+              <span>Epic</span>
+              <span id="epicCount">0</span>
+            </div>
+          </div>
+
+          <div class="open-line">
+            <span id="open">0/0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slots-section">
+      <div id="slotsList" class="slots-list">
+        <div class="empty-state">A carregar slots...</div>
+      </div>
+    </div>
+
+    <div class="footer-space"></div>
   </div>
 
-  <div class="box">
-    <div>Total</div>
-    <div id="total">0</div>
-  </div>
+  <script>
+    const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
-  <div class="box">
-    <div>Open</div>
-    <div id="open">0/0</div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="box"><div>AVG</div><div id="avg">0x</div></div>
-  <div class="box"><div>BE</div><div id="be">0%</div></div>
-  <div class="box"><div>Profit</div><div id="profit">0€</div></div>
-  <div class="box"><div>Pago</div><div id="paid">0€</div></div>
-</div>
-
-<script>
-const SUPABASE_URL="https://cwengomkuhqvrdcpkgwp.supabase.co";
-const SUPABASE_KEY="sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
-
-// 🔥 parse seguro MESMO
-function parseMoney(value){
-  if(value === null || value === undefined) return 0;
-
-  let str = String(value).trim();
-
-  // troca vírgula por ponto (ex: 2000,50)
-  str = str.replace(",", ".");
-
-  const num = parseFloat(str);
-  return isNaN(num) ? 0 : num;
-}
-
-// 🔥 FIX DEFINITIVO DO START
-function getStartFromHunt(hunt){
-  const startValue = parseMoney(hunt?.start_value);
-  const startBalance = parseMoney(hunt?.start_balance);
-
-  if(startValue > 0) return startValue;
-  if(startBalance > 0) return startBalance;
-
-  return 0;
-}
-
-async function load(){
-  try{
-
-    const huntRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/hunts?select=*&is_active=eq.true&order=id.desc&limit=1`,
-      {
-        headers:{
-          apikey:SUPABASE_KEY,
-          Authorization:`Bearer ${SUPABASE_KEY}`
-        }
-      }
-    );
-
-    const huntData = await huntRes.json();
-    const hunt = huntData[0];
-
-    if(!hunt){
-      document.getElementById("title").innerText="Sem hunt ativa";
-      return;
+    function parseMoney(value) {
+      if (value === null || value === undefined) return 0;
+      let str = String(value).trim().replace(",", ".");
+      const num = parseFloat(str);
+      return isNaN(num) ? 0 : num;
     }
 
-    const startValue = getStartFromHunt(hunt);
+    function getStartFromHunt(hunt) {
+      const startValue = parseMoney(hunt?.start_value);
+      const startBalance = parseMoney(hunt?.start_balance);
 
-    document.getElementById("title").innerText = hunt.nome || "Sem nome";
-    document.getElementById("start").innerText = startValue.toFixed(2)+"€";
-
-    const bonusRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/bonus?select=*&hunt_id=eq.${hunt.id}&order=id.asc`,
-      {
-        headers:{
-          apikey:SUPABASE_KEY,
-          Authorization:`Bearer ${SUPABASE_KEY}`
-        }
-      }
-    );
-
-    const bonuses = await bonusRes.json();
-
-    document.getElementById("total").innerText = bonuses.length;
-
-    let opened = bonuses.filter(b => parseMoney(b.payout) > 0);
-    document.getElementById("open").innerText = opened.length + "/" + bonuses.length;
-
-    let totalPaid = bonuses.reduce((s,b)=>s + parseMoney(b.payout),0);
-    document.getElementById("paid").innerText = totalPaid.toFixed(2)+"€";
-
-    let profit = totalPaid - startValue;
-    document.getElementById("profit").innerText = profit.toFixed(2)+"€";
-
-    let avg = 0;
-    if(opened.length){
-      avg = opened.reduce((s,b)=>s + (parseMoney(b.payout) / (parseMoney(b.bet) || 1)),0) / opened.length;
+      if (startValue > 0) return startValue;
+      if (startBalance > 0) return startBalance;
+      return 0;
     }
 
-    document.getElementById("avg").innerText = avg.toFixed(2)+"x";
+    function formatCurrency(value) {
+      return "$" + parseMoney(value).toFixed(2);
+    }
 
-    let be = startValue > 0 ? (totalPaid / startValue) * 100 : 0;
-    document.getElementById("be").innerText = be.toFixed(0)+"%";
+    function formatMultiplier(value) {
+      return parseMoney(value).toFixed(2) + "x";
+    }
 
-  } catch(e){
-    console.log(e);
-    document.getElementById("title").innerText="ERRO OVERLAY";
-  }
-}
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
 
-setInterval(load,2000);
-load();
-</script>
+    function getBonusTypeLabel(bonus) {
+      const raw = String(
+        bonus?.bonus_type ||
+        bonus?.type ||
+        bonus?.categoria ||
+        bonus?.rarity ||
+        ""
+      ).trim().toLowerCase();
 
+      if (raw.includes("super")) return "super";
+      if (raw.includes("epic")) return "epic";
+      if (raw.includes("extreme")) return "epic";
+      return "normal";
+    }
+
+    function getImageFromBonus(bonus) {
+      return (
+        bonus?.image_url ||
+        bonus?.imagem_url ||
+        bonus?.image ||
+        bonus?.thumbnail ||
+        bonus?.thumb ||
+        bonus?.cover ||
+        ""
+      );
+    }
+
+    function renderSlots(bonuses) {
+      const list = document.getElementById("slotsList");
+
+      if (!bonuses.length) {
+        list.innerHTML = '<div class="empty-state">Sem bónus nesta hunt</div>';
+        return;
+      }
+
+      list.innerHTML = bonuses.map((bonus, index) => {
+        const name = bonus.nome || bonus.name || bonus.slot_name || "Sem nome";
+        const bet = parseMoney(bonus.bet);
+        const img = getImageFromBonus(bonus);
+
+        return `
+          <div class="slot-card ${parseMoney(bonus.payout) > 0 ? "muted" : ""}">
+            <div class="slot-top">
+              <div class="slot-title">
+                <div class="slot-name">${escapeHtml(name)}</div>
+                <div class="slot-bet">${formatCurrency(bet)}</div>
+              </div>
+              <div class="slot-index">#${index + 1}</div>
+            </div>
+
+            <div class="slot-image-wrap">
+              ${
+                img
+                  ? `<img class="slot-image" src="${escapeHtml(img)}" alt="${escapeHtml(name)}" />`
+                  : `<div class="slot-placeholder">Sem imagem</div>`
+              }
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function load() {
+      try {
+        const huntRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/hunts?select=*&is_active=eq.true&order=id.desc&limit=1`,
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: `Bearer ${SUPABASE_KEY}`
+            }
+          }
+        );
+
+        const huntData = await huntRes.json();
+        const hunt = huntData[0];
+
+        if (!hunt) {
+          document.getElementById("huntLabel").innerText = "BONUS HUNT";
+          document.getElementById("huntSub").innerText = "Sem hunt ativa";
+          document.getElementById("huntId").innerText = "#000";
+          document.getElementById("start").innerText = "$0.00";
+          document.getElementById("be").innerText = "0.00x";
+          document.getElementById("total").innerText = "0";
+          document.getElementById("superCount").innerText = "0";
+          document.getElementById("epicCount").innerText = "0";
+          document.getElementById("open").innerText = "0/0";
+          document.getElementById("slotsList").innerHTML = '<div class="empty-state">Sem hunt ativa</div>';
+          return;
+        }
+
+        const startValue = getStartFromHunt(hunt);
+
+        document.getElementById("huntLabel").innerText = "BONUS HUNT";
+        document.getElementById("huntSub").innerText = hunt.nome || "Sem nome";
+        document.getElementById("huntId").innerText = "#" + hunt.id;
+        document.getElementById("start").innerText = formatCurrency(startValue);
+
+        const bonusRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/bonus?select=*&hunt_id=eq.${hunt.id}&order=id.asc`,
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: `Bearer ${SUPABASE_KEY}`
+            }
+          }
+        );
+
+        const bonuses = await bonusRes.json();
+
+        const total = bonuses.length;
+        const opened = bonuses.filter(b => parseMoney(b.payout) > 0);
+        const totalPaid = bonuses.reduce((sum, b) => sum + parseMoney(b.payout), 0);
+
+        let superCount = 0;
+        let epicCount = 0;
+
+        for (const bonus of bonuses) {
+          const type = getBonusTypeLabel(bonus);
+          if (type === "super") superCount++;
+          if (type === "epic") epicCount++;
+        }
+
+        document.getElementById("total").innerText = total;
+        document.getElementById("superCount").innerText = superCount;
+        document.getElementById("epicCount").innerText = epicCount;
+        document.getElementById("open").innerText = opened.length + "/" + total;
+
+        const breakEvenX = totalPaid > 0 && startValue > 0
+          ? startValue / totalPaid
+          : 0;
+
+        document.getElementById("be").innerText = formatMultiplier(breakEvenX);
+
+        renderSlots(bonuses);
+
+      } catch (e) {
+        console.log(e);
+        document.getElementById("huntLabel").innerText = "BONUS HUNT";
+        document.getElementById("huntSub").innerText = "Erro overlay";
+        document.getElementById("huntId").innerText = "#000";
+        document.getElementById("slotsList").innerHTML = '<div class="empty-state">Erro ao carregar overlay</div>';
+      }
+    }
+
+    setInterval(load, 2000);
+    load();
+  </script>
 </body>
 </html>
