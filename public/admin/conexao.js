@@ -136,11 +136,17 @@ async function ativarHunt(huntId) {
     const hunts = await listarHunts();
 
     for (const hunt of hunts) {
-      if (String(hunt.id) === String(huntId)) {
-        await atualizarDado("hunts", hunt.id, { status: "ativa" });
-      } else if (hunt.status === "ativa") {
-        await atualizarDado("hunts", hunt.id, { status: "inativa" });
+      const okReset = await atualizarDado("hunts", hunt.id, { status: "inativa" });
+      if (!okReset) {
+        console.error("Erro ao desativar hunt:", hunt.id);
+        return false;
       }
+    }
+
+    const okAtivar = await atualizarDado("hunts", huntId, { status: "ativa" });
+    if (!okAtivar) {
+      console.error("Erro ao ativar hunt:", huntId);
+      return false;
     }
 
     return true;
