@@ -448,22 +448,10 @@
         ctScrollRaf = requestAnimationFrame(ctAutoScrollStep);
       }
 
-      function ctStartAutoScrollIfNeeded() {
+      function ctStartAutoScroll(firstListHeight) {
         ctStopAutoScroll();
 
-        const lists = CT_ELS.bonusTrack.querySelectorAll(".bonusList");
-        if (!lists.length) return;
-
-        const firstList = lists[0];
-        ctFirstListHeight = firstList.offsetHeight;
-
-        const viewportHeight = CT_ELS.bonusViewport.clientHeight;
-
-        if (ctFirstListHeight <= viewportHeight) {
-          CT_ELS.bonusTrack.style.transform = "translateY(0px)";
-          return;
-        }
-
+        ctFirstListHeight = firstListHeight;
         ctIsScrolling = true;
         ctScrollRaf = requestAnimationFrame(ctAutoScrollStep);
       }
@@ -589,10 +577,28 @@
         const highlightedIndex = ctGetHighlightedIndex(bonuses);
         const listHtml = ctRenderBonusListHtml(bonuses, highlightedIndex);
 
-        CT_ELS.bonusTrack.innerHTML = listHtml + listHtml;
+        ctStopAutoScroll();
+        CT_ELS.bonusTrack.innerHTML = listHtml;
 
         requestAnimationFrame(() => {
-          ctStartAutoScrollIfNeeded();
+          const firstList = CT_ELS.bonusTrack.querySelector(".bonusList");
+          if (!firstList) return;
+
+          const firstListHeight = firstList.offsetHeight;
+          const viewportHeight = CT_ELS.bonusViewport.clientHeight;
+
+          if (firstListHeight > viewportHeight) {
+            CT_ELS.bonusTrack.innerHTML = listHtml + listHtml;
+
+            requestAnimationFrame(() => {
+              const realFirstList = CT_ELS.bonusTrack.querySelector(".bonusList");
+              if (!realFirstList) return;
+
+              ctStartAutoScroll(realFirstList.offsetHeight);
+            });
+          } else {
+            CT_ELS.bonusTrack.style.transform = "translateY(0px)";
+          }
         });
       }
 
