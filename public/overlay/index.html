@@ -321,7 +321,7 @@
     async function carregarOverlay() {
       try {
         const huntsResp = await fetch(
-          `${SUPABASE_URL}/rest/v1/hunts?select=*&order=id.desc&limit=1`,
+          `${SUPABASE_URL}/rest/v1/hunts?select=*&status=eq.ativa&limit=1`,
           { headers }
         );
 
@@ -335,7 +335,7 @@
         const atual = hunts[0];
 
         if (!atual) {
-          document.getElementById("stats").innerHTML = "Nenhuma caçada criada ainda.";
+          document.getElementById("stats").innerHTML = "Nenhuma hunt ativa.";
           document.getElementById("bonus-wrap").innerHTML = "";
           document.getElementById("slideshow").innerHTML = "<span style='color:#888;'>Sem dados disponíveis</span>";
           return;
@@ -350,6 +350,7 @@
         const averageX = start > 0 ? pago / start : 0;
 
         document.getElementById("stats").innerHTML = `
+          💰 Hunt Ativa: ${atual.nome}<br>
           💰 Saldo Inicial: ${formatarEuro(start)} |
           💵 Total Pago: ${formatarEuro(pago)} |
           <span style="color:${corLucro};">Lucro/Prejuízo: ${formatarEuro(lucro)}</span><br>
