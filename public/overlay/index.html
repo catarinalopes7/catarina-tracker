@@ -349,6 +349,101 @@
       transition: width 0.35s ease;
     }
 
+    .current-opening {
+      margin-top: 14px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(132, 70, 93, 0.85) 0%, rgba(108, 44, 74, 0.88) 48%, rgba(73, 26, 66, 0.90) 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 10px 24px rgba(0,0,0,0.22);
+      display: none;
+    }
+
+    .current-opening.show {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 14px;
+      padding: 12px;
+    }
+
+    .current-thumb {
+      width: 140px;
+      min-width: 140px;
+      height: 140px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .current-thumb img,
+    .current-thumb .current-placeholder {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .current-placeholder {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px;
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.04);
+    }
+
+    .current-content {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .current-name {
+      font-size: 26px;
+      line-height: 1.02;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #ffffff;
+      word-break: break-word;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.28);
+    }
+
+    .current-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .current-stat {
+      border-radius: 14px;
+      background: rgba(255,255,255,0.10);
+      padding: 12px 10px;
+      text-align: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .current-stat-label {
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.78);
+      margin-bottom: 8px;
+    }
+
+    .current-stat-value {
+      font-size: 28px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+    }
+
     .bestworst-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -507,6 +602,22 @@
         inset 0 1px 0 rgba(255,255,255,0.05),
         0 10px 24px rgba(0,0,0,0.26);
       overflow: hidden;
+      transition: 0.25s ease;
+    }
+
+    .slot-card.opened {
+      opacity: 0.45;
+    }
+
+    .slot-card.current {
+      opacity: 1;
+      border: 2px solid rgba(153, 215, 255, 0.52);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        0 0 0 1px rgba(255,255,255,0.05),
+        0 10px 24px rgba(0,0,0,0.26),
+        0 0 18px rgba(111, 206, 255, 0.20);
+      background: linear-gradient(180deg, #4b368d, #302060);
     }
 
     .slot-top {
@@ -600,10 +711,6 @@
         0 10px 24px rgba(0,0,0,0.26);
     }
 
-    .muted {
-      opacity: 0.55;
-    }
-
     .footer-space {
       height: 4px;
       flex-shrink: 0;
@@ -672,6 +779,33 @@
 
             <div class="progress-track">
               <div id="progressFill" class="progress-fill"></div>
+            </div>
+          </div>
+
+          <div id="currentOpening" class="current-opening">
+            <div class="current-thumb" id="currentThumb">
+              <div class="current-placeholder">Sem imagem</div>
+            </div>
+
+            <div class="current-content">
+              <div id="currentName" class="current-name">À espera de abertura</div>
+
+              <div class="current-stats">
+                <div class="current-stat">
+                  <div class="current-stat-label">Win</div>
+                  <div id="currentWin" class="current-stat-value">$0.00</div>
+                </div>
+
+                <div class="current-stat">
+                  <div class="current-stat-label">Multi</div>
+                  <div id="currentMulti" class="current-stat-value">0.00x</div>
+                </div>
+
+                <div class="current-stat">
+                  <div class="current-stat-label">Bet</div>
+                  <div id="currentBet" class="current-stat-value">$0.00</div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -849,7 +983,40 @@
       multi.innerText = formatMultiplier(multiValue);
     }
 
-    function renderSlots(bonuses) {
+    function renderCurrentOpening(item) {
+      const box = document.getElementById("currentOpening");
+      const thumb = document.getElementById("currentThumb");
+      const name = document.getElementById("currentName");
+      const win = document.getElementById("currentWin");
+      const multi = document.getElementById("currentMulti");
+      const bet = document.getElementById("currentBet");
+
+      if (!item || !item.bonus) {
+        box.classList.remove("show");
+        thumb.innerHTML = `<div class="current-placeholder">Sem imagem</div>`;
+        name.innerText = "À espera de abertura";
+        win.innerText = "$0.00";
+        multi.innerText = "0.00x";
+        bet.innerText = "$0.00";
+        return;
+      }
+
+      const bonus = item.bonus;
+      const img = getImageFromBonus(bonus);
+      const bonusName = getBonusName(bonus);
+
+      box.classList.add("show");
+      thumb.innerHTML = img
+        ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(bonusName)}" />`
+        : `<div class="current-placeholder">Sem imagem</div>`;
+
+      name.innerText = bonusName;
+      win.innerText = formatCurrency(bonus.payout);
+      multi.innerText = formatMultiplier(getBonusMulti(bonus));
+      bet.innerText = formatCurrency(bonus.bet);
+    }
+
+    function renderSlots(bonuses, latestOpenedIndex = -1) {
       const list = document.getElementById("slotsList");
 
       if (!bonuses.length) {
@@ -861,9 +1028,16 @@
         const name = getBonusName(bonus);
         const bet = parseMoney(bonus.bet);
         const img = getImageFromBonus(bonus);
+        const payout = parseMoney(bonus.payout);
+
+        const classes = [
+          "slot-card",
+          payout > 0 ? "opened" : "",
+          index === latestOpenedIndex ? "current" : ""
+        ].filter(Boolean).join(" ");
 
         return `
-          <div class="slot-card ${parseMoney(bonus.payout) > 0 ? "muted" : ""}">
+          <div class="${classes}">
             <div class="slot-top">
               <div class="slot-title">
                 <div class="slot-name">${escapeHtml(name)}</div>
@@ -895,6 +1069,7 @@
       document.getElementById("epicCount").innerText = "0";
       document.getElementById("open").innerText = "0/0";
       document.getElementById("progressFill").style.width = "0%";
+      renderCurrentOpening(null);
       renderMiniCard("best", null, -1);
       renderMiniCard("worst", null, -1);
       document.getElementById("slotsList").innerHTML = `<div class="empty-state">${message}</div>`;
@@ -922,11 +1097,6 @@
 
         const startValue = getStartFromHunt(hunt);
 
-        document.getElementById("huntLabel").innerText = "BONUS HUNT";
-        document.getElementById("huntSub").innerText = hunt.nome || "Sem nome";
-        document.getElementById("huntId").innerText = "#" + hunt.id;
-        document.getElementById("start").innerText = formatCurrency(startValue);
-
         const bonusRes = await fetch(
           `${SUPABASE_URL}/rest/v1/bonus?select=*&hunt_id=eq.${hunt.id}&order=id.asc`,
           {
@@ -944,7 +1114,13 @@
           .map((bonus, index) => ({ bonus, index }))
           .filter(item => parseMoney(item.bonus.payout) > 0);
 
+        const latestOpened = opened.length ? opened[opened.length - 1] : null;
         const totalPaid = bonuses.reduce((sum, b) => sum + parseMoney(b.payout), 0);
+
+        document.getElementById("huntLabel").innerText = opened.length > 0 ? "BONUS OPENING" : "BONUS HUNT";
+        document.getElementById("huntSub").innerText = hunt.nome || "Sem nome";
+        document.getElementById("huntId").innerText = "#" + hunt.id;
+        document.getElementById("start").innerText = formatCurrency(startValue);
 
         let superCount = 0;
         let epicCount = 0;
@@ -982,10 +1158,10 @@
           });
         }
 
+        renderCurrentOpening(latestOpened);
         renderMiniCard("best", bestItem?.bonus || null, bestItem?.index ?? -1);
         renderMiniCard("worst", worstItem?.bonus || null, worstItem?.index ?? -1);
-
-        renderSlots(bonuses);
+        renderSlots(bonuses, latestOpened?.index ?? -1);
 
       } catch (e) {
         console.log(e);
