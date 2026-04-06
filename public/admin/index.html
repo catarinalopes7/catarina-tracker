@@ -11,7 +11,7 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #151515;
+      background: linear-gradient(180deg, #1c1440 0%, #120d2e 100%);
       color: #fff;
       padding: 24px;
     }
@@ -19,6 +19,7 @@
     h1 {
       margin: 0 0 20px;
       font-size: 28px;
+      color: #ffd54a;
     }
 
     .layout {
@@ -29,15 +30,17 @@
     }
 
     .card {
-      background: #222;
-      border: 1px solid #333;
-      border-radius: 16px;
+      background: linear-gradient(180deg, #2a215d, #21194b);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
       padding: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
     }
 
     .card h2 {
       margin: 0 0 16px;
       font-size: 20px;
+      color: #fff;
     }
 
     .field {
@@ -48,17 +51,23 @@
       display: block;
       margin-bottom: 6px;
       font-size: 14px;
-      color: #cfcfcf;
+      color: #d7cffd;
     }
 
     .field input {
       width: 100%;
       padding: 12px 14px;
-      border-radius: 10px;
-      border: 1px solid #444;
-      background: #111;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.20);
       color: #fff;
       font-size: 15px;
+      outline: none;
+    }
+
+    .field input:focus {
+      border-color: rgba(255, 213, 74, 0.55);
+      box-shadow: 0 0 0 3px rgba(255, 213, 74, 0.10);
     }
 
     .actions {
@@ -70,28 +79,40 @@
 
     button {
       border: 0;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 12px 16px;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .btn-primary { background: #ffd54a; color: #111; }
-    .btn-secondary { background: #3b82f6; color: #fff; }
+    .btn-secondary { background: #5b7cff; color: #fff; }
     .btn-danger { background: #ef4444; color: #fff; }
-    .btn-muted { background: #444; color: #fff; }
+    .btn-muted { background: #4a4275; color: #fff; }
+    .btn-save { background: #16a34a; color: #fff; padding: 10px 14px; }
 
     .hunt-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
 
     .hunt-item {
-      background: #1a1a1a;
-      border: 1px solid #353535;
-      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(58, 43, 123, 0.95), rgba(40, 30, 87, 0.95));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
       padding: 16px;
     }
 
@@ -106,6 +127,7 @@
     .hunt-name {
       font-size: 18px;
       font-weight: 700;
+      color: #fff;
     }
 
     .badge {
@@ -118,7 +140,7 @@
 
     .badge-active { background: #16a34a; color: #fff; }
     .badge-closed { background: #ef4444; color: #fff; }
-    .badge-idle { background: #525252; color: #fff; }
+    .badge-idle { background: #6b628f; color: #fff; }
 
     .hunt-meta {
       display: grid;
@@ -128,15 +150,15 @@
     }
 
     .meta-box {
-      background: #111;
-      border: 1px solid #2f2f2f;
-      border-radius: 10px;
+      background: rgba(0,0,0,0.20);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
       padding: 10px;
     }
 
     .meta-label {
       font-size: 12px;
-      color: #aaa;
+      color: #c9c0f6;
       margin-bottom: 4px;
       text-transform: uppercase;
     }
@@ -144,6 +166,7 @@
     .meta-value {
       font-size: 16px;
       font-weight: 700;
+      color: #fff;
     }
 
     .status {
@@ -155,9 +178,122 @@
 
     .hint {
       font-size: 13px;
-      color: #aaa;
+      color: #c8c1ef;
       margin-top: 8px;
       line-height: 1.4;
+    }
+
+    .bonus-block {
+      margin-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 14px;
+    }
+
+    .bonus-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffd54a;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .bonus-table-wrap {
+      overflow-x: auto;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.16);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 880px;
+    }
+
+    th, td {
+      padding: 12px 12px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      vertical-align: middle;
+    }
+
+    th {
+      font-size: 14px;
+      color: #ffd54a;
+      font-weight: 800;
+      background: rgba(255,255,255,0.03);
+    }
+
+    td {
+      font-size: 14px;
+      color: #fff;
+    }
+
+    .tipo-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tipo-super {
+      background: rgba(245, 198, 90, 0.18);
+      color: #ffe49e;
+      border: 1px solid rgba(245, 198, 90, 0.20);
+    }
+
+    .tipo-epico {
+      background: rgba(220, 111, 146, 0.18);
+      color: #ffd9e5;
+      border: 1px solid rgba(220, 111, 146, 0.20);
+    }
+
+    .tipo-normal {
+      background: rgba(255,255,255,0.08);
+      color: #efefff;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .payout-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .payout-input {
+      width: 110px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.20);
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .payout-input:focus {
+      border-color: rgba(91, 124, 255, 0.55);
+      box-shadow: 0 0 0 3px rgba(91, 124, 255, 0.12);
+    }
+
+    .bonus-row-status {
+      font-size: 12px;
+      color: #cfc8f8;
+      min-width: 70px;
+    }
+
+    .empty-hunts,
+    .empty-bonuses {
+      padding: 14px;
+      color: #d8d2fb;
+    }
+
+    .saving {
+      opacity: 0.65;
+      pointer-events: none;
     }
 
     @media (max-width: 1100px) {
@@ -203,6 +339,9 @@
 
   <script src="./conexao.js"></script>
   <script>
+    const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
+
     const huntNomeInput = document.getElementById("huntNome");
     const huntStartInput = document.getElementById("huntStart");
     const createHuntBtn = document.getElementById("createHuntBtn");
@@ -220,14 +359,146 @@
       return `<span class="badge badge-idle">PARADA</span>`;
     }
 
+    function safeMoneyInput(value) {
+      if (value === null || value === undefined) return 0;
+      const normalized = String(value).trim().replace(",", ".");
+      const num = parseFloat(normalized);
+      return Number.isFinite(num) ? num : 0;
+    }
+
+    function getBonusName(bonus) {
+      return bonus.nome || bonus.name || bonus.slot_name || "Sem nome";
+    }
+
+    function getBonusProvider(bonus) {
+      return bonus.provider || bonus.provedor || "—";
+    }
+
+    function getBonusBet(bonus) {
+      return (
+        bonus.bet ??
+        bonus.aposta ??
+        bonus.bet_value ??
+        bonus.buy_value ??
+        0
+      );
+    }
+
+    function getBonusType(bonus) {
+      const raw = String(
+        bonus.tipo ||
+        bonus.type ||
+        bonus.bonus_type ||
+        bonus.rarity ||
+        "Normal"
+      ).trim();
+
+      return raw;
+    }
+
+    function normalizeTypeClass(type) {
+      const t = String(type).toLowerCase();
+      if (t.includes("super")) return "tipo-super";
+      if (t.includes("epic") || t.includes("épic") || t.includes("epico") || t.includes("épico") || t.includes("extreme")) return "tipo-epico";
+      return "tipo-normal";
+    }
+
+    async function updateBonusPayout(bonusId, payoutValue) {
+      const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/bonus?id=eq.${bonusId}`,
+        {
+          method: "PATCH",
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`,
+            "Content-Type": "application/json",
+            Prefer: "return=representation"
+          },
+          body: JSON.stringify({
+            payout: payoutValue
+          })
+        }
+      );
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || "Erro ao atualizar payout.");
+      }
+
+      return response.json();
+    }
+
+    function renderBonusTable(bonuses, huntId) {
+      if (!bonuses.length) {
+        return `<div class="empty-bonuses">Sem bónus nesta hunt.</div>`;
+      }
+
+      return `
+        <div class="bonus-table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Provider</th>
+                <th>Aposta (€)</th>
+                <th>Tipo</th>
+                <th>Payout (€)</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${bonuses.map((bonus) => {
+                const type = getBonusType(bonus);
+                const typeClass = normalizeTypeClass(type);
+                const payout = safeMoneyInput(bonus.payout).toFixed(2);
+                const bet = safeMoneyInput(getBonusBet(bonus)).toFixed(2);
+
+                return `
+                  <tr id="bonus-row-${bonus.id}">
+                    <td>${escapeHtml(getBonusName(bonus))}</td>
+                    <td>${escapeHtml(getBonusProvider(bonus))}</td>
+                    <td>${bet}</td>
+                    <td>
+                      <span class="tipo-badge ${typeClass}">
+                        ${escapeHtml(type)}
+                      </span>
+                    </td>
+                    <td>
+                      <input
+                        class="payout-input"
+                        id="payout-input-${bonus.id}"
+                        type="text"
+                        inputmode="decimal"
+                        value="${payout}"
+                        placeholder="0.00"
+                        onkeydown="handlePayoutKeydown(event, ${bonus.id})"
+                      />
+                    </td>
+                    <td>
+                      <div class="payout-cell">
+                        <button class="btn-save" id="save-btn-${bonus.id}" onclick="handleSavePayout(${bonus.id})">
+                          Guardar
+                        </button>
+                        <span class="bonus-row-status" id="bonus-status-${bonus.id}"></span>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
     async function renderHunts() {
       try {
-        huntList.innerHTML = `<div class="hunt-item">A carregar hunts...</div>`;
+        huntList.innerHTML = `<div class="hunt-item empty-hunts">A carregar hunts...</div>`;
 
         const hunts = await getAllHunts();
 
         if (!hunts.length) {
-          huntList.innerHTML = `<div class="hunt-item">Ainda não existem hunts.</div>`;
+          huntList.innerHTML = `<div class="hunt-item empty-hunts">Ainda não existem hunts.</div>`;
           return;
         }
 
@@ -272,6 +543,11 @@
                   <button class="btn-secondary" onclick="handleActivate(${hunt.id})">Ativar</button>
                   <button class="btn-danger" onclick="handleClose(${hunt.id})">Fechar</button>
                 </div>
+
+                <div class="bonus-block">
+                  <div class="bonus-title">Bónus da Hunt</div>
+                  ${renderBonusTable(bonuses, hunt.id)}
+                </div>
               </div>
             `;
           })
@@ -280,7 +556,7 @@
         huntList.innerHTML = rows.join("");
       } catch (error) {
         console.error(error);
-        huntList.innerHTML = `<div class="hunt-item">Erro ao carregar hunts.</div>`;
+        huntList.innerHTML = `<div class="hunt-item empty-hunts">Erro ao carregar hunts.</div>`;
       }
     }
 
@@ -342,11 +618,71 @@
       }
     }
 
+    async function handleSavePayout(bonusId) {
+      const input = document.getElementById(`payout-input-${bonusId}`);
+      const button = document.getElementById(`save-btn-${bonusId}`);
+      const status = document.getElementById(`bonus-status-${bonusId}`);
+      const row = document.getElementById(`bonus-row-${bonusId}`);
+
+      if (!input || !button || !status) return;
+
+      const payoutValue = safeMoneyInput(input.value);
+
+      try {
+        row?.classList.add("saving");
+        button.disabled = true;
+        status.textContent = "A guardar...";
+
+        await updateBonusPayout(bonusId, payoutValue);
+
+        input.value = payoutValue.toFixed(2);
+        status.textContent = "Guardado";
+
+        setStatus(`Payout do bónus #${bonusId} atualizado para ${payoutValue.toFixed(2)}€.`);
+        await renderHunts();
+      } catch (error) {
+        console.error(error);
+        status.textContent = "Erro";
+        setStatus("Erro ao guardar payout.");
+      } finally {
+        row?.classList.remove("saving");
+        button.disabled = false;
+
+        setTimeout(() => {
+          const currentStatus = document.getElementById(`bonus-status-${bonusId}`);
+          if (currentStatus) currentStatus.textContent = "";
+        }, 2000);
+      }
+    }
+
+    function handlePayoutKeydown(event, bonusId) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        handleSavePayout(bonusId);
+      }
+    }
+
     createHuntBtn.addEventListener("click", handleCreateHunt);
     refreshBtn.addEventListener("click", renderHunts);
 
+    huntStartInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        handleCreateHunt();
+      }
+    });
+
+    huntNomeInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        handleCreateHunt();
+      }
+    });
+
     window.handleActivate = handleActivate;
     window.handleClose = handleClose;
+    window.handleSavePayout = handleSavePayout;
+    window.handlePayoutKeydown = handlePayoutKeydown;
 
     renderHunts();
   </script>
