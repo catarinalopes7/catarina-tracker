@@ -150,6 +150,7 @@
     }
 
     .bonusItem {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -158,6 +159,51 @@
       border-radius: 22px;
       background: rgba(255,255,255,0.10);
       border: 1px solid rgba(255,255,255,0.12);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+      overflow: hidden;
+    }
+
+    .bonusItem.highlight {
+      background: linear-gradient(90deg, rgba(255,213,74,0.18), rgba(255,255,255,0.12));
+      border-color: rgba(255,213,74,0.75);
+      box-shadow:
+        0 0 0 2px rgba(255,213,74,0.10),
+        0 10px 30px rgba(0,0,0,0.20),
+        0 0 28px rgba(255,213,74,0.18);
+      transform: scale(1.01);
+    }
+
+    .bonusItem.highlight::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -35%;
+      width: 35%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0.18),
+        rgba(255,255,255,0)
+      );
+      transform: skewX(-18deg);
+      animation: shine 2.8s linear infinite;
+      pointer-events: none;
+    }
+
+    .bonusItem.highlight::after {
+      content: "EM DESTAQUE";
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #2D215F;
+      background: #FFD54A;
+      padding: 5px 10px;
+      border-radius: 999px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
     }
 
     .bonusLeft {
@@ -166,6 +212,7 @@
       gap: 6px;
       min-width: 0;
       flex: 1;
+      padding-right: 6px;
     }
 
     .bonusName {
@@ -173,6 +220,7 @@
       font-weight: 800;
       line-height: 1.15;
       word-break: break-word;
+      padding-right: 120px;
     }
 
     .bonusSub {
@@ -193,6 +241,7 @@
       letter-spacing: 0.4px;
       border: 1px solid rgba(255,255,255,0.15);
       background: rgba(255,255,255,0.10);
+      flex-shrink: 0;
     }
 
     .status-pendente {
@@ -234,6 +283,15 @@
       font-weight: 600;
       margin-top: 2px;
     }
+
+    @keyframes shine {
+      0% {
+        left: -40%;
+      }
+      100% {
+        left: 120%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -273,23 +331,12 @@
     <div class="footerNote">Overlay ativo</div>
   </div>
 
-  <!-- Mantém o teu ficheiro atual de ligação ao Supabase -->
   <script src="../admin/conexao.js"></script>
 
   <script>
-    /*
-      IMPORTANTE:
-      - Este ficheiro assume que o teu conexao.js já expõe SUPABASE_URL
-      - e SUPABASE_ANON_KEY ou SUPABASE_KEY
-      - Se no teu conexao.js os nomes forem diferentes, ajusta só estas 2 linhas
-    */
     const SUPABASE_BASE_URL = window.SUPABASE_URL;
     const SUPABASE_API_KEY = window.SUPABASE_ANON_KEY || window.SUPABASE_KEY;
 
-    /*
-      Se os nomes das tabelas no teu projeto forem outros,
-      altera apenas estas duas constantes.
-    */
     const TABLE_HUNTS = 'hunts';
     const TABLE_BONUSES = 'hunt_bonuses';
 
@@ -318,7 +365,7 @@
     let isScrolling = false;
     let lastTs = 0;
 
-    const SCROLL_SPEED = 28; // px por segundo
+    const SCROLL_SPEED = 28;
 
     function normalizeStatus(value) {
       const raw = String(value || '').trim().toLowerCase();
@@ -385,11 +432,21 @@
       return parts.join(' • ');
     }
 
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
     function stopAutoScroll() {
       if (scrollRaf) {
         cancelAnimationFrame(scrollRaf);
         scrollRaf = null;
       }
+
       scrollOffset = 0;
       firstListHeight = 0;
       isScrolling = false;
@@ -445,10 +502,53 @@
       els.bonusTrack.innerHTML = `<div class="emptyState">${message}</div>`;
     }
 
+    function getHighlightedIndex(bonuses) {
+      if (!bonuses.length) return -1;
+
+      const activeIndex = bonuses.findIndex(b => normalizeStatus(b.status) === 'ativo');
+      if (activeIndex !== -1) return activeIndex;
+
+      const pendingIndex = bonuses.findIndex(b => {
+        const status = normalizeStatus(b.status);
+        return status !== 'feito' && status !== 'cancelado';
+      });
+      if (pendingIndex !== -1) return pendingIndex;
+
+      return bonuses.length - 1;
+    }
+
+    function renderBonusListHtml(bonuses, highlightedIndex) {
+      return `
+        <div class="bonusList">
+          ${bonuses.map((bonus, index) => {
+            const status = normalizeStatus(bonus.status);
+            const bonusName = getBonusName(bonus);
+            const bonusSub = getBonusSub(bonus);
+            const isHighlight = index === highlightedIndex;
+
+            return `
+              <div class="bonusItem${isHighlight ? ' highlight' : ''}">
+                <div class="bonusLeft">
+                  <div class="bonusName">${escapeHtml(bonusName)}</div>
+                  <div class="bonusSub">${bonusSub ? escapeHtml(bonusSub) : '&nbsp;'}</div>
+                </div>
+                <div class="bonusStatus status-${status}">
+                  ${formatStatusLabel(status)}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
     function renderOverlay(hunt, bonuses) {
       const total = bonuses.length;
       const done = bonuses.filter(b => normalizeStatus(b.status) === 'feito').length;
-      const pending = bonuses.filter(b => normalizeStatus(b.status) !== 'feito').length;
+      const pending = bonuses.filter(b => {
+        const status = normalizeStatus(b.status);
+        return status !== 'feito' && status !== 'cancelado';
+      }).length;
 
       els.huntName.textContent = hunt.name || `Hunt #${hunt.id}`;
       els.huntId.textContent = `ID: ${hunt.id ?? '—'}`;
@@ -464,31 +564,9 @@
         return;
       }
 
-      const listHtml = `
-        <div class="bonusList">
-          ${bonuses.map((bonus) => {
-            const status = normalizeStatus(bonus.status);
-            const bonusName = getBonusName(bonus);
-            const bonusSub = getBonusSub(bonus);
+      const highlightedIndex = getHighlightedIndex(bonuses);
+      const listHtml = renderBonusListHtml(bonuses, highlightedIndex);
 
-            return `
-              <div class="bonusItem">
-                <div class="bonusLeft">
-                  <div class="bonusName">${escapeHtml(bonusName)}</div>
-                  <div class="bonusSub">${bonusSub ? escapeHtml(bonusSub) : '&nbsp;'}</div>
-                </div>
-                <div class="bonusStatus status-${status}">
-                  ${formatStatusLabel(status)}
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      `;
-
-      /*
-        Duplicamos a lista 2x para criar scroll infinito suave.
-      */
       els.bonusTrack.innerHTML = listHtml + listHtml;
 
       requestAnimationFrame(() => {
@@ -529,15 +607,6 @@
           slot_id: b.slot_id ?? null
         }))
       });
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
     }
 
     async function refreshOverlay() {
