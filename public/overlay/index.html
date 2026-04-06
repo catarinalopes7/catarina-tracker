@@ -107,7 +107,7 @@
 
     .moneyStats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 16px;
     }
 
@@ -115,7 +115,7 @@
       background: rgba(255,255,255,0.10);
       border: 1px solid rgba(255,255,255,0.16);
       border-radius: 24px;
-      padding: 20px 16px;
+      padding: 18px 14px;
       text-align: center;
       box-shadow: 0 10px 24px rgba(0,0,0,0.14);
       min-height: 122px;
@@ -125,31 +125,48 @@
     }
 
     .moneyLabel {
-      font-size: 20px;
+      font-size: 17px;
       opacity: 0.9;
       margin-bottom: 8px;
       font-weight: 700;
+      line-height: 1.15;
     }
 
     .moneyValue {
-      font-size: 34px;
+      font-size: 28px;
       font-weight: 900;
       line-height: 1.05;
       word-break: break-word;
     }
 
-    .moneyValue.positive {
+    .moneySub {
+      margin-top: 8px;
+      font-size: 17px;
+      font-weight: 800;
+      opacity: 0.92;
+    }
+
+    .moneyValue.positive,
+    .moneySub.positive {
       color: #A5D6A7;
       text-shadow: 0 0 18px rgba(165,214,167,0.16);
     }
 
-    .moneyValue.negative {
+    .moneyValue.negative,
+    .moneySub.negative {
       color: #FFAB91;
       text-shadow: 0 0 18px rgba(255,171,145,0.16);
     }
 
-    .moneyValue.neutral {
+    .moneyValue.neutral,
+    .moneySub.neutral {
       color: #fff;
+    }
+
+    .moneyValue.warning,
+    .moneySub.warning {
+      color: #FFE082;
+      text-shadow: 0 0 18px rgba(255,224,130,0.14);
     }
 
     #bonusPanel {
@@ -429,6 +446,16 @@
         <div class="moneyLabel">Profit / Loss</div>
         <div class="moneyValue neutral" id="moneyProfitLoss">€0,00</div>
       </div>
+      <div class="moneyBox">
+        <div class="moneyLabel">Break-even Inicial</div>
+        <div class="moneyValue warning" id="moneyBreakEvenInicial">€0,00</div>
+        <div class="moneySub neutral" id="moneyBreakEvenInicialPct">0,00%</div>
+      </div>
+      <div class="moneyBox">
+        <div class="moneyLabel">Break-even Atual</div>
+        <div class="moneyValue warning" id="moneyBreakEvenAtual">€0,00</div>
+        <div class="moneySub neutral" id="moneyBreakEvenAtualPct">0,00%</div>
+      </div>
     </div>
 
     <div id="bonusPanel">
@@ -461,6 +488,10 @@
         moneyTotalPago: document.getElementById("moneyTotalPago"),
         moneyAverageX: document.getElementById("moneyAverageX"),
         moneyProfitLoss: document.getElementById("moneyProfitLoss"),
+        moneyBreakEvenInicial: document.getElementById("moneyBreakEvenInicial"),
+        moneyBreakEvenInicialPct: document.getElementById("moneyBreakEvenInicialPct"),
+        moneyBreakEvenAtual: document.getElementById("moneyBreakEvenAtual"),
+        moneyBreakEvenAtualPct: document.getElementById("moneyBreakEvenAtualPct"),
         bonusTrack: document.getElementById("bonusTrack"),
         bonusViewport: document.getElementById("bonusViewport"),
         debugBox: document.getElementById("debugBox")
@@ -588,10 +619,22 @@
         })}x`;
       }
 
+      function ctFormatPercent(value) {
+        const num = Number(value || 0);
+        return `${num.toLocaleString("pt-PT", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })}%`;
+      }
+
+      function ctClamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+      }
+
       function ctSetMoneyValue(el, value, formatter) {
         const num = Number(value || 0);
 
-        el.classList.remove("positive", "negative", "neutral");
+        el.classList.remove("positive", "negative", "neutral", "warning");
 
         if (num > 0) {
           el.classList.add("positive");
@@ -605,9 +648,27 @@
       }
 
       function ctSetNeutralValue(el, value, formatter) {
-        el.classList.remove("positive", "negative", "neutral");
+        el.classList.remove("positive", "negative", "neutral", "warning");
         el.classList.add("neutral");
         el.textContent = formatter(Number(value || 0));
+      }
+
+      function ctSetWarningValue(el, value, formatter) {
+        el.classList.remove("positive", "negative", "neutral", "warning");
+        el.classList.add("warning");
+        el.textContent = formatter(Number(value || 0));
+      }
+
+      function ctSetPercentState(el, pct) {
+        el.classList.remove("positive", "negative", "neutral", "warning");
+
+        if (pct >= 100) {
+          el.classList.add("positive");
+        } else if (pct > 0) {
+          el.classList.add("warning");
+        } else {
+          el.classList.add("neutral");
+        }
       }
 
       function ctStopAutoScroll() {
@@ -658,6 +719,10 @@
         ctSetNeutralValue(CT_ELS.moneyTotalPago, 0, ctFormatMoney);
         ctSetNeutralValue(CT_ELS.moneyAverageX, 0, ctFormatAverageX);
         ctSetMoneyValue(CT_ELS.moneyProfitLoss, 0, ctFormatMoneySigned);
+        ctSetWarningValue(CT_ELS.moneyBreakEvenInicial, 0, ctFormatMoney);
+        ctSetNeutralValue(CT_ELS.moneyBreakEvenInicialPct, 0, ctFormatPercent);
+        ctSetWarningValue(CT_ELS.moneyBreakEvenAtual, 0, ctFormatMoney);
+        ctSetNeutralValue(CT_ELS.moneyBreakEvenAtualPct, 0, ctFormatPercent);
         CT_ELS.bonusTrack.innerHTML = `<div class="emptyState">${ctEscapeHtml(message)}</div>`;
       }
 
@@ -739,6 +804,7 @@
           huntId: hunt?.id ?? null,
           huntName: hunt?.name ?? "",
           huntStatus: hunt?.status ?? "",
+          start_balance: hunt?.start_balance ?? 0,
           total_pago: hunt?.total_pago ?? 0,
           average_x: hunt?.average_x ?? 0,
           profit_loss: hunt?.profit_loss ?? 0,
@@ -761,6 +827,13 @@
           return status !== "feito" && status !== "cancelado";
         }).length;
 
+        const startBalance = Number(hunt.start_balance || 0);
+        const totalPago = Number(hunt.total_pago || 0);
+        const breakEvenInicial = startBalance;
+        const breakEvenPct = startBalance > 0 ? (totalPago / startBalance) * 100 : 0;
+        const breakEvenPctClamped = ctClamp(breakEvenPct, 0, 100);
+        const breakEvenAtual = Math.max(startBalance - totalPago, 0);
+
         CT_ELS.huntName.textContent = hunt.name || `Hunt #${hunt.id}`;
         CT_ELS.huntId.textContent = `ID: ${hunt.id ?? "—"}`;
         CT_ELS.huntStatus.textContent = `Estado: ${hunt.status || "—"}`;
@@ -768,9 +841,17 @@
         CT_ELS.statDone.textContent = String(done);
         CT_ELS.statPending.textContent = String(pending);
 
-        ctSetNeutralValue(CT_ELS.moneyTotalPago, hunt.total_pago ?? 0, ctFormatMoney);
+        ctSetNeutralValue(CT_ELS.moneyTotalPago, totalPago, ctFormatMoney);
         ctSetNeutralValue(CT_ELS.moneyAverageX, hunt.average_x ?? 0, ctFormatAverageX);
         ctSetMoneyValue(CT_ELS.moneyProfitLoss, hunt.profit_loss ?? 0, ctFormatMoneySigned);
+
+        ctSetWarningValue(CT_ELS.moneyBreakEvenInicial, breakEvenInicial, ctFormatMoney);
+        CT_ELS.moneyBreakEvenInicialPct.textContent = ctFormatPercent(breakEvenPctClamped);
+        ctSetPercentState(CT_ELS.moneyBreakEvenInicialPct, breakEvenPctClamped);
+
+        ctSetWarningValue(CT_ELS.moneyBreakEvenAtual, breakEvenAtual, ctFormatMoney);
+        CT_ELS.moneyBreakEvenAtualPct.textContent = ctFormatPercent(breakEvenPctClamped);
+        ctSetPercentState(CT_ELS.moneyBreakEvenAtualPct, breakEvenPctClamped);
 
         if (!bonuses.length) {
           ctStopAutoScroll();
