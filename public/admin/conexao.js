@@ -1,54 +1,207 @@
-// conexao.js – ligação e operações Supabase
-const SUPABASE_URL   = "[cwengomkuhqvrdcpkgwp.supabase.co](https://cwengomkuhqvrdcpkgwp.supabase.co)";
-const SUPABASE_KEY   = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
+// public/admin/conexao.js
+// Ligação e operações Supabase
+
+const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
 const headers = {
   apikey: SUPABASE_KEY,
   Authorization: `Bearer ${SUPABASE_KEY}`,
   "Content-Type": "application/json",
+  Prefer: "return=representation",
 };
 
-// funções CRUD
+// =========================
+// FUNÇÕES BASE CRUD
+// =========================
+
 async function inserirDados(tabela, dados) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${tabela}`, {
-    method: "POST", headers, body: JSON.stringify(dados),
-  });
-  return r.ok;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${tabela}`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(dados),
+    });
+
+    if (!r.ok) {
+      const erroTexto = await r.text();
+      console.error(`Erro ao inserir em ${tabela}:`, erroTexto);
+      return false;
+    }
+
+    return true;
+  } catch (erro) {
+    console.error(`Erro de ligação ao inserir em ${tabela}:`, erro);
+    return false;
+  }
 }
 
 async function apagarDado(tabela, id) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${tabela}?id=eq.${id}`, {
-    method: "DELETE", headers,
-  });
-  return r.ok;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${tabela}?id=eq.${id}`, {
+      method: "DELETE",
+      headers,
+    });
+
+    if (!r.ok) {
+      const erroTexto = await r.text();
+      console.error(`Erro ao apagar em ${tabela}:`, erroTexto);
+      return false;
+    }
+
+    return true;
+  } catch (erro) {
+    console.error(`Erro de ligação ao apagar em ${tabela}:`, erro);
+    return false;
+  }
 }
 
 async function atualizarDado(tabela, id, dados) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${tabela}?id=eq.${id}`, {
-    method: "PATCH", headers, body: JSON.stringify(dados),
-  });
-  return r.ok;
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${tabela}?id=eq.${id}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(dados),
+    });
+
+    if (!r.ok) {
+      const erroTexto = await r.text();
+      console.error(`Erro ao atualizar em ${tabela}:`, erroTexto);
+      return false;
+    }
+
+    return true;
+  } catch (erro) {
+    console.error(`Erro de ligação ao atualizar em ${tabela}:`, erro);
+    return false;
+  }
 }
 
-// 🔸 Função de cálculo automático
+async function buscarDados(tabela, query = "select=*") {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/${tabela}?${query}`, {
+      method: "GET",
+      headers,
+    });
+
+    if (!r.ok) {
+      const erroTexto = await r.text();
+      console.error(`Erro ao buscar em ${tabela}:`, erroTexto);
+      return [];
+    }
+
+    return await r.json();
+  } catch (erro) {
+    console.error(`Erro de ligação ao buscar em ${tabela}:`, erro);
+    return [];
+  }
+}
+
+// =========================
+// BONUS
+// =========================
+
+async function gravarBonus(dadosBonus) {
+  return await inserirDados("bonus", dadosBonus);
+}
+
+async function apagarBonus(id) {
+  return await apagarDado("bonus", id);
+}
+
+async function atualizarBonus(id, dadosBonus) {
+  return await atualizarDado("bonus", id, dadosBonus);
+}
+
+async function listarBonus() {
+  return await buscarDados("bonus", "select=*&order=id.desc");
+}
+
+// =========================
+// HUNTS
+// =========================
+
+async function gravarHunt(dadosHunt) {
+  return await inserirDados("hunts", dadosHunt);
+}
+
+async function apagarHunt(id) {
+  return await apagarDado("hunts", id);
+}
+
+async function atualizarHunt(id, dadosHunt) {
+  return await atualizarDado("hunts", id, dadosHunt);
+}
+
+async function listarHunts() {
+  return await buscarDados("hunts", "select=*&order=id.desc");
+}
+
+async function buscarHuntPorId(huntId) {
+  const dados = await buscarDados("hunts", `select=*&id=eq.${huntId}`);
+  return dados.length ? dados[0] : null;
+}
+
+// =========================
+// SLOTS
+// =========================
+
+async function gravarSlot(dadosSlot) {
+  return await inserirDados("slots", dadosSlot);
+}
+
+async function apagarSlot(id) {
+  return await apagarDado("slots", id);
+}
+
+async function atualizarSlot(id, dadosSlot) {
+  return await atualizarDado("slots", id, dadosSlot);
+}
+
+async function listarSlots() {
+  return await buscarDados("slots", "select=*&order=id.desc");
+}
+
+// =========================
+// CÁLCULOS AUTOMÁTICOS DO HUNT
+// =========================
+
 async function recalcularHunt(huntId) {
-  const resp = await fetch(`${SUPABASE_URL}/rest/v1/bonus?select=*`, { headers });
-  const dados = await resp.json();
-  const lista = dados.filter(b => b.hunt_id == huntId);
+  try {
+    const bonus = await buscarDados("bonus", "select=*");
+    const lista = bonus.filter((b) => Number(b.hunt_id) === Number(huntId));
 
-  const totalPago = lista.reduce((s,b) => s + (b.payout || 0), 0);
-  const totalAposta = lista.reduce((s,b) => s + (b.aposta || 0), 0);
-  const average = lista.length ? (totalPago / totalAposta) : 0;
+    const totalPago = lista.reduce((s, b) => s + Number(b.payout || 0), 0);
+    const totalAposta = lista.reduce((s, b) => s + Number(b.aposta || 0), 0);
+    const average = totalAposta > 0 ? totalPago / totalAposta : 0;
 
-  const huntResp = await fetch(`${SUPABASE_URL}/rest/v1/hunts?id=eq.${huntId}`);
-  const [hunt] = await huntResp.json();
-  const start = hunt.start_balance || 0;
-  const profit = totalPago - start;
+    const hunt = await buscarHuntPorId(huntId);
 
-  await atualizarDado("hunts", huntId, {
-    total_pago: totalPago,
-    profit_loss: profit,
-  });
+    if (!hunt) {
+      console.error(`Hunt com ID ${huntId} não encontrada.`);
+      return false;
+    }
 
+    const start = Number(hunt.start_balance || 0);
+    const profit = totalPago - start;
+
+    const ok = await atualizarDado("hunts", huntId, {
+      total_pago: totalPago,
+      average_x: average,
+      profit_loss: profit,
+    });
+
+    if (ok) {
+      console.log(
+        `Recalcular Hunt ${huntId}: pago=${totalPago}, lucro=${profit}, média=${average}`
+      );
+    }
+
+    return ok;
+  } catch (erro) {
+    console.error(`Erro ao recalcular hunt ${huntId}:`, erro);
+    return false;
+  }
+}
   console.log(`Recalcular Hunt ${huntId}: pago=${totalPago}, lucro=${profit}, média=${average}`);
 }
