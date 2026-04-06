@@ -77,7 +77,7 @@
 
     .top-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1.2fr;
       gap: 18px;
     }
 
@@ -473,6 +473,11 @@
 
     <div class="top-row">
       <div class="panel">
+        <div class="label">Start</div>
+        <div id="startValue" class="top-value">0.00€</div>
+      </div>
+
+      <div class="panel">
         <div class="label">Total Bónus</div>
         <div id="totalBonus" class="top-value">0</div>
       </div>
@@ -753,7 +758,9 @@
 
       const totalBonus = bonuses.length;
       const openedCount = getOpenedCount(bonuses);
+      const totalCost = getTotalCost(bonuses);
 
+      document.getElementById("startValue").textContent = euro(totalCost);
       document.getElementById("totalBonus").textContent = totalBonus;
       document.getElementById("openCount").textContent = `${openedCount}/${totalBonus}`;
 
@@ -876,6 +883,7 @@
 
         if (!hunt) {
           document.getElementById("huntTitle").textContent = "Sem hunt ativa";
+          document.getElementById("startValue").textContent = "0.00€";
           document.getElementById("totalBonus").textContent = "0";
           document.getElementById("openCount").textContent = "0/0";
           document.getElementById("progressFill").style.width = "0%";
