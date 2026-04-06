@@ -292,7 +292,6 @@
     async function carregarSlots() {
       try {
         todasSlots = await listarSlots();
-        console.log("Slots carregadas:", todasSlots);
       } catch (erro) {
         console.error("Erro ao carregar slots:", erro);
         todasSlots = [];
@@ -541,7 +540,6 @@
       document.getElementById("slotSelecionada").value = String(slot.id);
       document.getElementById("slotResults").innerHTML = "";
       atualizarBoxSlotSelecionada(slot.nome, slot.id);
-      console.log("Slot selecionada:", slot.id, slot.nome);
     }
 
     async function confirmarBonus() {
@@ -575,22 +573,16 @@
         return;
       }
 
-      const dadosBonus = {
+      const ok = await gravarBonus({
         nome: slotNome,
         aposta: aposta,
         tipo: tipo,
         hunt_id: Number(huntSelecionado),
         payout: 0,
         slot_id: Number(slotId)
-      };
+      });
 
-      alert(`A gravar bónus com slot_id = ${slotId}`);
-
-      console.log("Bonus a gravar:", dadosBonus);
-
-      const res = await gravarBonus(dadosBonus);
-
-      if (!res.ok) {
+      if (!ok) {
         alert("Erro ao adicionar o bónus.");
         return;
       }
