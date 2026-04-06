@@ -616,6 +616,26 @@
         .replaceAll("'", "&#039;");
     }
 
+    function resetOverlay() {
+      document.getElementById("startValue").textContent = "0.00€";
+      document.getElementById("totalBonus").textContent = "0";
+      document.getElementById("openCount").textContent = "0/0";
+      document.getElementById("progressFill").style.width = "0%";
+      document.getElementById("avgX").textContent = "0.00x";
+      document.getElementById("beInicial").textContent = "0%";
+      document.getElementById("profitLoss").textContent = "0.00€";
+      document.getElementById("profitLoss").classList.remove("green", "red");
+      document.getElementById("totalPago").textContent = "0.00€";
+      document.getElementById("bestName").textContent = "-";
+      document.getElementById("bestX").textContent = "0.00x";
+      document.getElementById("bestValue").textContent = "0.00€";
+      document.getElementById("worstName").textContent = "-";
+      document.getElementById("worstX").textContent = "0.00x";
+      document.getElementById("worstValue").textContent = "0.00€";
+      document.getElementById("listInner").innerHTML = "";
+      document.getElementById("emptyState").style.display = "flex";
+    }
+
     async function fetchActiveHunt() {
       const url =
         `${SUPABASE_URL}/rest/v1/${HUNTS_TABLE}` +
@@ -625,7 +645,10 @@
         `&limit=1`;
 
       const res = await fetch(url, { headers: headers() });
-      if (!res.ok) throw new Error("Erro ao buscar hunt ativa");
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error("Erro hunt ativa: " + text);
+      }
       const data = await res.json();
       return data[0] || null;
     }
@@ -638,7 +661,10 @@
         `&order=id.asc`;
 
       const res = await fetch(url, { headers: headers() });
-      if (!res.ok) throw new Error("Erro ao buscar bónus");
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error("Erro bónus: " + text);
+      }
       return await res.json();
     }
 
@@ -751,7 +777,7 @@
       const startValue = safeNumber(hunt?.start_value);
 
       document.getElementById("huntTitle").textContent =
-        hunt?.nome || hunt?.title || "Sem hunt ativa";
+        hunt?.nome || "Sem hunt ativa";
 
       document.getElementById("startValue").textContent = euro(startValue);
       document.getElementById("totalBonus").textContent = totalBonus;
@@ -876,24 +902,12 @@
 
         if (!hunt) {
           document.getElementById("huntTitle").textContent = "Sem hunt ativa";
-          document.getElementById("startValue").textContent = "0.00€";
-          document.getElementById("totalBonus").textContent = "0";
-          document.getElementById("openCount").textContent = "0/0";
-          document.getElementById("progressFill").style.width = "0%";
-          document.getElementById("avgX").textContent = "0.00x";
-          document.getElementById("beInicial").textContent = "0%";
-          document.getElementById("profitLoss").textContent = "0.00€";
-          document.getElementById("profitLoss").classList.remove("green", "red");
-          document.getElementById("totalPago").textContent = "0.00€";
-          document.getElementById("bestName").textContent = "-";
-          document.getElementById("bestX").textContent = "0.00x";
-          document.getElementById("bestValue").textContent = "0.00€";
-          document.getElementById("worstName").textContent = "-";
-          document.getElementById("worstX").textContent = "0.00x";
-          document.getElementById("worstValue").textContent = "0.00€";
-          renderBonuses([]);
+          resetOverlay();
           return;
         }
+
+        document.getElementById("huntTitle").textContent = hunt?.nome || "Sem hunt ativa";
+        document.getElementById("startValue").textContent = euro(hunt?.start_value);
 
         const bonuses = await fetchBonuses(hunt.id);
 
@@ -903,6 +917,8 @@
         renderBonuses(bonuses);
       } catch (error) {
         console.error(error);
+        document.getElementById("huntTitle").textContent = "ERRO OVERLAY";
+        resetOverlay();
       }
     }
 
