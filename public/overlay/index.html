@@ -164,6 +164,7 @@
     let piorSlot = null;
     let mostrandoMelhor = true;
     let todasSlots = [];
+    let huntAtivaAtualId = null;
 
     function numero(valor) {
       return Number(valor || 0);
@@ -272,6 +273,17 @@
       return criarFallbackSlot(slot?.nome || "Slot", slot?.provider || "Provider");
     }
 
+    function limparOverlaySemHunt(mensagem = "Nenhuma hunt ativa.") {
+      huntAtivaAtualId = null;
+      melhorSlot = null;
+      piorSlot = null;
+
+      document.getElementById("stats").innerHTML = mensagem;
+      document.getElementById("bonus-wrap").innerHTML = "";
+      document.getElementById("slideshow").className = "slot-card";
+      document.getElementById("slideshow").innerHTML = "<span style='color:#888;'>Sem dados disponíveis</span>";
+    }
+
     async function carregarSlots() {
       try {
         const resp = await fetch(`${SUPABASE_URL}/rest/v1/slots?select=*`, { headers });
@@ -321,7 +333,7 @@
     async function carregarOverlay() {
       try {
         const huntsResp = await fetch(
-          `${SUPABASE_URL}/rest/v1/hunts?select=*&status=eq.ativa&limit=1`,
+          `${SUPABASE_URL}/rest/v1/hunts?select=*&status=eq.ativa&order=id.desc&limit=1`,
           { headers }
         );
 
@@ -335,19 +347,31 @@
         const atual = hunts[0];
 
         if (!atual) {
-          document.getElementById("stats").innerHTML = "Nenhuma hunt ativa.";
-          document.getElementById("bonus-wrap").innerHTML = "";
-          document.getElementById("slideshow").innerHTML = "<span style='color:#888;'>Sem dados disponíveis</span>";
+          limparOverlaySemHunt("Nenhuma hunt ativa.");
           return;
         }
+
+        if (huntAtivaAtualId !== null && Number(huntAtivaAtualId) !== Number(atual.id)) {
+          melhorSlot = null;
+          piorSlot = null;
+          mostrandoMelhor = true;
+          document.getElementById("bonus-wrap").innerHTML = "";
+          document.getElementById("slideshow").className = "slot-card";
+          document.getElementById("slideshow").innerHTML = "<span style='color:#888;'>A atualizar hunt ativa...</span>";
+        }
+
+        huntAtivaAtualId = atual.id;
 
         const start = numero(atual.start_balance);
         const pago = numero(atual.total_pago);
         const lucro = numero(atual.profit_loss);
         const corLucro = lucro >= 0 ? "lawngreen" : "#FF5C5C";
 
-        const breakevenX = pago > 0 ? start / pago : start;
-        const averageX = start > 0 ? pago / start : 0;
+        const averageX = numero(atual.average_x) > 0
+          ? numero(atual.average_x)
+          : (start > 0 ? pago / start : 0);
+
+        const breakevenX = start > 0 ? 1 : 0;
 
         document.getElementById("stats").innerHTML = `
           💰 Hunt Ativa: ${atual.nome}<br>
