@@ -1,164 +1,609 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8" />
-<title>Catarina Tracker - Admin</title>
+  <meta charset="UTF-8" />
+  <title>Catarina Tracker - Admin</title>
 
-<style>
-body{background:#0f1221;color:#fff;font-family:Arial;padding:20px}
-table{width:100%;border-collapse:collapse}
-td,th{padding:10px;border-bottom:1px solid #333;text-align:left}
-tr:hover{background:#1a1f3a}
-input{padding:6px;border-radius:6px;border:none;width:80px}
-button{padding:8px 12px;border:none;border-radius:8px;cursor:pointer}
-.green{color:#00ffa6}
-.red{color:#ff5d73}
-</style>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top, rgba(92, 67, 201, 0.22), transparent 35%),
+        linear-gradient(180deg, #0f1221 0%, #0a0d18 100%);
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+    }
+
+    .page {
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .title-wrap h2 {
+      font-size: 32px;
+      line-height: 1;
+      margin-bottom: 6px;
+      color: #ffd54a;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .title-wrap .sub {
+      color: rgba(255,255,255,0.72);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .status-badge {
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 900;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      white-space: nowrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(33, 38, 68, 0.96), rgba(20, 24, 44, 0.98));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.28);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-head h3 {
+      font-size: 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: #fff;
+    }
+
+    .panel-head .count {
+      min-width: 34px;
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.08);
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      text-align: left;
+      vertical-align: middle;
+      font-size: 14px;
+    }
+
+    th {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: rgba(255,255,255,0.72);
+      background: rgba(255,255,255,0.03);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tr:hover td {
+      background: rgba(255,255,255,0.04);
+    }
+
+    .hunt-row {
+      cursor: pointer;
+    }
+
+    .hunt-row.active td {
+      background: rgba(138, 104, 255, 0.16);
+    }
+
+    .hunt-name {
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .hunt-start {
+      font-weight: 900;
+      color: #dbe5ff;
+    }
+
+    .slot-name {
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .slot-bet,
+    .slot-payout {
+      font-weight: 900;
+      color: #dbe5ff;
+    }
+
+    .slot-id {
+      color: rgba(255,255,255,0.7);
+      font-weight: 700;
+    }
+
+    button {
+      padding: 9px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 13px;
+      text-transform: uppercase;
+      transition: 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-open {
+      background: linear-gradient(180deg, #7a5cff, #5f44dc);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(95, 68, 220, 0.28);
+    }
+
+    .btn-open.active {
+      background: linear-gradient(180deg, #2ad6a0, #17b887);
+      box-shadow: 0 6px 18px rgba(23, 184, 135, 0.28);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.35px;
+      white-space: nowrap;
+    }
+
+    .pill.green {
+      color: #0d2a20;
+      background: #30efb3;
+    }
+
+    .pill.red {
+      color: #3d0f18;
+      background: #ff7d92;
+    }
+
+    .pill.gray {
+      color: #ffffff;
+      background: rgba(255,255,255,0.10);
+    }
+
+    .editable {
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .editable:hover {
+      background: rgba(255,255,255,0.06);
+      border-radius: 8px;
+    }
+
+    .edit-input {
+      width: 100px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.14);
+      outline: none;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .empty {
+      padding: 24px 18px;
+      text-align: center;
+      color: rgba(255,255,255,0.72);
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .summary-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 14px 18px 0;
+    }
+
+    .summary-card {
+      min-width: 140px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .summary-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.68);
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .summary-value {
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+
+    @media (max-width: 1200px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="page">
+    <div class="topbar">
+      <div class="title-wrap">
+        <h2>Catarina Tracker - Admin</h2>
+        <div class="sub">Gestão de hunts e edição rápida de payouts</div>
+      </div>
 
-<h2>Catarina Tracker - Admin</h2>
+      <div id="selectedHuntBadge" class="status-badge">Nenhuma hunt aberta</div>
+    </div>
 
-<h3>Hunts</h3>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Nome</th>
-<th>Start</th>
-<th>Ação</th>
-</tr>
-</thead>
-<tbody id="hunts"></tbody>
-</table>
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Hunts</h3>
+          <div id="huntsCount" class="count">0</div>
+        </div>
 
-<h3>Slots</h3>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Slot</th>
-<th>Bet</th>
-<th>Payout</th>
-<th>Estado</th>
-</tr>
-</thead>
-<tbody id="slots"></tbody>
-</table>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Start</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="hunts"></tbody>
+          </table>
+        </div>
+      </div>
 
-<script>
-const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
-const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Slots</h3>
+          <div id="slotsCount" class="count">0</div>
+        </div>
 
-let selectedHunt = null;
+        <div class="summary-bar">
+          <div class="summary-card">
+            <div class="summary-title">Total Slots</div>
+            <div id="sumTotal" class="summary-value">0</div>
+          </div>
 
-function headers(){
-return {
-apikey: SUPABASE_KEY,
-Authorization: "Bearer " + SUPABASE_KEY,
-"Content-Type":"application/json"
-}
-}
+          <div class="summary-card">
+            <div class="summary-title">Abertos</div>
+            <div id="sumOpen" class="summary-value">0</div>
+          </div>
 
-// ==================== HUNTS ====================
+          <div class="summary-card">
+            <div class="summary-title">Fechados</div>
+            <div id="sumClosed" class="summary-value">0</div>
+          </div>
 
-async function loadHunts(){
-const res = await fetch(`${SUPABASE_URL}/rest/v1/hunts?select=*`,{
-headers:headers()
-});
-const data = await res.json();
+          <div class="summary-card">
+            <div class="summary-title">Total Pago</div>
+            <div id="sumPaid" class="summary-value">$0.00</div>
+          </div>
+        </div>
 
-const tbody = document.getElementById("hunts");
-tbody.innerHTML="";
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Slot</th>
+                <th>Bet</th>
+                <th>Payout</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="slots">
+              <tr>
+                <td colspan="5" class="empty">Abre uma hunt para veres os slots</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
-data.forEach(h=>{
-const tr = document.createElement("tr");
-tr.innerHTML = `
-<td>${h.id}</td>
-<td>${h.nome}</td>
-<td>${h.start_balance}</td>
-<td><button onclick="openHunt(${h.id})">Abrir</button></td>
-`;
-tbody.appendChild(tr);
-});
-}
+  <script>
+    const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
-function openHunt(id){
-selectedHunt = id;
-loadSlots();
-}
+    let selectedHunt = null;
+    let huntsCache = [];
 
-// ==================== SLOTS ====================
+    function headers() {
+      return {
+        apikey: SUPABASE_KEY,
+        Authorization: "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json"
+      };
+    }
 
-async function loadSlots(){
-if(!selectedHunt)return;
+    function parseMoney(value) {
+      if (value === null || value === undefined) return 0;
+      const str = String(value).trim().replace(",", ".");
+      const num = parseFloat(str);
+      return isNaN(num) ? 0 : num;
+    }
 
-const res = await fetch(`${SUPABASE_URL}/rest/v1/hunt_slots?hunt_id=eq.${selectedHunt}&select=*`,{
-headers:headers()
-});
+    function formatMoney(value) {
+      return "$" + parseMoney(value).toFixed(2);
+    }
 
-const data = await res.json();
-const tbody = document.getElementById("slots");
-tbody.innerHTML="";
+    function setSelectedHuntBadge() {
+      const badge = document.getElementById("selectedHuntBadge");
 
-data.forEach(slot=>{
-const tr = document.createElement("tr");
+      if (!selectedHunt) {
+        badge.textContent = "Nenhuma hunt aberta";
+        return;
+      }
 
-const estado = slot.payout > 0 ? 
-'<span class="green">BONUS OPENING</span>' : 
-'<span class="red">FECHADO</span>';
+      const hunt = huntsCache.find(h => Number(h.id) === Number(selectedHunt));
+      if (!hunt) {
+        badge.textContent = "Hunt aberta";
+        return;
+      }
 
-tr.innerHTML = `
-<td>${slot.id}</td>
-<td>${slot.slot_name}</td>
-<td>${slot.bet_size}</td>
-<td onclick="editPayout(this, ${slot.id}, ${slot.payout})">${Number(slot.payout).toFixed(2)}</td>
-<td>${estado}</td>
-`;
+      badge.textContent = `Hunt aberta: #${hunt.id} - ${hunt.nome || "Sem nome"}`;
+    }
 
-tbody.appendChild(tr);
-});
-}
+    function renderHunts(data) {
+      const tbody = document.getElementById("hunts");
+      document.getElementById("huntsCount").textContent = data.length;
 
-// ==================== EDIT PAYOUT ====================
+      if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="4" class="empty">Sem hunts</td></tr>`;
+        return;
+      }
 
-function editPayout(td, id, currentValue){
+      tbody.innerHTML = data.map(h => {
+        const isActive = Number(selectedHunt) === Number(h.id);
 
-const input = document.createElement("input");
-input.value = currentValue;
-td.innerHTML="";
-td.appendChild(input);
-input.focus();
+        return `
+          <tr class="hunt-row ${isActive ? "active" : ""}" onclick="openHunt(${h.id})">
+            <td><span class="slot-id">#${h.id}</span></td>
+            <td><span class="hunt-name">${escapeHtml(h.nome || "Sem nome")}</span></td>
+            <td><span class="hunt-start">${formatMoney(h.start_balance)}</span></td>
+            <td>
+              <button class="btn-open ${isActive ? "active" : ""}" onclick="event.stopPropagation(); openHunt(${h.id})">
+                ${isActive ? "Aberta" : "Abrir"}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
 
-input.addEventListener("keydown", async (e)=>{
+    function renderSlots(data) {
+      const tbody = document.getElementById("slots");
+      const total = data.length;
+      const opened = data.filter(slot => parseMoney(slot.payout) > 0).length;
+      const closed = total - opened;
+      const totalPaid = data.reduce((sum, slot) => sum + parseMoney(slot.payout), 0);
 
-if(e.key === "Enter"){
-const newValue = parseFloat(input.value) || 0;
+      document.getElementById("slotsCount").textContent = total;
+      document.getElementById("sumTotal").textContent = total;
+      document.getElementById("sumOpen").textContent = opened;
+      document.getElementById("sumClosed").textContent = closed;
+      document.getElementById("sumPaid").textContent = formatMoney(totalPaid);
 
-await fetch(`${SUPABASE_URL}/rest/v1/hunt_slots?id=eq.${id}`,{
-method:"PATCH",
-headers:headers(),
-body:JSON.stringify({
-payout:newValue,
-status: newValue > 0 ? "open" : "pending"
-})
-});
+      if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="5" class="empty">Sem slots nesta hunt</td></tr>`;
+        return;
+      }
 
-loadSlots();
-}
+      tbody.innerHTML = data.map(slot => {
+        const payout = parseMoney(slot.payout);
+        const estado = payout > 0
+          ? `<span class="pill green">BONUS OPENING</span>`
+          : `<span class="pill red">FECHADO</span>`;
 
-if(e.key === "Escape"){
-loadSlots();
-}
+        return `
+          <tr>
+            <td><span class="slot-id">#${slot.id}</span></td>
+            <td><span class="slot-name">${escapeHtml(slot.slot_name || "Sem nome")}</span></td>
+            <td><span class="slot-bet">${formatMoney(slot.bet_size)}</span></td>
+            <td class="editable" onclick="editPayout(this, ${slot.id}, ${payout})">
+              <span class="slot-payout">${payout.toFixed(2)}</span>
+            </td>
+            <td>${estado}</td>
+          </tr>
+        `;
+      }).join("");
+    }
 
-});
-}
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
 
-// ==================== INIT ====================
+    async function loadHunts() {
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/hunts?select=*&order=id.desc`,
+          { headers: headers() }
+        );
 
-loadHunts();
-</script>
+        const data = await res.json();
+        huntsCache = Array.isArray(data) ? data : [];
 
+        if (!selectedHunt && huntsCache.length) {
+          selectedHunt = huntsCache[0].id;
+        }
+
+        const stillExists = huntsCache.some(h => Number(h.id) === Number(selectedHunt));
+        if (!stillExists) {
+          selectedHunt = huntsCache.length ? huntsCache[0].id : null;
+        }
+
+        renderHunts(huntsCache);
+        setSelectedHuntBadge();
+
+        if (selectedHunt) {
+          await loadSlots();
+        } else {
+          renderSlots([]);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    async function loadSlots() {
+      if (!selectedHunt) {
+        renderSlots([]);
+        return;
+      }
+
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/hunt_slots?hunt_id=eq.${selectedHunt}&select=*&order=id.asc`,
+          { headers: headers() }
+        );
+
+        const data = await res.json();
+        const rows = Array.isArray(data) ? data : [];
+
+        renderSlots(rows);
+        renderHunts(huntsCache);
+        setSelectedHuntBadge();
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    function openHunt(id) {
+      selectedHunt = id;
+      renderHunts(huntsCache);
+      setSelectedHuntBadge();
+      loadSlots();
+    }
+
+    function editPayout(td, id, currentValue) {
+      if (td.querySelector("input")) return;
+
+      const input = document.createElement("input");
+      input.className = "edit-input";
+      input.value = parseMoney(currentValue).toFixed(2);
+
+      td.innerHTML = "";
+      td.appendChild(input);
+      input.focus();
+      input.select();
+
+      input.addEventListener("keydown", async (e) => {
+        if (e.key === "Enter") {
+          const newValue = parseMoney(input.value);
+
+          try {
+            await fetch(`${SUPABASE_URL}/rest/v1/hunt_slots?id=eq.${id}`, {
+              method: "PATCH",
+              headers: headers(),
+              body: JSON.stringify({
+                payout: newValue,
+                status: newValue > 0 ? "open" : "pending"
+              })
+            });
+          } catch (err) {
+            console.log(err);
+          }
+
+          loadSlots();
+        }
+
+        if (e.key === "Escape") {
+          loadSlots();
+        }
+      });
+
+      input.addEventListener("blur", () => {
+        loadSlots();
+      });
+    }
+
+    setInterval(() => {
+      if (selectedHunt) loadSlots();
+    }, 2500);
+
+    loadHunts();
+  </script>
 </body>
 </html>
