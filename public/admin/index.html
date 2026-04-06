@@ -6,9 +6,7 @@
   <title>Catarina Tracker - Admin</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -79,25 +77,10 @@
       cursor: pointer;
     }
 
-    .btn-primary {
-      background: #ffd54a;
-      color: #111;
-    }
-
-    .btn-secondary {
-      background: #3b82f6;
-      color: #fff;
-    }
-
-    .btn-danger {
-      background: #ef4444;
-      color: #fff;
-    }
-
-    .btn-muted {
-      background: #444;
-      color: #fff;
-    }
+    .btn-primary { background: #ffd54a; color: #111; }
+    .btn-secondary { background: #3b82f6; color: #fff; }
+    .btn-danger { background: #ef4444; color: #fff; }
+    .btn-muted { background: #444; color: #fff; }
 
     .hunt-list {
       display: flex;
@@ -133,20 +116,9 @@
       font-weight: 700;
     }
 
-    .badge-active {
-      background: #16a34a;
-      color: #fff;
-    }
-
-    .badge-closed {
-      background: #ef4444;
-      color: #fff;
-    }
-
-    .badge-idle {
-      background: #525252;
-      color: #fff;
-    }
+    .badge-active { background: #16a34a; color: #fff; }
+    .badge-closed { background: #ef4444; color: #fff; }
+    .badge-idle { background: #525252; color: #fff; }
 
     .hunt-meta {
       display: grid;
@@ -189,13 +161,8 @@
     }
 
     @media (max-width: 1100px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-
-      .hunt-meta {
-        grid-template-columns: 1fr 1fr;
-      }
+      .layout { grid-template-columns: 1fr; }
+      .hunt-meta { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -208,7 +175,7 @@
 
       <div class="field">
         <label for="huntNome">Nome da hunt</label>
-        <input id="huntNome" type="text" placeholder="Ex: BH 1000€" />
+        <input id="huntNome" type="text" placeholder="Ex: Hunt #1" />
       </div>
 
       <div class="field">
@@ -217,7 +184,7 @@
       </div>
 
       <div class="hint">
-        O Start é o valor inicial fixo da hunt. Fica sempre igual no overlay, do início ao fim.
+        Ao criar, esta hunt fica ativa automaticamente e o Start fica guardado fixo.
       </div>
 
       <div class="actions">
@@ -248,14 +215,8 @@
     }
 
     function getStatusBadge(hunt) {
-      if (hunt.is_active) {
-        return `<span class="badge badge-active">ATIVA</span>`;
-      }
-
-      if (hunt.is_closed) {
-        return `<span class="badge badge-closed">FECHADA</span>`;
-      }
-
+      if (hunt.is_active) return `<span class="badge badge-active">ATIVA</span>`;
+      if (hunt.is_closed) return `<span class="badge badge-closed">FECHADA</span>`;
       return `<span class="badge badge-idle">PARADA</span>`;
     }
 
@@ -276,7 +237,7 @@
             const totalBonus = bonuses.length;
             const totalPaid = getTotalPaid(bonuses);
             const profitLoss = getProfitLossFromStart(hunt, bonuses);
-            const startValue = safeNumber(hunt.start_value);
+            const startValue = getStartFromHunt(hunt);
 
             return `
               <div class="hunt-item">
@@ -347,7 +308,7 @@
         huntNomeInput.value = "";
         huntStartInput.value = "";
 
-        setStatus("Hunt criada com sucesso.");
+        setStatus("Hunt criada e ativada com sucesso.");
         await renderHunts();
       } catch (error) {
         console.error(error);
