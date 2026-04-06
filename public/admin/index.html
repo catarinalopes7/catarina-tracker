@@ -170,8 +170,7 @@
       font-weight:700;
     }
 
-    .field input,
-    .field select{
+    .field input{
       width:100%;
       border:1px solid rgba(255,255,255,.09);
       background:#11162a;
@@ -182,8 +181,7 @@
       outline:none;
     }
 
-    .field input:focus,
-    .field select:focus{
+    .field input:focus{
       border-color:rgba(255,213,74,.55);
       box-shadow:0 0 0 3px rgba(255,213,74,.12);
     }
@@ -362,7 +360,7 @@
             <button class="btn-primary" id="createHuntBtn">Criar Hunt</button>
 
             <div class="muted">
-              Esta versão tenta ser compatível com várias versões da tua tabela no Supabase, para evitar o conflito que ficou no admin.
+              Esta versão volta a ficar compatível com o <b>conexao.js</b> e também aceita configuração manual como fallback.
             </div>
 
             <div class="statusbar" id="statusBox">Pronto.</div>
@@ -381,8 +379,7 @@
               <button class="btn-blue" id="saveConfigBtn">Guardar configuração</button>
 
               <div class="small muted">
-                Se já tiveres um <code>conexao.js</code> a definir as credenciais, não precisas preencher isto.  
-                Este fallback existe só para o admin não quebrar.
+                Se o <code>conexao.js</code> já estiver a carregar corretamente, isto serve só de backup.
               </div>
             </div>
           </div>
@@ -418,11 +415,10 @@
     </div>
   </div>
 
-  <script>
-    // =========================================================
-    // CONFIG
-    // =========================================================
+  <!-- IMPORTANTE: volta a carregar o conexao.js -->
+  <script src="../conexao.js"></script>
 
+  <script>
     const CONFIG_STORAGE_KEY = "ct_admin_supabase_config";
 
     function readSavedConfig() {
@@ -440,18 +436,26 @@
     function getSupabaseConfig() {
       const saved = readSavedConfig();
 
-      const url =
-        window.SUPABASE_URL ||
-        window.supabaseUrl ||
-        saved.url ||
-        "";
+      const possibleUrls = [
+        window.SUPABASE_URL,
+        window.supabaseUrl,
+        window.SB_URL,
+        window.sbUrl,
+        saved.url
+      ];
 
-      const key =
-        window.SUPABASE_ANON_KEY ||
-        window.SUPABASE_KEY ||
-        window.supabaseAnonKey ||
-        saved.key ||
-        "";
+      const possibleKeys = [
+        window.SUPABASE_ANON_KEY,
+        window.SUPABASE_KEY,
+        window.supabaseAnonKey,
+        window.supabaseKey,
+        window.SB_ANON_KEY,
+        window.sbAnonKey,
+        saved.key
+      ];
+
+      const url = possibleUrls.find(v => typeof v === "string" && v.trim()) || "";
+      const key = possibleKeys.find(v => typeof v === "string" && v.trim()) || "";
 
       return { url, key };
     }
@@ -461,10 +465,6 @@
       document.getElementById("supabaseUrl").value = url || "";
       document.getElementById("supabaseKey").value = key || "";
     }
-
-    // =========================================================
-    // DOM
-    // =========================================================
 
     const huntNameInput = document.getElementById("huntName");
     const huntStartInput = document.getElementById("huntStart");
@@ -476,10 +476,6 @@
     const toggleConfigBtn = document.getElementById("toggleConfigBtn");
     const configBox = document.getElementById("configBox");
     const saveConfigBtn = document.getElementById("saveConfigBtn");
-
-    // =========================================================
-    // UTILS
-    // =========================================================
 
     function setStatus(message, type = "") {
       statusBox.textContent = message;
@@ -521,16 +517,12 @@
     }
 
     function getHuntName(row) {
-      return (
-        row.name ??
-        row.title ??
-        row.hunt_name ??
-        `Hunt #${row.id ?? "?"}`
-      );
+      return row.name ?? row.title ?? row.hunt_name ?? `Hunt #${row.id ?? "?"}`;
     }
 
     function detectState(row) {
       const rawStatus = String(row.status ?? "").toLowerCase();
+
       const isActive =
         row.is_active === true ||
         row.active === true ||
@@ -546,14 +538,8 @@
         rawStatus === "done" ||
         rawStatus === "ended";
 
-      if (isActive) {
-        return { key: "active", label: "ATIVA" };
-      }
-
-      if (isClosed) {
-        return { key: "closed", label: "FECHADA" };
-      }
-
+      if (isActive) return { key: "active", label: "ATIVA" };
+      if (isClosed) return { key: "closed", label: "FECHADA" };
       return { key: "draft", label: "INATIVA" };
     }
 
@@ -579,11 +565,15 @@
 
     async function fetchJson(path, options = {}) {
       const { url } = getSupabaseConfig();
+
+      if (!url) {
+        throw new Error("Falta a URL do Supabase.");
+      }
+
       const res = await fetch(`${url}${path}`, options);
-
       const text = await res.text();
-      let data = null;
 
+      let data = null;
       try {
         data = text ? JSON.parse(text) : null;
       } catch {
@@ -602,13 +592,8 @@
       return data;
     }
 
-    // =========================================================
-    // SUPABASE / HUNTS API
-    // =========================================================
-
     async function listHunts() {
-      const path = `/rest/v1/hunts?select=*&order=id.desc`;
-      return fetchJson(path, {
+      return fetchJson(`/rest/v1/hunts?select=*&order=id.desc`, {
         method: "GET",
         headers: getHeaders()
       });
@@ -617,9 +602,7 @@
     async function tryCreateWithPayload(payload) {
       return fetchJson(`/rest/v1/hunts`, {
         method: "POST",
-        headers: getHeaders({
-          Prefer: "return=representation"
-        }),
+        headers: getHeaders({ Prefer: "return=representation" }),
         body: JSON.stringify(payload)
       });
     }
@@ -649,8 +632,7 @@
 
       for (const payload of payloadAttempts) {
         try {
-          const created = await tryCreateWithPayload(payload);
-          return created;
+          return await tryCreateWithPayload(payload);
         } catch (err) {
           lastError = err;
         }
@@ -662,9 +644,7 @@
     async function patchHunt(id, patch) {
       return fetchJson(`/rest/v1/hunts?id=eq.${id}`, {
         method: "PATCH",
-        headers: getHeaders({
-          Prefer: "return=representation"
-        }),
+        headers: getHeaders({ Prefer: "return=representation" }),
         body: JSON.stringify(patch)
       });
     }
@@ -672,9 +652,9 @@
     async function activateHunt(id) {
       const all = await listHunts();
 
-      // Primeiro tenta desativar hunts ativas
       for (const row of all) {
         const state = detectState(row);
+
         if (state.key === "active" && Number(row.id) !== Number(id)) {
           const offAttempts = [
             { is_active: false, status: "inactive" },
@@ -693,7 +673,6 @@
         }
       }
 
-      // Agora ativa a escolhida
       const onAttempts = [
         { is_active: true, status: "active", is_closed: false, closed: false },
         { active: true, status: "active", is_closed: false, closed: false },
@@ -741,10 +720,6 @@
       throw lastError || new Error("Não foi possível fechar a hunt.");
     }
 
-    // =========================================================
-    // RENDER
-    // =========================================================
-
     function renderHunts(rows) {
       huntCount.textContent = `${rows.length} hunt${rows.length === 1 ? "" : "s"}`;
 
@@ -771,7 +746,6 @@
             <td>${escapeHtml(row.id ?? "-")}</td>
             <td>
               <span class="hunt-name">${escapeHtml(getHuntName(row))}</span>
-              ${row.slot_name ? `<span class="sub">${escapeHtml(row.slot_name)}</span>` : ""}
             </td>
             <td>${escapeHtml(formatMoney(getStartValue(row)))}</td>
             <td><span class="pill ${pillClass}">${escapeHtml(state.label)}</span></td>
@@ -811,10 +785,6 @@
       }
     }
 
-    // =========================================================
-    // ACTIONS
-    // =========================================================
-
     async function onCreateHunt() {
       createHuntBtn.disabled = true;
 
@@ -843,7 +813,7 @@
         console.error(err);
         setStatus(`Erro ao ativar hunt #${id}: ${err.message || err}`, "err");
       }
-    }
+    };
 
     window.handleClose = async function(id) {
       try {
@@ -855,20 +825,16 @@
         console.error(err);
         setStatus(`Erro ao fechar hunt #${id}: ${err.message || err}`, "err");
       }
-    }
-
-    // =========================================================
-    // EVENTS
-    // =========================================================
+    };
 
     createHuntBtn.addEventListener("click", onCreateHunt);
     refreshBtn.addEventListener("click", loadHunts);
 
-    huntStartInput.addEventListener("keydown", (e) => {
+    huntNameInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") onCreateHunt();
     });
 
-    huntNameInput.addEventListener("keydown", (e) => {
+    huntStartInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") onCreateHunt();
     });
 
@@ -889,10 +855,6 @@
       setStatus("Configuração guardada com sucesso.", "ok");
       loadHunts();
     });
-
-    // =========================================================
-    // INIT
-    // =========================================================
 
     fillConfigInputs();
     loadHunts();
