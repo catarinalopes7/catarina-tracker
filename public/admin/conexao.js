@@ -1,6 +1,11 @@
 const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
+window.CT_SUPABASE = {
+  url: SUPABASE_URL,
+  key: SUPABASE_KEY
+};
+
 const headers = {
   apikey: SUPABASE_KEY,
   Authorization: `Bearer ${SUPABASE_KEY}`,
