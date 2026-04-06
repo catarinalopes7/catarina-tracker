@@ -4,281 +4,608 @@
   <meta charset="UTF-8" />
   <title>Catarina Tracker – Painel</title>
   <style>
-    body{margin:0;background:#1E1B3C;color:#FFF;
-     font-family:'Poppins',sans-serif;text-align:center;}
-    header{background:#15122C;padding:20px;color:#FFD54A;}
-    section{margin:20px auto;width:90%;max-width:900px;}
-    table{width:100%;border-collapse:collapse;background:#241F45;}
-    th,td{padding:10px;border-bottom:1px solid #444;text-align:left;}
-    th{color:#FFD54A;}
-    button{background:#4F3EC7;border:none;color:white;padding:6px 12px;
-           border-radius:5px;margin:2px;cursor:pointer;}
-    button:hover{background:#FF4DD4;}
-    input,select{padding:5px;margin:4px;border:none;border-radius:4px;}
-    .modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;
-           background:rgba(0,0,0,0.8);z-index:1000;}
-    .modal-content{background:#241F45;margin:50px auto;padding:20px;
-                   width:500px;border-radius:10px;}
-    .slot-search{width:100%;padding:8px;margin:5px 0;}
-    .slot-results{max-height:200px;overflow-y:auto;background:#1E1B3C;
-                  border-radius:5px;margin:5px 0;}
-    .slot-item{padding:10px;cursor:pointer;border-bottom:1px solid #444;}
-    .slot-item:hover{background:#4F3EC7;}
+    body {
+      margin: 0;
+      background: #1E1B3C;
+      color: #FFF;
+      font-family: 'Poppins', Arial, sans-serif;
+      text-align: center;
+    }
+
+    header {
+      background: #15122C;
+      padding: 20px;
+      color: #FFD54A;
+    }
+
+    section {
+      margin: 20px auto;
+      width: 90%;
+      max-width: 1000px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #241F45;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #444;
+      text-align: left;
+    }
+
+    th {
+      color: #FFD54A;
+    }
+
+    button {
+      background: #4F3EC7;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 5px;
+      margin: 2px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #FF4DD4;
+    }
+
+    input, select {
+      padding: 8px;
+      margin: 4px;
+      border: none;
+      border-radius: 4px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: #241F45;
+      margin: 50px auto;
+      padding: 20px;
+      width: min(500px, 92%);
+      border-radius: 10px;
+      text-align: left;
+    }
+
+    .modal-content h3 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .slot-search {
+      width: 100%;
+      padding: 8px;
+      margin: 5px 0;
+      box-sizing: border-box;
+    }
+
+    .slot-results {
+      max-height: 200px;
+      overflow-y: auto;
+      background: #1E1B3C;
+      border-radius: 5px;
+      margin: 5px 0;
+    }
+
+    .slot-item {
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #444;
+    }
+
+    .slot-item:hover {
+      background: #4F3EC7;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .info-note {
+      color: #CFC7FF;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .box {
+      background: #241F45;
+      padding: 16px;
+      border-radius: 10px;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 800px) {
+      .grid-2, .grid-4 {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-<header>
-  <h1>🎯 Catarina Tracker</h1>
-  <button onclick="menuNova()">➕ Nova Caçada</button>
-</header>
+  <header>
+    <h1>🎯 Catarina Tracker</h1>
+    <button onclick="menuNova()">➕ Nova Caçada</button>
+  </header>
 
-<section>
-  <h2>Caçadas</h2>
-  <table id="tblHunts">
-    <thead>
-      <tr><th>Nome</th><th>Saldo Inicial (€)</th>
-          <th>Total Pago (€)</th><th>Lucro/Prejuízo (€)</th><th>Ações</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</section>
+  <section>
+    <div class="box">
+      <h2>Adicionar nova slot</h2>
+      <div class="grid-4">
+        <input id="novaSlotNome" type="text" placeholder="Nome da slot">
+        <input id="novaSlotProvider" type="text" placeholder="Provider">
+        <select id="novaSlotBonusBuy">
+          <option value="true">Tem Bonus Buy</option>
+          <option value="false">Não tem Bonus Buy</option>
+        </select>
+        <input id="novaSlotTipo" type="text" placeholder="Tipo de slot">
+      </div>
+      <div style="margin-top:10px;">
+        <button onclick="adicionarNovaSlot()">Guardar Slot</button>
+      </div>
+      <div class="info-note">
+        O slug é criado automaticamente. A imagem pode ficar vazia por agora.
+      </div>
+    </div>
+  </section>
 
-<section>
-  <h2>Bónus da Caçada Selecionada</h2>
-  <div id="secBonus">
-    <p>Seleciona uma caçada para ver os bónus correspondentes.</p>
+  <section>
+    <h2>Caçadas</h2>
+    <table id="tblHunts">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Saldo Inicial (€)</th>
+          <th>Total Pago (€)</th>
+          <th>Lucro/Prejuízo (€)</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Bónus da Caçada Selecionada</h2>
+    <div id="secBonus">
+      <p>Seleciona uma caçada para ver os bónus correspondentes.</p>
+    </div>
+  </section>
+
+  <div id="modalBonus" class="modal">
+    <div class="modal-content">
+      <h3>Adicionar Bónus</h3>
+
+      <label for="providerFilter">Provider:</label>
+      <select id="providerFilter">
+        <option value="">Todos</option>
+        <option value="Pragmatic Play">Pragmatic Play</option>
+        <option value="Hacksaw Gaming">Hacksaw Gaming</option>
+        <option value="Nolimit City">Nolimit City</option>
+        <option value="BGaming">BGaming</option>
+      </select>
+
+      <label for="slotSearch">Procurar Slot:</label>
+      <input
+        type="text"
+        id="slotSearch"
+        class="slot-search"
+        placeholder="Digite nome da slot..."
+      >
+
+      <div id="slotResults" class="slot-results"></div>
+
+      <input type="hidden" id="slotSelecionada">
+
+      <label for="bonusAposta">Aposta (€):</label>
+      <input type="number" id="bonusAposta" step="0.01" placeholder="0.20">
+
+      <label for="bonusTipo">Tipo:</label>
+      <select id="bonusTipo">
+        <option>Normal</option>
+        <option>Super</option>
+        <option>Épico</option>
+      </select>
+
+      <div style="margin-top: 12px; text-align: center;">
+        <button onclick="confirmarBonus()">Adicionar</button>
+        <button onclick="fecharModal()">Cancelar</button>
+      </div>
+    </div>
   </div>
-</section>
 
-<!-- Modal para adicionar bónus -->
-<div id="modalBonus" class="modal">
-  <div class="modal-content">
-    <h3>Adicionar Bónus</h3>
-    
-    <label>Provider:</label>
-    <select id="providerFilter">
-      <option value="">Todos</option>
-      <option value="Pragmatic Play">Pragmatic Play</option>
-      <option value="Hacksaw Gaming">Hacksaw Gaming</option>
-      <option value="Nolimit City">Nolimit City</option>
-      <option value="BGaming">BGaming</option>
-    </select>
+  <script src="conexao.js"></script>
+  <script>
+    let huntSelecionado = null;
+    let todasSlots = [];
 
-    <label>Procurar Slot:</label>
-    <input type="text" id="slotSearch" class="slot-search" placeholder="Digite nome da slot...">
-    <div id="slotResults" class="slot-results"></div>
+    function escapeHtml(valor) {
+      return String(valor ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
 
-    <input type="hidden" id="slotSelecionada">
+    function formatarNumero(valor) {
+      return Number(valor || 0).toFixed(2);
+    }
 
-    <label>Aposta (€):</label>
-    <input type="number" id="bonusAposta" step="0.01" placeholder="0.20">
+    function gerarSlug(texto) {
+      return String(texto || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+    }
 
-    <label>Tipo:</label>
-    <select id="bonusTipo">
-      <option>Normal</option>
-      <option>Super</option>
-      <option>Épico</option>
-    </select>
+    async function carregarSlots() {
+      try {
+        todasSlots = await listarSlots();
+      } catch (erro) {
+        console.error("Erro ao carregar slots:", erro);
+        todasSlots = [];
+      }
+    }
 
-    <button onclick="confirmarBonus()">Adicionar</button>
-    <button onclick="fecharModal()">Cancelar</button>
-  </div>
-</div>
+    async function adicionarNovaSlot() {
+      const nome = document.getElementById("novaSlotNome").value.trim();
+      const provider = document.getElementById("novaSlotProvider").value.trim();
+      const temBonusBuy = document.getElementById("novaSlotBonusBuy").value === "true";
+      const tipoSlot = document.getElementById("novaSlotTipo").value.trim();
 
-<!-- Scripts -->
-<script src="conexao.js"></script>
-<script>
-let huntSelecionado=null;
-let todasSlots=[];
+      if (!nome || !provider || !tipoSlot) {
+        alert("Preenche nome, provider e tipo de slot.");
+        return;
+      }
 
-// Carregar todas as slots na inicialização
-async function carregarSlots(){
-  const resp = await fetch(`${SUPABASE_URL}/rest/v1/slots?select=*`, {headers});
-  todasSlots = await resp.json();
-}
+      const slug = gerarSlug(nome);
 
-// 🔹 carregar hunts
-async function carregarHunts(){
-  const resp = await fetch(`${SUPABASE_URL}/rest/v1/hunts?select=*`,{headers});
-  const dados = await resp.json();
-  const corpo = document.querySelector("#tblHunts tbody");
-  corpo.innerHTML="";
-  dados.forEach(h=>{
-    const tr=document.createElement("tr");
-    const lucro = (h.profit_loss||0).toFixed(2);
-    tr.innerHTML=`
-      <td>${h.nome}</td>
-      <td>${(h.start_balance||0).toFixed(2)}</td>
-      <td>${(h.total_pago||0).toFixed(2)}</td>
-      <td>${lucro}</td>
-      <td>
-        <button onclick="verBonus(${h.id})">🔍 Abrir</button>
-        <button onclick="editarHunt(${h.id},'${h.nome}',${h.start_balance||0})">✏️</button>
-        <button onclick="apagarHunt(${h.id})">🗑️</button>
-      </td>`;
-    corpo.appendChild(tr);
-  });
-}
+      const ok = await gravarSlot({
+        nome,
+        provider,
+        slug,
+        imagem_url: null,
+        tem_bonus_buy: temBonusBuy,
+        tipo_slot: tipoSlot
+      });
 
-// 🔹 criar nova hunt
-async function menuNova(){
-  const nome = prompt("Nome da Caçada (ex: #58)","");
-  const saldo = parseFloat(prompt("Saldo Inicial (€):","0"));
-  if(!nome||isNaN(saldo))return;
-  await inserirDados("hunts",{nome,start_balance:saldo});
-  carregarHunts();
-}
+      if (!ok) {
+        alert("Erro ao guardar a slot. Se já existir, o sistema pode estar a bloquear duplicado.");
+        return;
+      }
 
-// 🔹 editar hunt
-async function editarHunt(id,nomeAntigo,saldoAntigo){
-  const nome = prompt("Novo nome",nomeAntigo);
-  const saldo = parseFloat(prompt("Novo saldo inicial (€)",saldoAntigo));
-  if(!nome||isNaN(saldo))return;
-  await fetch(`${SUPABASE_URL}/rest/v1/hunts?id=eq.${id}`,{
-    method:'PATCH',headers,body:JSON.stringify({nome,start_balance:saldo})
-  });
-  carregarHunts();
-}
+      document.getElementById("novaSlotNome").value = "";
+      document.getElementById("novaSlotProvider").value = "";
+      document.getElementById("novaSlotBonusBuy").value = "true";
+      document.getElementById("novaSlotTipo").value = "";
 
-// 🔹 apagar hunt
-async function apagarHunt(id){
-  if(confirm("Apagar esta caçada?")){
-    await apagarDado("hunts",id);
-    carregarHunts();
-    document.getElementById("secBonus").innerHTML =
-      "<p>Seleciona uma caçada para ver bónus.</p>";
-  }
-}
+      await carregarSlots();
+      alert("Slot guardada com sucesso.");
+    }
 
-// 🔹 ver bónus
-async function verBonus(id){
-  huntSelecionado=id;
-  const resp=await fetch(`${SUPABASE_URL}/rest/v1/bonus?select=*`,{headers});
-  const dados=(await resp.json()).filter(b=>b.hunt_id==id);
-  let html=`<button onclick="abrirModalBonus()">➕ Adicionar Bónus</button>`;
-  html+=`<table><thead>
-           <tr><th>Nome</th><th>Provider</th><th>Aposta (€)</th>
-               <th>Tipo</th><th>Payout (€)</th><th>Ações</th></tr>
-         </thead><tbody>`;
-  dados.forEach(b=>{
-    // Buscar info da slot
-    const slot = todasSlots.find(s => s.nome === b.nome) || {};
-    html+=`<tr>
-      <td>${b.nome}</td>
-      <td>${slot.provider||'N/A'}</td>
-      <td>${b.aposta}</td>
-      <td>${b.tipo}</td>
-      <td>${b.payout||0}</td>
-      <td>
-        <button onclick="editarBonus(${b.id},'${b.nome}',${b.aposta},'${b.tipo}','${b.payout||0}')">✏️</button>
-        <button onclick="apagarBonus(${b.id})">🗑️</button>
-      </td></tr>`;
-  });
-  html+="</tbody></table>";
-  document.getElementById("secBonus").innerHTML=html;
-}
+    async function carregarHunts() {
+      try {
+        const dados = await listarHunts();
+        const corpo = document.querySelector("#tblHunts tbody");
+        corpo.innerHTML = "";
 
-// 🔹 Modal de bónus
-function abrirModalBonus(){
-  if(!huntSelecionado){alert("Seleciona um hunt.");return;}
-  document.getElementById("modalBonus").style.display="block";
-}
+        dados.forEach((h) => {
+          const tr = document.createElement("tr");
+          const lucro = formatarNumero(h.profit_loss);
+          const saldoInicial = formatarNumero(h.start_balance);
+          const totalPago = formatarNumero(h.total_pago);
 
-function fecharModal(){
-  document.getElementById("modalBonus").style.display="none";
-  document.getElementById("slotSearch").value="";
-  document.getElementById("slotResults").innerHTML="";
-  document.getElementById("slotSelecionada").value="";
-}
+          tr.innerHTML = `
+            <td>${escapeHtml(h.nome)}</td>
+            <td>${saldoInicial}</td>
+            <td>${totalPago}</td>
+            <td>${lucro}</td>
+            <td class="actions">
+              <button onclick="verBonus(${h.id})">🔍 Abrir</button>
+              <button onclick="editarHunt(${h.id}, ${JSON.stringify(h.nome)}, ${Number(h.start_balance || 0)})">✏️</button>
+              <button onclick="apagarHuntUI(${h.id})">🗑️</button>
+            </td>
+          `;
+          corpo.appendChild(tr);
+        });
+      } catch (erro) {
+        console.error("Erro ao carregar hunts:", erro);
+      }
+    }
 
-// 🔹 Pesquisa de slots
-document.addEventListener('DOMContentLoaded', function(){
-  const searchInput = document.getElementById('slotSearch');
-  const providerFilter = document.getElementById('providerFilter');
-  
-  function pesquisarSlots(){
-    const termo = searchInput.value.toLowerCase();
-    const provider = providerFilter.value;
-    
-    let slots = todasSlots;
-    if(provider) slots = slots.filter(s => s.provider === provider);
-    if(termo) slots = slots.filter(s => s.nome.toLowerCase().includes(termo));
-    
-    const results = document.getElementById('slotResults');
-    results.innerHTML = '';
-    
-    slots.slice(0,10).forEach(slot => {
-      const div = document.createElement('div');
-      div.className = 'slot-item';
-      div.innerHTML = `<b>${slot.nome}</b> - ${slot.provider}`;
-      div.onclick = () => selecionarSlot(slot);
-      results.appendChild(div);
+    async function menuNova() {
+      const nome = prompt("Nome da Caçada (ex: #58)", "");
+      if (!nome) return;
+
+      const saldo = parseFloat(prompt("Saldo Inicial (€):", "0"));
+      if (isNaN(saldo)) return;
+
+      const ok = await gravarHunt({
+        nome,
+        start_balance: saldo,
+        total_pago: 0,
+        profit_loss: 0
+      });
+
+      if (!ok) {
+        alert("Erro ao criar a caçada.");
+        return;
+      }
+
+      await carregarHunts();
+    }
+
+    async function editarHunt(id, nomeAntigo, saldoAntigo) {
+      const nome = prompt("Novo nome", nomeAntigo);
+      if (!nome) return;
+
+      const saldo = parseFloat(prompt("Novo saldo inicial (€)", saldoAntigo));
+      if (isNaN(saldo)) return;
+
+      const ok = await atualizarHunt(id, {
+        nome,
+        start_balance: saldo
+      });
+
+      if (!ok) {
+        alert("Erro ao editar a caçada.");
+        return;
+      }
+
+      await recalcularHunt(id);
+      await carregarHunts();
+
+      if (huntSelecionado === id) {
+        await verBonus(id);
+      }
+    }
+
+    async function apagarHuntUI(id) {
+      if (!confirm("Apagar esta caçada?")) return;
+
+      const ok = await apagarHunt(id);
+
+      if (!ok) {
+        alert("Erro ao apagar a caçada.");
+        return;
+      }
+
+      if (huntSelecionado === id) {
+        huntSelecionado = null;
+        document.getElementById("secBonus").innerHTML =
+          "<p>Seleciona uma caçada para ver os bónus correspondentes.</p>";
+      }
+
+      await carregarHunts();
+    }
+
+    async function verBonus(id) {
+      huntSelecionado = id;
+
+      try {
+        const todosBonus = await listarBonus();
+        const dados = todosBonus.filter((b) => Number(b.hunt_id) === Number(id));
+
+        let html = `<button onclick="abrirModalBonus()">➕ Adicionar Bónus</button>`;
+        html += `<div class="info-note">Hunt selecionada: #${id}</div>`;
+        html += `
+          <table style="margin-top:10px;">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Provider</th>
+                <th>Aposta (€)</th>
+                <th>Tipo</th>
+                <th>Payout (€)</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        dados.forEach((b) => {
+          const slot = todasSlots.find((s) => Number(s.id) === Number(b.slot_id)) ||
+                       todasSlots.find((s) => s.nome === b.nome) || {};
+          html += `
+            <tr>
+              <td>${escapeHtml(b.nome)}</td>
+              <td>${escapeHtml(slot.provider || "N/A")}</td>
+              <td>${formatarNumero(b.aposta)}</td>
+              <td>${escapeHtml(b.tipo)}</td>
+              <td>${formatarNumero(b.payout)}</td>
+              <td class="actions">
+                <button onclick="editarBonus(${b.id}, ${JSON.stringify(b.nome)}, ${Number(b.aposta || 0)}, ${JSON.stringify(b.tipo)}, ${Number(b.payout || 0)})">✏️</button>
+                <button onclick="apagarBonusUI(${b.id})">🗑️</button>
+              </td>
+            </tr>
+          `;
+        });
+
+        html += `</tbody></table>`;
+        document.getElementById("secBonus").innerHTML = html;
+      } catch (erro) {
+        console.error("Erro ao carregar bónus:", erro);
+        document.getElementById("secBonus").innerHTML =
+          "<p>Erro ao carregar os bónus desta caçada.</p>";
+      }
+    }
+
+    function abrirModalBonus() {
+      if (!huntSelecionado) {
+        alert("Seleciona uma hunt primeiro.");
+        return;
+      }
+
+      document.getElementById("modalBonus").style.display = "block";
+    }
+
+    function fecharModal() {
+      document.getElementById("modalBonus").style.display = "none";
+      document.getElementById("slotSearch").value = "";
+      document.getElementById("slotResults").innerHTML = "";
+      document.getElementById("slotSelecionada").value = "";
+      document.getElementById("bonusAposta").value = "";
+      document.getElementById("bonusTipo").value = "Normal";
+      document.getElementById("providerFilter").value = "";
+    }
+
+    function pesquisarSlots() {
+      const searchInput = document.getElementById("slotSearch");
+      const providerFilter = document.getElementById("providerFilter");
+      const termo = searchInput.value.toLowerCase().trim();
+      const provider = providerFilter.value;
+
+      let slots = [...todasSlots];
+
+      if (provider) {
+        slots = slots.filter((s) => s.provider === provider);
+      }
+
+      if (termo) {
+        slots = slots.filter((s) => String(s.nome || "").toLowerCase().includes(termo));
+      }
+
+      const results = document.getElementById("slotResults");
+      results.innerHTML = "";
+
+      slots.slice(0, 20).forEach((slot) => {
+        const div = document.createElement("div");
+        div.className = "slot-item";
+        div.innerHTML = `<b>${escapeHtml(slot.nome)}</b> - ${escapeHtml(slot.provider || "")}`;
+        div.onclick = () => selecionarSlot(slot);
+        results.appendChild(div);
+      });
+    }
+
+    function selecionarSlot(slot) {
+      document.getElementById("slotSearch").value = slot.nome;
+      document.getElementById("slotSelecionada").value = slot.id;
+      document.getElementById("slotResults").innerHTML = "";
+    }
+
+    async function confirmarBonus() {
+      const slotNome = document.getElementById("slotSearch").value.trim();
+      const slotId = document.getElementById("slotSelecionada").value;
+      const aposta = parseFloat(document.getElementById("bonusAposta").value);
+      const tipo = document.getElementById("bonusTipo").value;
+
+      if (!huntSelecionado) {
+        alert("Nenhuma hunt selecionada.");
+        return;
+      }
+
+      if (!slotNome || isNaN(aposta)) {
+        alert("Preenche a slot e a aposta.");
+        return;
+      }
+
+      const ok = await gravarBonus({
+        nome: slotNome,
+        aposta: aposta,
+        tipo: tipo,
+        hunt_id: huntSelecionado,
+        slot_id: slotId ? Number(slotId) : null,
+        payout: 0
+      });
+
+      if (!ok) {
+        alert("Erro ao adicionar o bónus.");
+        return;
+      }
+
+      await recalcularHunt(huntSelecionado);
+      fecharModal();
+      await verBonus(huntSelecionado);
+      await carregarHunts();
+    }
+
+    async function editarBonus(id, nomeAntigo, apAntiga, tipoAntigo, payoutAntigo) {
+      const nome = prompt("Novo nome", nomeAntigo);
+      if (!nome) return;
+
+      const aposta = parseFloat(prompt("Nova aposta", apAntiga));
+      if (isNaN(aposta)) return;
+
+      const tipo = prompt("Tipo (Normal, Super, Épico)", tipoAntigo);
+      if (!tipo) return;
+
+      const payout = parseFloat(prompt("Payout (€)", payoutAntigo));
+      if (isNaN(payout)) return;
+
+      const ok = await atualizarBonus(id, {
+        nome,
+        aposta,
+        tipo,
+        payout
+      });
+
+      if (!ok) {
+        alert("Erro ao editar o bónus.");
+        return;
+      }
+
+      await recalcularHunt(huntSelecionado);
+      await verBonus(huntSelecionado);
+      await carregarHunts();
+    }
+
+    async function apagarBonusUI(id) {
+      if (!confirm("Apagar bónus definitivamente?")) return;
+
+      const ok = await apagarBonus(id);
+
+      if (!ok) {
+        alert("Erro ao apagar o bónus.");
+        return;
+      }
+
+      await recalcularHunt(huntSelecionado);
+      await verBonus(huntSelecionado);
+      await carregarHunts();
+    }
+
+    document.addEventListener("DOMContentLoaded", async function () {
+      document.getElementById("slotSearch").addEventListener("input", pesquisarSlots);
+      document.getElementById("providerFilter").addEventListener("change", pesquisarSlots);
+
+      await carregarSlots();
+      await carregarHunts();
     });
-  }
-  
-  searchInput.oninput = pesquisarSlots;
-  providerFilter.onchange = pesquisarSlots;
-});
-
-function selecionarSlot(slot){
-  document.getElementById('slotSearch').value = slot.nome;
-  document.getElementById('slotSelecionada').value = slot.id;
-  document.getElementById('slotResults').innerHTML = '';
-}
-
-// 🔹 confirmar adição de bónus
-async function confirmarBonus(){
-  const slotNome = document.getElementById('slotSearch').value;
-  const aposta = parseFloat(document.getElementById('bonusAposta').value);
-  const tipo = document.getElementById('bonusTipo').value;
-  
-  if(!slotNome || isNaN(aposta)){
-    alert('Preenche slot e aposta!');
-    return;
-  }
-  
-  await inserirDados("bonus", {
-    nome: slotNome,
-    aposta: aposta,
-    tipo: tipo,
-    hunt_id: huntSelecionado
-  });
-  
-  await recalcularHunt(huntSelecionado);
-  fecharModal();
-  verBonus(huntSelecionado);
-}
-
-// 🔹 editar bónus (mantém o sistema antigo por agora)
-async function editarBonus(id,nomeAntigo,apAntiga,tipoAntigo,payoutAntigo){
-  const nome=prompt("Novo nome",nomeAntigo);
-  const aposta=parseFloat(prompt("Nova aposta",apAntiga));
-  const tipo=prompt("Tipo (Normal, Super, Épico)",tipoAntigo);
-  const payout=parseFloat(prompt("Payout (€)",payoutAntigo));
-  await fetch(`${SUPABASE_URL}/rest/v1/bonus?id=eq.${id}`,{
-    method:'PATCH',headers,body:JSON.stringify({nome,aposta,tipo,payout})
-  });
-  await recalcularHunt(huntSelecionado);
-  verBonus(huntSelecionado);
-}
-
-// 🔹 apagar bónus
-async function apagarBonus(id){
-  if(confirm("Apagar bónus definitivamente?")){
-    await apagarDado("bonus",id);
-    await recalcularHunt(huntSelecionado);
-    verBonus(huntSelecionado);
-  }
-}
-
-// Inicialização
-carregarSlots();
-carregarHunts();
-</script>
-
-  <script src="/js/supabase.js"></script>
-
-</body>
-</html>
+  </script>
 </body>
 </html>
