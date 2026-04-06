@@ -5,251 +5,848 @@
   <meta name="viewport" content="width=1080, height=1920" />
   <title>Catarina Tracker Overlay</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    body {
+    :root {
+      --bg1: #1a1233;
+      --bg2: #23194a;
+      --bg3: #120d22;
+      --panel: rgba(255,255,255,0.08);
+      --panel-2: rgba(255,255,255,0.06);
+      --panel-3: rgba(255,255,255,0.10);
+      --border: rgba(255,255,255,0.14);
+      --text: #ffffff;
+      --muted: rgba(255,255,255,0.72);
+      --gold: #ffd54a;
+      --gold-2: #ffb92e;
+      --green: #47d97b;
+      --red: #ff5f7d;
+      --blue: #6db6ff;
+      --purple: #b68dff;
+      --shadow: 0 18px 40px rgba(0,0,0,0.35);
+      --glow: 0 0 0 1px rgba(255,213,74,0.18), 0 0 30px rgba(255,213,74,0.18);
+    }
+
+    html, body {
       width: 1080px;
       height: 1920px;
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(180deg, #221942, #171126);
-      color: #fff;
-      padding: 30px;
+      overflow: hidden;
+      font-family: 'Poppins', Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(115, 75, 255, 0.22), transparent 28%),
+        linear-gradient(180deg, var(--bg2) 0%, var(--bg1) 42%, var(--bg3) 100%);
+    }
+
+    body {
+      padding: 28px;
+    }
+
+    .overlay {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
     }
 
     .hunt-title {
+      min-height: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
+      padding: 18px 28px;
+      border-radius: 28px;
+      border: 1px solid rgba(255,213,74,0.18);
+      background: linear-gradient(135deg, rgba(255,213,74,0.14), rgba(255,255,255,0.07));
+      box-shadow: var(--shadow);
+      color: var(--gold);
       font-size: 38px;
       font-weight: 800;
-      color: #FFD54A;
-      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
 
-    .row {
+    .top-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 15px;
+      gap: 18px;
     }
 
-    .box {
-      background: rgba(255,255,255,0.08);
-      padding: 20px;
-      border-radius: 20px;
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 20px 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
     }
 
     .label {
       font-size: 16px;
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 5px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
     }
 
-    .value {
-      font-size: 34px;
+    .top-value {
+      font-size: 40px;
       font-weight: 800;
+      line-height: 1;
+    }
+
+    .open-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .open-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .open-label {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .open-value {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1;
     }
 
     .progress {
-      height: 12px;
-      background: rgba(255,255,255,0.1);
+      width: 100%;
+      height: 16px;
       border-radius: 999px;
-      margin-top: 10px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
       overflow: hidden;
+      position: relative;
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg,#FFD54A,#ff9f43);
       width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-2));
+      transition: width 0.35s ease;
+      position: relative;
     }
 
-    .cards {
+    .progress-fill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+      animation: shimmer 2.5s linear infinite;
+    }
+
+    .main-cards {
       display: grid;
-      grid-template-columns: repeat(4,1fr);
-      gap: 12px;
-      margin-bottom: 15px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
     }
 
-    .card {
-      background: rgba(255,255,255,0.08);
-      padding: 15px;
-      border-radius: 20px;
+    .mini-card {
+      min-height: 120px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.06));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    .green { color: #44d17a; }
-    .red { color: #ff5c7a; }
-    .blue { color: #69b7ff; }
-    .gold { color: #FFD54A; }
+    .mini-label {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
 
-    /* 🔥 NOVA LINHA BEST / WORST */
-    .bestworst {
+    .mini-value {
+      font-size: 33px;
+      font-weight: 800;
+      line-height: 1.05;
+      word-break: break-word;
+    }
+
+    .gold { color: var(--gold); }
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+    .blue { color: var(--blue); }
+    .purple { color: var(--purple); }
+
+    .secondary-cards {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 16px;
     }
 
-    .slot-box {
-      background: rgba(255,255,255,0.06);
-      padding: 16px;
-      border-radius: 20px;
+    .slot-highlight {
+      min-height: 118px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.05));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slot-highlight.best::before,
+    .slot-highlight.worst::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      border-radius: 8px;
+    }
+
+    .slot-highlight.best::before {
+      background: linear-gradient(180deg, var(--green), #78ff9e);
+    }
+
+    .slot-highlight.worst::before {
+      background: linear-gradient(180deg, var(--red), #ff9aae);
     }
 
     .slot-name {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 5px;
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 8px;
+    }
+
+    .slot-sub {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--muted);
     }
 
     .slot-value {
-      font-size: 24px;
+      font-size: 30px;
       font-weight: 800;
+      line-height: 1;
     }
 
-    .list {
-      height: 1200px;
+    .list-panel {
+      flex: 1;
+      min-height: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.04));
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .list-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 20%, transparent 80%, rgba(255,255,255,0.02));
+    }
+
+    .list-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      will-change: transform;
+    }
+
+    .bonus-card {
+      min-height: 118px;
+      border-radius: 22px;
+      padding: 16px 18px;
+      background: var(--panel-2);
+      border: 1px solid rgba(255,255,255,0.10);
+      display: grid;
+      grid-template-columns: 1.65fr 0.8fr 0.95fr;
+      gap: 12px;
+      align-items: center;
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+      position: relative;
       overflow: hidden;
     }
 
-    .item {
-      background: rgba(255,255,255,0.06);
-      padding: 15px;
-      border-radius: 15px;
-      margin-bottom: 10px;
+    .bonus-card.active {
+      background: linear-gradient(135deg, rgba(255,213,74,0.18), rgba(255,255,255,0.10));
+      border-color: rgba(255,213,74,0.40);
+      box-shadow: var(--glow), var(--shadow);
+      animation: pulseActive 1.8s ease-in-out infinite;
+      transform: scale(1.01);
     }
 
-    .active {
-      border: 2px solid #FFD54A;
+    .bonus-card.active::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
+      transform: translateX(-100%);
+      animation: activeSweep 2.8s linear infinite;
+    }
+
+    .bonus-main {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .bonus-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .bonus-name {
+      font-size: 27px;
+      font-weight: 800;
+      line-height: 1.05;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .bonus-meta {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .bonus-side {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      text-align: right;
+    }
+
+    .bonus-side-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .bonus-side-value {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 28px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .badge-live {
+      color: #1f1600;
+      background: linear-gradient(180deg, var(--gold), #ffbf36);
+      box-shadow: 0 0 16px rgba(255,213,74,0.22);
+    }
+
+    .badge-bigwin {
+      color: #08170e;
+      background: linear-gradient(180deg, #5eff9b, #31d36f);
+      box-shadow: 0 0 18px rgba(71,217,123,0.20);
+    }
+
+    .empty {
+      height: 100%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 30px;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 14px;
+      color: rgba(255,255,255,0.34);
+      margin-top: 2px;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(120%); }
+    }
+
+    @keyframes pulseActive {
+      0%, 100% {
+        box-shadow: var(--glow), var(--shadow);
+      }
+      50% {
+        box-shadow: 0 0 0 1px rgba(255,213,74,0.28), 0 0 40px rgba(255,213,74,0.24), var(--shadow);
+      }
+    }
+
+    @keyframes activeSweep {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
   </style>
 </head>
-
 <body>
+  <div class="overlay">
+    <div id="huntTitle" class="hunt-title">A carregar hunt...</div>
 
-<div class="hunt-title" id="huntTitle">A carregar hunt...</div>
+    <div class="top-row">
+      <div class="panel">
+        <div class="label">Total Bónus</div>
+        <div id="totalBonus" class="top-value">0</div>
+      </div>
 
-<div class="row">
-  <div class="box">
-    <div class="label">Total Bónus</div>
-    <div class="value" id="totalBonus">0</div>
-  </div>
+      <div class="panel">
+        <div class="open-wrap">
+          <div class="open-head">
+            <div class="open-label">Bonus Open</div>
+            <div id="openCount" class="open-value">0/0</div>
+          </div>
 
-  <div class="box">
-    <div class="label">Bonus Open</div>
-    <div class="value" id="openCount">0/0</div>
-    <div class="progress">
-      <div class="progress-fill" id="progressFill"></div>
+          <div class="progress">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<div class="cards">
-  <div class="card">
-    <div class="label">AVG X</div>
-    <div class="value gold" id="avgX">0x</div>
-  </div>
+    <div class="main-cards">
+      <div class="mini-card">
+        <div class="mini-label">AVG X</div>
+        <div id="avgX" class="mini-value gold">0.00x</div>
+      </div>
 
-  <div class="card">
-    <div class="label">BE Inicial</div>
-    <div class="value blue" id="beInicial">0%</div>
-  </div>
+      <div class="mini-card">
+        <div class="mini-label">BE Inicial</div>
+        <div id="beInicial" class="mini-value blue">0%</div>
+      </div>
 
-  <div class="card">
-    <div class="label">Profit / Loss</div>
-    <div class="value" id="profitLoss">0€</div>
-  </div>
+      <div class="mini-card">
+        <div class="mini-label">Profit / Loss</div>
+        <div id="profitLoss" class="mini-value">0.00€</div>
+      </div>
 
-  <div class="card">
-    <div class="label">Total Pago</div>
-    <div class="value green" id="totalPago">0€</div>
-  </div>
-</div>
-
-<!-- 🔥 BEST / WORST -->
-<div class="bestworst">
-  <div class="slot-box">
-    <div class="label">Best Slot</div>
-    <div class="slot-name" id="bestName">-</div>
-    <div class="slot-value green" id="bestValue">0€</div>
-  </div>
-
-  <div class="slot-box">
-    <div class="label">Worst Slot</div>
-    <div class="slot-name" id="worstName">-</div>
-    <div class="slot-value red" id="worstValue">0€</div>
-  </div>
-</div>
-
-<div class="list" id="list"></div>
-
-<script>
-const SUPABASE_URL = "COLOCA_URL";
-const SUPABASE_KEY = "COLOCA_KEY";
-
-function euro(v){return Number(v||0).toFixed(2)+"€"}
-
-async function load(){
-  const hunt = await fetch(`${SUPABASE_URL}/rest/v1/hunts?is_active=eq.true&limit=1`,{
-    headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}
-  }).then(r=>r.json()).then(d=>d[0]);
-
-  if(!hunt)return;
-
-  const bonuses = await fetch(`${SUPABASE_URL}/rest/v1/hunt_bonuses?hunt_id=eq.${hunt.id}`,{
-    headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}
-  }).then(r=>r.json());
-
-  document.getElementById("huntTitle").textContent = hunt.name;
-
-  const opened = bonuses.filter(b=>b.payout>0).length;
-  document.getElementById("totalBonus").textContent = bonuses.length;
-  document.getElementById("openCount").textContent = `${opened}/${bonuses.length}`;
-
-  document.getElementById("progressFill").style.width =
-    bonuses.length ? (opened/bonuses.length*100)+"%" : "0%";
-
-  let totalCost=0,totalPaid=0;
-
-  bonuses.forEach(b=>{
-    totalCost += Number(b.buy_amount||0);
-    totalPaid += Number(b.payout||0);
-  });
-
-  document.getElementById("totalPago").textContent = euro(totalPaid);
-  document.getElementById("profitLoss").textContent = euro(totalPaid-totalCost);
-
-  /* 🔥 BEST / WORST */
-  let best=null,worst=null;
-
-  bonuses.forEach(b=>{
-    if(!best || b.payout > best.payout) best = b;
-    if(!worst || b.payout < worst.payout) worst = b;
-  });
-
-  if(best){
-    document.getElementById("bestName").textContent = best.slot_name || "Slot";
-    document.getElementById("bestValue").textContent = euro(best.payout);
-  }
-
-  if(worst){
-    document.getElementById("worstName").textContent = worst.slot_name || "Slot";
-    document.getElementById("worstValue").textContent = euro(worst.payout);
-  }
-
-  /* LISTA */
-  document.getElementById("list").innerHTML = bonuses.map(b=>`
-    <div class="item">
-      ${b.slot_name || "Slot"} - Bet ${euro(b.bet)}
-      ${b.payout>0 ? " | "+euro(b.payout):""}
+      <div class="mini-card">
+        <div class="mini-label">Total Pago</div>
+        <div id="totalPago" class="mini-value green">0.00€</div>
+      </div>
     </div>
-  `).join("");
-}
 
-setInterval(load,2000);
-load();
-</script>
+    <div class="secondary-cards">
+      <div class="slot-highlight best">
+        <div class="label">Best Slot</div>
+        <div id="bestName" class="slot-name">-</div>
+        <div class="slot-sub">Maior payout</div>
+        <div id="bestValue" class="slot-value green">0.00€</div>
+      </div>
 
+      <div class="slot-highlight worst">
+        <div class="label">Worst Slot</div>
+        <div id="worstName" class="slot-name">-</div>
+        <div class="slot-sub">Menor payout</div>
+        <div id="worstValue" class="slot-value red">0.00€</div>
+      </div>
+    </div>
+
+    <div class="list-panel">
+      <div id="listInner" class="list-inner"></div>
+      <div id="emptyState" class="empty">Sem bónus para mostrar.</div>
+    </div>
+
+    <div class="footer-note">Catarina Tracker Overlay</div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "COLOCA_AQUI_O_TEU_SUPABASE_URL";
+    const SUPABASE_KEY = "COLOCA_AQUI_O_TEU_SUPABASE_ANON_KEY";
+
+    const HUNTS_TABLE = "hunts";
+    const BONUSES_TABLE = "hunt_bonuses";
+
+    const REFRESH_MS = 2500;
+    const AUTOSCROLL_SPEED = 0.45;
+
+    let animationFrame = null;
+    let scrollPos = 0;
+
+    function headers() {
+      return {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation"
+      };
+    }
+
+    function safeNumber(value) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function euro(value) {
+      return `${safeNumber(value).toFixed(2)}€`;
+    }
+
+    function percent(value) {
+      return `${safeNumber(value).toFixed(0)}%`;
+    }
+
+    function xValue(value) {
+      return `${safeNumber(value).toFixed(2)}x`;
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function fetchActiveHunt() {
+      const url =
+        `${SUPABASE_URL}/rest/v1/${HUNTS_TABLE}` +
+        `?select=*` +
+        `&is_active=eq.true` +
+        `&order=created_at.desc` +
+        `&limit=1`;
+
+      const res = await fetch(url, { headers: headers() });
+      if (!res.ok) throw new Error("Erro ao buscar hunt ativa");
+      const data = await res.json();
+      return data[0] || null;
+    }
+
+    async function fetchBonuses(huntId) {
+      const url =
+        `${SUPABASE_URL}/rest/v1/${BONUSES_TABLE}` +
+        `?select=*` +
+        `&hunt_id=eq.${huntId}` +
+        `&order=created_at.asc`;
+
+      const res = await fetch(url, { headers: headers() });
+      if (!res.ok) throw new Error("Erro ao buscar bónus");
+      return await res.json();
+    }
+
+    function getBonusStatus(bonus) {
+      const raw = String(bonus.status || "").toLowerCase();
+
+      if (raw === "opened" || raw === "open" || raw === "done" || raw === "completed") {
+        return "opened";
+      }
+
+      if (raw === "active" || raw === "opening" || raw === "current") {
+        return "active";
+      }
+
+      return "pending";
+    }
+
+    function getActiveBonus(bonuses) {
+      return bonuses.find(b => getBonusStatus(b) === "active") || null;
+    }
+
+    function getOpenedBonuses(bonuses) {
+      return bonuses.filter(b => {
+        const status = getBonusStatus(b);
+        return status === "opened" || status === "active";
+      });
+    }
+
+    function getOpenedCount(bonuses) {
+      return getOpenedBonuses(bonuses).length;
+    }
+
+    function getBuyAmount(bonus) {
+      return safeNumber(bonus.buy_amount ?? bonus.cost ?? bonus.price ?? 0);
+    }
+
+    function getPayout(bonus) {
+      return safeNumber(bonus.payout ?? bonus.win_amount ?? 0);
+    }
+
+    function getBet(bonus) {
+      return safeNumber(bonus.bet ?? 0);
+    }
+
+    function getSlotName(bonus, index = 0) {
+      return (
+        bonus.slot_name ||
+        bonus.game_name ||
+        bonus.name ||
+        `Bónus ${index + 1}`
+      );
+    }
+
+    function getTotalCost(bonuses) {
+      return bonuses.reduce((sum, b) => sum + getBuyAmount(b), 0);
+    }
+
+    function getOpenedCost(bonuses) {
+      return getOpenedBonuses(bonuses).reduce((sum, b) => sum + getBuyAmount(b), 0);
+    }
+
+    function getTotalPaid(bonuses) {
+      return bonuses.reduce((sum, b) => sum + getPayout(b), 0);
+    }
+
+    function getAvgX(bonuses) {
+      const opened = getOpenedBonuses(bonuses);
+      if (!opened.length) return 0;
+
+      const totalX = opened.reduce((sum, b) => {
+        const bet = getBet(b);
+        const payout = getPayout(b);
+        if (bet <= 0) return sum;
+        return sum + (payout / bet);
+      }, 0);
+
+      return totalX / opened.length;
+    }
+
+    function getBeInicial(bonuses) {
+      const totalCost = getTotalCost(bonuses);
+      if (totalCost <= 0) return 0;
+      return (getTotalPaid(bonuses) / totalCost) * 100;
+    }
+
+    function getProfitLoss(bonuses) {
+      return getTotalPaid(bonuses) - getTotalCost(bonuses);
+    }
+
+    function getBestBonus(bonuses) {
+      if (!bonuses.length) return null;
+      return bonuses.reduce((best, current) => {
+        return getPayout(current) > getPayout(best) ? current : best;
+      });
+    }
+
+    function getWorstBonus(bonuses) {
+      if (!bonuses.length) return null;
+      return bonuses.reduce((worst, current) => {
+        return getPayout(current) < getPayout(worst) ? current : worst;
+      });
+    }
+
+    function isBigWin(bonus) {
+      const bet = getBet(bonus);
+      const payout = getPayout(bonus);
+      if (bet <= 0) return false;
+      return (payout / bet) >= 100;
+    }
+
+    function updateTop(hunt, bonuses) {
+      document.getElementById("huntTitle").textContent =
+        hunt?.name || hunt?.title || "Sem hunt ativa";
+
+      const totalBonus = bonuses.length;
+      const openedCount = getOpenedCount(bonuses);
+
+      document.getElementById("totalBonus").textContent = totalBonus;
+      document.getElementById("openCount").textContent = `${openedCount}/${totalBonus}`;
+
+      const pct = totalBonus > 0 ? (openedCount / totalBonus) * 100 : 0;
+      document.getElementById("progressFill").style.width = `${pct}%`;
+    }
+
+    function updateMainCards(bonuses) {
+      const avg = getAvgX(bonuses);
+      const beInicial = getBeInicial(bonuses);
+      const profitLoss = getProfitLoss(bonuses);
+      const totalPago = getTotalPaid(bonuses);
+
+      document.getElementById("avgX").textContent = xValue(avg);
+      document.getElementById("beInicial").textContent = percent(beInicial);
+      document.getElementById("totalPago").textContent = euro(totalPago);
+
+      const profitEl = document.getElementById("profitLoss");
+      profitEl.textContent = euro(profitLoss);
+      profitEl.classList.remove("green", "red", "gold");
+      profitEl.classList.add(profitLoss >= 0 ? "green" : "red");
+    }
+
+    function updateBestWorst(bonuses) {
+      const best = getBestBonus(bonuses);
+      const worst = getWorstBonus(bonuses);
+
+      document.getElementById("bestName").textContent = best ? getSlotName(best) : "-";
+      document.getElementById("bestValue").textContent = best ? euro(getPayout(best)) : "0.00€";
+
+      document.getElementById("worstName").textContent = worst ? getSlotName(worst) : "-";
+      document.getElementById("worstValue").textContent = worst ? euro(getPayout(worst)) : "0.00€";
+    }
+
+    function renderBonuses(bonuses) {
+      const listInner = document.getElementById("listInner");
+      const emptyState = document.getElementById("emptyState");
+
+      if (!bonuses.length) {
+        listInner.innerHTML = "";
+        emptyState.style.display = "flex";
+        return;
+      }
+
+      emptyState.style.display = "none";
+
+      const activeBonus = getActiveBonus(bonuses);
+
+      listInner.innerHTML = bonuses.map((bonus, index) => {
+        const isActive = activeBonus && String(activeBonus.id) === String(bonus.id);
+        const title = getSlotName(bonus, index);
+        const bet = getBet(bonus);
+        const payout = getPayout(bonus);
+        const showBigWin = isBigWin(bonus);
+
+        return `
+          <div class="bonus-card ${isActive ? "active" : ""}">
+            <div class="bonus-main">
+              <div class="bonus-title-row">
+                <div class="bonus-name">${escapeHtml(title)}</div>
+                ${isActive ? `<div class="badge badge-live">Live</div>` : ""}
+                ${showBigWin ? `<div class="badge badge-bigwin">Big Win</div>` : ""}
+              </div>
+              <div class="bonus-meta">Bet: ${euro(bet)}</div>
+            </div>
+
+            <div class="bonus-side">
+              <div class="bonus-side-label">Estado</div>
+              <div class="bonus-side-value">${isActive ? "ABRIR" : "NA LISTA"}</div>
+            </div>
+
+            <div class="bonus-side">
+              <div class="bonus-side-label">${isActive ? "Payout" : ""}</div>
+              <div class="bonus-side-value ${payout >= 0 ? "green" : "red"}">
+                ${isActive ? euro(payout) : ""}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      restartAutoScroll();
+    }
+
+    function restartAutoScroll() {
+      const panel = document.querySelector(".list-panel");
+      const listInner = document.getElementById("listInner");
+
+      scrollPos = 0;
+
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+        animationFrame = null;
+      }
+
+      function step() {
+        const maxScroll = Math.max(0, listInner.scrollHeight - panel.clientHeight + 30);
+
+        if (maxScroll > 0) {
+          scrollPos += AUTOSCROLL_SPEED;
+          if (scrollPos >= maxScroll) {
+            scrollPos = 0;
+          }
+          listInner.style.transform = `translateY(-${scrollPos}px)`;
+        } else {
+          listInner.style.transform = `translateY(0px)`;
+        }
+
+        animationFrame = requestAnimationFrame(step);
+      }
+
+      animationFrame = requestAnimationFrame(step);
+    }
+
+    async function loadOverlay() {
+      try {
+        const hunt = await fetchActiveHunt();
+
+        if (!hunt) {
+          document.getElementById("huntTitle").textContent = "Sem hunt ativa";
+          document.getElementById("totalBonus").textContent = "0";
+          document.getElementById("openCount").textContent = "0/0";
+          document.getElementById("progressFill").style.width = "0%";
+          document.getElementById("avgX").textContent = "0.00x";
+          document.getElementById("beInicial").textContent = "0%";
+          document.getElementById("profitLoss").textContent = "0.00€";
+          document.getElementById("profitLoss").classList.remove("green", "red");
+          document.getElementById("totalPago").textContent = "0.00€";
+          document.getElementById("bestName").textContent = "-";
+          document.getElementById("bestValue").textContent = "0.00€";
+          document.getElementById("worstName").textContent = "-";
+          document.getElementById("worstValue").textContent = "0.00€";
+          renderBonuses([]);
+          return;
+        }
+
+        const bonuses = await fetchBonuses(hunt.id);
+
+        updateTop(hunt, bonuses);
+        updateMainCards(bonuses);
+        updateBestWorst(bonuses);
+        renderBonuses(bonuses);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadOverlay();
+    setInterval(loadOverlay, REFRESH_MS);
+  </script>
 </body>
 </html>
