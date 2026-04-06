@@ -316,24 +316,6 @@
       display:none;
     }
 
-    .selected-hunt-box{
-      display:flex;
-      gap:14px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-
-    .selected-hunt-title{
-      font-size:18px;
-      font-weight:800;
-      color:#fff;
-    }
-
-    .selected-hunt-meta{
-      color:var(--muted);
-      font-size:13px;
-    }
-
     .empty-state{
       padding:22px;
       color:var(--muted);
@@ -374,11 +356,6 @@
     .slot-closed{
       color:#ff9aa7;
       font-weight:700;
-    }
-
-    .hint{
-      color:var(--muted);
-      font-size:12px;
     }
 
     .click-note{
@@ -514,6 +491,45 @@
     const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
     const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
+    const HUNT_LINK_COLUMNS = [
+      "hunt_id",
+      "hunt",
+      "huntId",
+      "hunt_id_fk",
+      "id_hunt",
+      "bonus_id"
+    ];
+
+    const SLOT_NAME_KEYS = [
+      "slot_name",
+      "nome",
+      "name",
+      "slot",
+      "titulo"
+    ];
+
+    const SLOT_BET_KEYS = [
+      "bet_size",
+      "bet",
+      "aposta",
+      "valor_aposta",
+      "stake"
+    ];
+
+    const SLOT_PAYOUT_KEYS = [
+      "payout",
+      "valor_pago",
+      "total_pago",
+      "paid",
+      "resultado"
+    ];
+
+    const SLOT_STATUS_KEYS = [
+      "status",
+      "estado",
+      "state"
+    ];
+
     const huntNameInput = document.getElementById("huntName");
     const huntStartInput = document.getElementById("huntStart");
     const createHuntBtn = document.getElementById("createHuntBtn");
@@ -522,7 +538,6 @@
     const huntCount = document.getElementById("huntCount");
     const statusBox = document.getElementById("statusBox");
 
-    const slotsSection = document.getElementById("slotsSection");
     const slotsContentEmpty = document.getElementById("slotsContentEmpty");
     const slotsContentLoaded = document.getElementById("slotsContentLoaded");
     const selectedHuntMeta = document.getElementById("selectedHuntMeta");
@@ -534,6 +549,7 @@
     let selectedHuntId = null;
     let selectedHuntRow = null;
     let huntsCache = [];
+    let detectedSlotLinkColumn = null;
 
     function setStatus(message, type = "") {
       statusBox.textContent = message;
@@ -597,6 +613,15 @@
       return data;
     }
 
+    function firstValue(obj, keys, fallback = null) {
+      for (const key of keys) {
+        if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
+          return obj[key];
+        }
+      }
+      return fallback;
+    }
+
     function getHuntName(row) {
       return row.nome ?? `Hunt #${row.id ?? "?"}`;
     }
@@ -624,19 +649,25 @@
     }
 
     function getSlotName(row) {
-      return row.slot_name ?? row.nome ?? row.name ?? `Slot #${row.id ?? "?"}`;
+      return firstValue(row, SLOT_NAME_KEYS, `Slot #${row.id ?? "?"}`);
     }
 
     function getSlotBet(row) {
-      return row.bet_size ?? row.bet ?? row.aposta ?? row.valor_aposta ?? 0;
+      return firstValue(row, SLOT_BET_KEYS, 0);
     }
 
     function getSlotPayout(row) {
-      return row.payout ?? row.valor_pago ?? row.total_pago ?? 0;
+      return firstValue(row, SLOT_PAYOUT_KEYS, 0);
+    }
+
+    function getSlotStatus(row) {
+      return String(firstValue(row, SLOT_STATUS_KEYS, "")).toLowerCase();
     }
 
     function isSlotOpened(row) {
-      return Number(getSlotPayout(row)) > 0;
+      const payout = Number(getSlotPayout(row) || 0);
+      const status = getSlotStatus(row);
+      return payout > 0 || status === "opened" || status === "open";
     }
 
     async function listHunts() {
@@ -650,7 +681,9 @@
       const nome = huntNameInput.value.trim();
       const start = Number(huntStartInput.value || 0);
 
-      if (!nome) throw new Error("Escreve um nome para a hunt.");
+      if (!nome) {
+        throw new Error("Escreve um nome para a hunt.");
+      }
 
       return fetchJson(`/rest/v1/hunts`, {
         method: "POST",
@@ -704,64 +737,101 @@
     }
 
     async function listSlotsForHunt(huntId) {
-      return fetchJson(`/rest/v1/slots?select=*&hunt_id=eq.${huntId}&order=id.asc`, {
-        method: "GET",
-        headers: getHeaders()
-      });
-    }
-
-    async function createSlotForHunt(huntId, slotName, betValue) {
-      const attempts = [
-        {
-          hunt_id: huntId,
-          slot_name: slotName,
-          bet_size: betValue,
-          payout: 0,
-          status: "pending"
-        },
-        {
-          hunt_id: huntId,
-          nome: slotName,
-          aposta: betValue,
-          payout: 0,
-          status: "pending"
-        },
-        {
-          hunt_id: huntId,
-          name: slotName,
-          bet: betValue,
-          payout: 0,
-          status: "pending"
-        },
-        {
-          hunt_id: huntId,
-          slot_name: slotName,
-          bet: betValue,
-          payout: 0
-        },
-        {
-          hunt_id: huntId,
-          name: slotName,
-          bet_size: betValue,
-          payout: 0
-        }
-      ];
-
       let lastError = null;
 
-      for (const payload of attempts) {
+      if (detectedSlotLinkColumn) {
         try {
-          return await fetchJson(`/rest/v1/slots`, {
-            method: "POST",
-            headers: getHeaders(),
-            body: JSON.stringify(payload)
-          });
+          return await fetchJson(
+            `/rest/v1/slots?select=*&${detectedSlotLinkColumn}=eq.${huntId}&order=id.asc`,
+            {
+              method: "GET",
+              headers: getHeaders()
+            }
+          );
+        } catch (err) {
+          lastError = err;
+          detectedSlotLinkColumn = null;
+        }
+      }
+
+      for (const col of HUNT_LINK_COLUMNS) {
+        try {
+          const result = await fetchJson(
+            `/rest/v1/slots?select=*&${col}=eq.${huntId}&order=id.asc`,
+            {
+              method: "GET",
+              headers: getHeaders()
+            }
+          );
+          detectedSlotLinkColumn = col;
+          return result;
         } catch (err) {
           lastError = err;
         }
       }
 
-      throw lastError || new Error("Não foi possível adicionar o slot.");
+      throw lastError || new Error("Não foi possível carregar slots.");
+    }
+
+    async function createSlotForHunt(huntId, slotName, betValue) {
+      let lastError = null;
+      const columnsToTry = detectedSlotLinkColumn
+        ? [detectedSlotLinkColumn, ...HUNT_LINK_COLUMNS.filter(c => c !== detectedSlotLinkColumn)]
+        : HUNT_LINK_COLUMNS;
+
+      for (const col of columnsToTry) {
+        const payloadAttempts = [
+          {
+            [col]: huntId,
+            slot_name: slotName,
+            bet_size: betValue,
+            payout: 0,
+            status: "pending"
+          },
+          {
+            [col]: huntId,
+            nome: slotName,
+            aposta: betValue,
+            payout: 0,
+            status: "pending"
+          },
+          {
+            [col]: huntId,
+            name: slotName,
+            bet: betValue,
+            payout: 0,
+            status: "pending"
+          },
+          {
+            [col]: huntId,
+            slot_name: slotName,
+            bet: betValue,
+            payout: 0
+          },
+          {
+            [col]: huntId,
+            name: slotName,
+            bet_size: betValue,
+            payout: 0
+          }
+        ];
+
+        for (const payload of payloadAttempts) {
+          try {
+            const result = await fetchJson(`/rest/v1/slots`, {
+              method: "POST",
+              headers: getHeaders(),
+              body: JSON.stringify(payload)
+            });
+            detectedSlotLinkColumn = col;
+            return result;
+          } catch (err) {
+            lastError = err;
+          }
+        }
+      }
+
+      throw lastError || new Error("Não foi possível adicionar slot.");
     }
 
     function renderHunts(rows) {
@@ -818,7 +888,7 @@
           <td>${escapeHtml(row.id ?? "-")}</td>
           <td>
             <span class="slot-name">${escapeHtml(getSlotName(row))}</span>
-            <span class="slot-sub">hunt_id: ${escapeHtml(row.hunt_id ?? "-")}</span>
+            <span class="slot-sub">slot ligado à hunt selecionada</span>
           </td>
           <td>${escapeHtml(formatMoney(getSlotBet(row)))}</td>
           <td>${escapeHtml(formatMoney(getSlotPayout(row)))}</td>
