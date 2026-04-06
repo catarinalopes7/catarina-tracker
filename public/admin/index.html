@@ -737,46 +737,39 @@
     }
 
     async function listSlotsForHunt(huntId) {
-      let lastError = null;
+      const allSlots = await fetchJson(`/rest/v1/slots?select=*`, {
+        method: "GET",
+        headers: getHeaders()
+      });
 
-      if (detectedSlotLinkColumn) {
-        try {
-          return await fetchJson(
-            `/rest/v1/slots?select=*&${detectedSlotLinkColumn}=eq.${huntId}&order=id.asc`,
-            {
-              method: "GET",
-              headers: getHeaders()
-            }
-          );
-        } catch (err) {
-          lastError = err;
-          detectedSlotLinkColumn = null;
+      if (!Array.isArray(allSlots) || allSlots.length === 0) {
+        return [];
+      }
+
+      if (!detectedSlotLinkColumn) {
+        const sampleKeys = Object.keys(allSlots[0]);
+
+        for (const key of sampleKeys) {
+          const hasMatch = allSlots.some(row => String(row[key]) === String(huntId));
+          if (hasMatch) {
+            detectedSlotLinkColumn = key;
+            break;
+          }
         }
       }
 
-      for (const col of HUNT_LINK_COLUMNS) {
-        try {
-          const result = await fetchJson(
-            `/rest/v1/slots?select=*&${col}=eq.${huntId}&order=id.asc`,
-            {
-              method: "GET",
-              headers: getHeaders()
-            }
-          );
-          detectedSlotLinkColumn = col;
-          return result;
-        } catch (err) {
-          lastError = err;
-        }
+      if (!detectedSlotLinkColumn) {
+        throw new Error("Não foi possível detetar a coluna de ligação dos slots à hunt.");
       }
 
-      throw lastError || new Error("Não foi possível carregar slots.");
+      return allSlots.filter(row => String(row[detectedSlotLinkColumn]) === String(huntId));
     }
 
     async function createSlotForHunt(huntId, slotName, betValue) {
       let lastError = null;
+
       const columnsToTry = detectedSlotLinkColumn
-        ? [detectedSlotLinkColumn, ...HUNT_LINK_COLUMNS.filter(c => c !== detectedSlotLinkColumn)]
+        ? [detectedSlotLinkColumn]
         : HUNT_LINK_COLUMNS;
 
       for (const col of columnsToTry) {
@@ -818,13 +811,11 @@
 
         for (const payload of payloadAttempts) {
           try {
-            const result = await fetchJson(`/rest/v1/slots`, {
+            return await fetchJson(`/rest/v1/slots`, {
               method: "POST",
               headers: getHeaders(),
               body: JSON.stringify(payload)
             });
-            detectedSlotLinkColumn = col;
-            return result;
           } catch (err) {
             lastError = err;
           }
