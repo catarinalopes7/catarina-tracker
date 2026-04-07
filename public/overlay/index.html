@@ -21,7 +21,7 @@
     }
 
     body {
-      padding: 12px;
+      padding: 10px;
     }
 
     #app {
@@ -29,36 +29,35 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .panel {
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      border-radius: 18px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.38);
       overflow: hidden;
       flex-shrink: 0;
     }
 
     .header {
-      padding: 10px 14px 8px;
+      padding: 8px 12px 6px;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      gap: 10px;
+      gap: 8px;
     }
 
     .header-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       min-width: 0;
       width: 100%;
     }
 
     .logo {
-      width: 42px;
-      height: 42px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       flex-shrink: 0;
       display: flex;
@@ -66,9 +65,9 @@
       justify-content: center;
       background: radial-gradient(circle at 30% 30%, #7e6aff 0%, #5a43e0 50%, #35227f 100%);
       box-shadow:
-        inset 0 0 0 3px rgba(255,255,255,0.08),
-        0 8px 18px rgba(0,0,0,0.35);
-      font-size: 20px;
+        inset 0 0 0 2px rgba(255,255,255,0.08),
+        0 6px 14px rgba(0,0,0,0.32);
+      font-size: 17px;
       font-weight: 900;
       color: #f5edff;
     }
@@ -79,7 +78,7 @@
     }
 
     .hunt-label {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 900;
       letter-spacing: 0.8px;
       text-transform: uppercase;
@@ -89,44 +88,42 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 900px;
     }
 
     .hunt-sub {
-      margin-top: 4px;
-      font-size: 13px;
+      margin-top: 3px;
+      font-size: 11px;
       font-weight: 700;
       color: #ffffff;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.35px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 900px;
     }
 
     .stats-wrap {
-      padding: 0 14px 8px;
+      padding: 0 12px 6px;
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 6px;
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 7px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
     }
 
     .stat-card {
-      min-height: 64px;
-      border-radius: 14px;
-      padding: 8px 8px;
+      min-height: 54px;
+      border-radius: 12px;
+      padding: 6px 6px;
       text-align: center;
       background: linear-gradient(180deg, rgba(94, 73, 174, 0.95), rgba(48, 33, 106, 0.98));
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.06),
-        0 8px 20px rgba(0,0,0,0.20);
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 6px 14px rgba(0,0,0,0.18);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -137,13 +134,13 @@
     }
 
     .stat-title {
-      font-size: 11px;
+      font-size: 10px;
       line-height: 1;
       text-transform: uppercase;
       font-weight: 700;
       color: #d6cdf7;
-      letter-spacing: 0.45px;
-      margin-bottom: 5px;
+      letter-spacing: 0.4px;
+      margin-bottom: 4px;
     }
 
     .stat-card.start-balance .stat-title {
@@ -151,15 +148,15 @@
     }
 
     .stat-value {
-      font-size: 22px;
+      font-size: 18px;
       line-height: 1;
       font-weight: 900;
       color: #ffffff;
-      text-shadow: 0 3px 10px rgba(0,0,0,0.28);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
 
     .stat-card.start-balance .stat-value {
-      font-size: 26px;
+      font-size: 20px;
     }
 
     .stat-value.negative {
@@ -171,28 +168,28 @@
     }
 
     .bonuses-wrap {
-      padding: 0 14px 10px;
+      padding: 0 12px 8px;
     }
 
     .bonuses-bar {
       background: linear-gradient(180deg, rgba(89, 66, 169, 0.96), rgba(45, 31, 102, 0.98));
-      border-radius: 14px;
-      padding: 8px;
+      border-radius: 12px;
+      padding: 7px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
-        0 8px 20px rgba(0,0,0,0.20);
+        0 7px 18px rgba(0,0,0,0.18);
     }
 
     .bonuses-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 6px;
+      gap: 10px;
+      margin-bottom: 5px;
     }
 
     .bonuses-title {
-      font-size: 14px;
+      font-size: 12px;
       line-height: 1;
       font-weight: 900;
       text-transform: uppercase;
@@ -200,7 +197,7 @@
     }
 
     .bonuses-count {
-      font-size: 20px;
+      font-size: 16px;
       line-height: 1;
       font-weight: 900;
       color: #ffffff;
@@ -209,23 +206,23 @@
     .tag-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 7px;
-      margin-top: 4px;
+      gap: 6px;
+      margin-top: 3px;
     }
 
     .tag {
       position: relative;
-      min-height: 48px;
-      border-radius: 14px;
-      padding: 8px 10px;
+      min-height: 42px;
+      border-radius: 12px;
+      padding: 7px 9px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
       overflow: hidden;
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.08),
-        0 8px 18px rgba(0,0,0,0.16);
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 6px 14px rgba(0,0,0,0.14);
     }
 
     .tag::before {
@@ -239,37 +236,37 @@
     .tag-left {
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 6px;
       position: relative;
       z-index: 1;
     }
 
     .tag-dot {
-      width: 9px;
-      height: 9px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       flex-shrink: 0;
-      box-shadow: 0 0 10px rgba(255,255,255,0.18);
+      box-shadow: 0 0 8px rgba(255,255,255,0.18);
     }
 
     .tag-label {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.35px;
+      letter-spacing: 0.3px;
       position: relative;
       z-index: 1;
     }
 
     .tag-value {
-      min-width: 34px;
-      height: 32px;
-      padding: 0 11px;
+      min-width: 30px;
+      height: 28px;
+      padding: 0 10px;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 900;
       position: relative;
       z-index: 1;
@@ -323,40 +320,40 @@
     }
 
     .progress-wrap {
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     .progress-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       gap: 8px;
     }
 
     .progress-label {
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.84);
-      letter-spacing: 0.35px;
+      letter-spacing: 0.3px;
     }
 
     .progress-count {
-      font-size: 16px;
+      font-size: 12px;
       font-weight: 900;
       color: #ffffff;
     }
 
     .progress-track {
       width: 100%;
-      height: 12px;
+      height: 10px;
       border-radius: 999px;
       overflow: hidden;
       background: rgba(11, 7, 34, 0.42);
       box-shadow:
-        inset 0 2px 6px rgba(0,0,0,0.22),
-        inset 0 1px 0 rgba(255,255,255,0.05);
+        inset 0 2px 5px rgba(0,0,0,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
     .progress-fill {
@@ -364,33 +361,33 @@
       width: 0%;
       border-radius: 999px;
       background: linear-gradient(90deg, #a574ff 0%, #6fceff 100%);
-      box-shadow: 0 0 16px rgba(129, 194, 255, 0.22);
+      box-shadow: 0 0 14px rgba(129, 194, 255, 0.20);
       transition: width 0.35s ease;
     }
 
     .current-opening {
-      margin-top: 8px;
-      border-radius: 14px;
+      margin-top: 6px;
+      border-radius: 12px;
       overflow: hidden;
       background: linear-gradient(135deg, rgba(132, 70, 93, 0.85) 0%, rgba(108, 44, 74, 0.88) 48%, rgba(73, 26, 66, 0.90) 100%);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.08),
-        0 8px 20px rgba(0,0,0,0.20);
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 7px 16px rgba(0,0,0,0.16);
       display: none;
     }
 
     .current-opening.show {
       display: grid;
-      grid-template-columns: 84px 1fr;
-      gap: 8px;
-      padding: 7px;
+      grid-template-columns: 68px 1fr;
+      gap: 6px;
+      padding: 6px;
     }
 
     .current-thumb {
-      width: 84px;
-      min-width: 84px;
-      height: 84px;
-      border-radius: 10px;
+      width: 68px;
+      min-width: 68px;
+      height: 68px;
+      border-radius: 9px;
       overflow: hidden;
       background: rgba(255,255,255,0.06);
     }
@@ -408,8 +405,8 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 6px;
-      font-size: 10px;
+      padding: 5px;
+      font-size: 9px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.7);
@@ -421,43 +418,43 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 5px;
+      gap: 4px;
     }
 
     .current-name {
-      font-size: 15px;
+      font-size: 13px;
       line-height: 1.03;
       font-weight: 900;
       text-transform: uppercase;
       color: #ffffff;
       word-break: break-word;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.28);
+      text-shadow: 0 2px 7px rgba(0,0,0,0.25);
     }
 
     .current-stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 5px;
+      gap: 4px;
     }
 
     .current-stat {
-      border-radius: 10px;
+      border-radius: 9px;
       background: rgba(255,255,255,0.10);
-      padding: 6px 4px;
+      padding: 5px 4px;
       text-align: center;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
     .current-stat-label {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.78);
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .current-stat-value {
-      font-size: 17px;
+      font-size: 14px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1;
@@ -466,20 +463,20 @@
     .bestworst-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 7px;
-      margin-top: 8px;
+      gap: 6px;
+      margin-top: 6px;
     }
 
     .mini-card {
       background: linear-gradient(180deg, rgba(58, 40, 128, 0.92), rgba(36, 24, 85, 0.96));
-      border-radius: 14px;
-      padding: 7px;
+      border-radius: 12px;
+      padding: 6px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
-        0 8px 18px rgba(0,0,0,0.16);
-      min-height: 82px;
+        0 6px 14px rgba(0,0,0,0.15);
+      min-height: 70px;
       display: flex;
-      gap: 7px;
+      gap: 6px;
       align-items: stretch;
       overflow: hidden;
     }
@@ -493,9 +490,9 @@
     }
 
     .mini-thumb {
-      width: 62px;
-      min-width: 62px;
-      border-radius: 10px;
+      width: 52px;
+      min-width: 52px;
+      border-radius: 9px;
       overflow: hidden;
       background: rgba(255,255,255,0.05);
       align-self: stretch;
@@ -513,12 +510,12 @@
       display: flex !important;
       align-items: center;
       justify-content: center;
-      font-size: 9px;
+      font-size: 8px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.6);
       text-align: center;
-      padding: 6px;
+      padding: 4px;
       background: rgba(255,255,255,0.04);
     }
 
@@ -528,21 +525,21 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 3px;
+      gap: 2px;
     }
 
     .mini-topline {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 5px;
+      gap: 4px;
     }
 
     .mini-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.25px;
     }
 
     .mini-card.best .mini-label {
@@ -554,9 +551,9 @@
     }
 
     .mini-badge {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 900;
-      padding: 3px 7px;
+      padding: 2px 6px;
       border-radius: 999px;
       background: rgba(255,255,255,0.06);
       color: rgba(255,255,255,0.85);
@@ -564,17 +561,17 @@
     }
 
     .mini-name {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
       color: #ffffff;
-      line-height: 1.05;
+      line-height: 1.04;
       text-transform: uppercase;
       word-break: break-word;
     }
 
     .mini-stats {
       display: flex;
-      gap: 8px;
+      gap: 7px;
       flex-wrap: wrap;
     }
 
@@ -585,14 +582,14 @@
     }
 
     .mini-stat-label {
-      font-size: 9px;
+      font-size: 8px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.65);
     }
 
     .mini-stat-value {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1;
@@ -604,28 +601,43 @@
       overflow: hidden;
     }
 
-    .slots-list {
+    .slots-viewport {
       height: 100%;
       overflow: hidden;
+      position: relative;
+    }
+
+    .slots-track {
+      will-change: transform;
+      display: block;
+    }
+
+    .slots-group {
       display: flex;
       flex-direction: column;
-      gap: 7px;
-      padding-right: 2px;
+      gap: 5px;
+    }
+
+    .slots-gap {
+      height: 10px;
+      flex-shrink: 0;
     }
 
     .slot-card {
+      position: relative;
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      border-radius: 13px;
-      padding: 7px;
+      border-radius: 12px;
+      padding: 6px;
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 8px 20px rgba(0,0,0,0.22);
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 7px 18px rgba(0,0,0,0.20);
       overflow: hidden;
       transition: 0.25s ease;
+      border: 1px solid rgba(255,255,255,0.04);
     }
 
     .slot-card.opened {
-      opacity: 0.45;
+      opacity: 0.42;
     }
 
     .slot-card.current {
@@ -639,12 +651,48 @@
       background: linear-gradient(180deg, #4b368d, #302060);
     }
 
+    .slot-card.super-slot {
+      border: 1px solid rgba(244, 206, 103, 0.55);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 7px 18px rgba(0,0,0,0.20),
+        0 0 14px rgba(244, 206, 103, 0.12);
+    }
+
+    .slot-card.super-slot::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgba(244, 206, 103, 0.10), transparent 30%, transparent 70%, rgba(244, 206, 103, 0.08));
+    }
+
+    .slot-card.epic-slot {
+      border: 1px solid rgba(224, 126, 177, 0.58);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 7px 18px rgba(0,0,0,0.20),
+        0 0 14px rgba(224, 126, 177, 0.12);
+    }
+
+    .slot-card.epic-slot::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgba(224, 126, 177, 0.10), transparent 30%, transparent 70%, rgba(173, 118, 255, 0.10));
+    }
+
     .slot-top {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 4px;
+      gap: 8px;
+      margin-bottom: 3px;
+      position: relative;
+      z-index: 1;
     }
 
     .slot-title {
@@ -653,19 +701,19 @@
     }
 
     .slot-name {
-      font-size: 15px;
+      font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
       color: #f4f8ff;
       line-height: 1.03;
       font-style: italic;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      text-shadow: 0 2px 7px rgba(0,0,0,0.32);
       word-break: break-word;
     }
 
     .slot-bet {
-      margin-top: 3px;
-      font-size: 12px;
+      margin-top: 2px;
+      font-size: 9px;
       font-weight: 900;
       color: #dbe8ff;
       line-height: 1;
@@ -673,61 +721,64 @@
     }
 
     .slot-index {
-      font-size: 14px;
+      font-size: 10px;
       font-weight: 900;
       color: rgba(255,255,255,0.78);
       flex-shrink: 0;
       line-height: 1;
+      position: relative;
+      z-index: 1;
     }
 
     .slot-image-wrap {
       width: 100%;
-      border-radius: 10px;
+      border-radius: 9px;
       overflow: hidden;
       background: rgba(255,255,255,0.04);
       position: relative;
+      z-index: 1;
     }
 
     .slot-image {
       width: 100%;
-      aspect-ratio: 16 / 9;
+      aspect-ratio: 16 / 6.6;
       object-fit: cover;
       display: block;
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border-radius: 9px;
     }
 
     .slot-placeholder {
       width: 100%;
-      aspect-ratio: 16 / 9;
+      aspect-ratio: 16 / 6.6;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 12px;
       font-weight: 800;
       color: rgba(255,255,255,0.65);
       text-transform: uppercase;
-      letter-spacing: 0.7px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      border-radius: 10px;
+      letter-spacing: 0.5px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border-radius: 9px;
     }
 
     .empty-state {
       height: 100%;
-      border-radius: 18px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 40px;
+      padding: 30px;
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 900;
       color: rgba(255,255,255,0.82);
       text-transform: uppercase;
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 8px 20px rgba(0,0,0,0.22);
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 8px 18px rgba(0,0,0,0.20);
     }
 
     .footer-space {
@@ -772,9 +823,7 @@
             <div class="stat-title">Profit/Loss</div>
             <div id="profitLoss" class="stat-value">$0.00</div>
           </div>
-        </div>
 
-        <div class="stats-grid" style="grid-template-columns: 1fr;">
           <div class="stat-card">
             <div class="stat-title">Total Pago</div>
             <div id="totalPaid" class="stat-value">$0.00</div>
@@ -905,8 +954,10 @@
     </div>
 
     <div class="slots-section">
-      <div id="slotsList" class="slots-list">
-        <div class="empty-state">A carregar slots...</div>
+      <div id="slotsViewport" class="slots-viewport">
+        <div id="slotsTrack" class="slots-track">
+          <div class="empty-state">A carregar slots...</div>
+        </div>
       </div>
     </div>
 
@@ -919,6 +970,13 @@
 
     let slotsCatalogCache = [];
     let slotsCatalogLoaded = false;
+
+    let scrollAnimationId = null;
+    let scrollOffset = 0;
+    let scrollOriginalHeight = 0;
+    let scrollLastTimestamp = 0;
+    const scrollGap = 10;
+    const scrollSpeed = 15;
 
     function parseMoney(value) {
       if (value === null || value === undefined) return 0;
@@ -1076,6 +1134,61 @@
       );
     }
 
+    function stopAutoScroll() {
+      if (scrollAnimationId) {
+        cancelAnimationFrame(scrollAnimationId);
+        scrollAnimationId = null;
+      }
+
+      scrollOffset = 0;
+      scrollOriginalHeight = 0;
+      scrollLastTimestamp = 0;
+
+      const track = document.getElementById("slotsTrack");
+      if (track) {
+        track.style.transform = "translateY(0px)";
+      }
+    }
+
+    function startAutoScrollIfNeeded() {
+      stopAutoScroll();
+
+      const viewport = document.getElementById("slotsViewport");
+      const track = document.getElementById("slotsTrack");
+      const firstGroup = track.querySelector(".slots-group");
+
+      if (!viewport || !track || !firstGroup) return;
+
+      const viewportHeight = viewport.clientHeight;
+      const contentHeight = firstGroup.offsetHeight;
+
+      if (contentHeight <= viewportHeight + 4) {
+        track.style.transform = "translateY(0px)";
+        return;
+      }
+
+      scrollOriginalHeight = contentHeight + scrollGap;
+
+      function animate(timestamp) {
+        if (!scrollLastTimestamp) {
+          scrollLastTimestamp = timestamp;
+        }
+
+        const delta = (timestamp - scrollLastTimestamp) / 1000;
+        scrollLastTimestamp = timestamp;
+        scrollOffset += scrollSpeed * delta;
+
+        if (scrollOffset >= scrollOriginalHeight) {
+          scrollOffset = 0;
+        }
+
+        track.style.transform = `translateY(-${scrollOffset}px)`;
+        scrollAnimationId = requestAnimationFrame(animate);
+      }
+
+      scrollAnimationId = requestAnimationFrame(animate);
+    }
+
     function renderMiniCard(prefix, item, index) {
       const thumb = document.getElementById(prefix + "Thumb");
       const rank = document.getElementById(prefix + "Rank");
@@ -1140,21 +1253,26 @@
     }
 
     function renderSlots(items, latestOpenedIndex = -1) {
-      const list = document.getElementById("slotsList");
+      const track = document.getElementById("slotsTrack");
+
+      stopAutoScroll();
 
       if (!items.length) {
-        list.innerHTML = '<div class="empty-state">Sem bónus nesta hunt</div>';
+        track.innerHTML = '<div class="empty-state">Sem bónus nesta hunt</div>';
         return;
       }
 
-      list.innerHTML = items.map((item, index) => {
+      const cardsHtml = items.map((item, index) => {
         const name = getBonusName(item);
         const bet = getBonusBet(item);
         const img = getImageFromBonus(item);
         const payout = getBonusPayout(item);
+        const type = getBonusTypeLabel(item);
 
         const classes = [
           "slot-card",
+          type === "super" ? "super-slot" : "",
+          type === "epic" ? "epic-slot" : "",
           payout > 0 ? "opened" : "",
           index === latestOpenedIndex ? "current" : ""
         ].filter(Boolean).join(" ");
@@ -1179,9 +1297,20 @@
           </div>
         `;
       }).join("");
+
+      track.innerHTML = `
+        <div class="slots-group">${cardsHtml}</div>
+        <div class="slots-gap"></div>
+        <div class="slots-group">${cardsHtml}</div>
+      `;
+
+      requestAnimationFrame(() => {
+        startAutoScrollIfNeeded();
+      });
     }
 
     function resetOverlayNoHunt(message = "Sem hunt ativa") {
+      stopAutoScroll();
       document.getElementById("huntLabel").innerText = "BONUS HUNT";
       document.getElementById("huntSub").innerText = message;
       document.getElementById("start").innerText = "$0.00";
@@ -1198,7 +1327,7 @@
       renderCurrentOpening(null);
       renderMiniCard("best", null, -1);
       renderMiniCard("worst", null, -1);
-      document.getElementById("slotsList").innerHTML = `<div class="empty-state">${message}</div>`;
+      document.getElementById("slotsTrack").innerHTML = `<div class="empty-state">${message}</div>`;
     }
 
     async function load() {
@@ -1309,6 +1438,10 @@
         resetOverlayNoHunt("Erro overlay");
       }
     }
+
+    window.addEventListener("resize", () => {
+      requestAnimationFrame(() => startAutoScrollIfNeeded());
+    });
 
     setInterval(load, 2000);
     load();
