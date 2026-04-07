@@ -364,12 +364,26 @@
     }
 
     .slot-card {
-      border-radius: 10px;
-      overflow: hidden;
-      background: linear-gradient(180deg, #5845bc, #322387);
-      border: 1px solid rgba(188, 176, 255, 0.14);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-    }
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #5845bc, #322387);
+  border: 1px solid rgba(188, 176, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.slot-card.super {
+  border: 1px solid rgba(244, 199, 73, 0.50);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 0 14px rgba(244, 199, 73, 0.16);
+}
+
+.slot-card.epic {
+  border: 1px solid rgba(255, 132, 181, 0.48);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 0 14px rgba(255, 120, 170, 0.16);
+}
 
     .slot-top {
       display: flex;
@@ -955,20 +969,22 @@
 
     const statusMarkup = slot.opened
       ? `
-        <div class="slot-status opened">
-          <div class="slot-status-label">Payout</div>
-          <div class="slot-status-value">${euro(slot.payout)}</div>
-        </div>
-      `
-      : `
+        const statusMarkup = slot.opened
+  ? `
+    <div class="slot-status opened">
+      <div class="slot-status-label">Payout</div>
+      <div class="slot-status-value">${euro(slot.payout)}</div>
+    </div>
+  `
+  : ``;
         <div class="slot-status pending">
           <div class="slot-status-label">Estado</div>
           <div class="slot-status-value">Pendente</div>
         </div>
       `;
 
-    return `
-      <div class="slot-card">
+   return `
+  <div class="slot-card ${slot.type}">
         <div class="slot-top">
           <div class="slot-top-left">
             <div class="slot-name">${escapeHtml(slot.name)}</div>
@@ -982,9 +998,8 @@
         </div>
 
         <div class="slot-bottom">
-          <div class="slot-type ${slot.type}">${slot.type}</div>
-          ${statusMarkup}
-        </div>
+  ${statusMarkup}
+</div>
       </div>
     `;
   }
