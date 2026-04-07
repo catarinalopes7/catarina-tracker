@@ -17,342 +17,223 @@
       overflow: hidden;
       font-family: 'Poppins', Arial, sans-serif;
       color: #ffffff;
-      background: linear-gradient(180deg, #4F3EC7, #2b1d74);
+      background: transparent;
     }
 
     body {
-      padding: 9px;
+      padding: 0;
     }
 
     #app {
-      width: 100%;
-      height: 100%;
+      width: 340px;
+      height: 1920px;
+      padding: 8px 10px 8px 8px;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 8px;
+      background: linear-gradient(180deg, #04162d 0%, #072149 60%, #04162d 100%);
+      border-right: 2px solid rgba(255,255,255,0.06);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.03) inset;
     }
 
     .panel {
-      background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      border-radius: 17px;
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.36);
+      background: linear-gradient(180deg, #0a2a55 0%, #071f40 100%);
+      border-radius: 20px;
+      border: 2px solid rgba(74, 142, 235, 0.32);
+      box-shadow:
+        0 12px 26px rgba(0,0,0,0.34),
+        inset 0 1px 0 rgba(255,255,255,0.08);
       overflow: hidden;
       flex-shrink: 0;
     }
 
-    .header {
-      padding: 7px 11px 5px;
+    .top-panel {
+      padding: 10px 10px 8px;
+    }
+
+    .top-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .top-head-left {
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 0;
-      width: 100%;
-    }
-
-    .logo {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at 30% 30%, #7e6aff 0%, #5a43e0 50%, #35227f 100%);
-      box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,0.08),
-        0 5px 12px rgba(0,0,0,0.30);
-      font-size: 15px;
-      font-weight: 900;
-      color: #f5edff;
-    }
-
-    .hunt-meta {
       min-width: 0;
       flex: 1;
     }
 
-    .hunt-label {
-      font-size: 13px;
+    .logo-badge {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #27a2ff;
+      color: #27a2ff;
+      box-shadow: 0 0 10px rgba(39,162,255,0.18);
       font-weight: 900;
-      letter-spacing: 0.7px;
-      text-transform: uppercase;
-      color: #FFD54A;
+      font-size: 15px;
       line-height: 1;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.35);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
-    .hunt-sub {
-      margin-top: 2px;
-      font-size: 10px;
-      font-weight: 700;
-      color: #ffffff;
+    .head-text {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .head-title {
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 900;
       text-transform: uppercase;
+      color: #ffffff;
       letter-spacing: 0.3px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .stats-wrap {
-      padding: 0 11px 5px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
+    .head-sub {
+      margin-top: 3px;
+      font-size: 11px;
+      line-height: 1;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.72);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .head-id {
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 900;
+      color: rgba(255,255,255,0.55);
+      text-transform: uppercase;
+      align-self: flex-start;
+      padding-top: 1px;
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 5px;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 7px;
     }
 
-    .stat-card {
-      min-height: 50px;
-      border-radius: 11px;
-      padding: 5px 5px;
-      text-align: center;
-      background: linear-gradient(180deg, rgba(94, 73, 174, 0.95), rgba(48, 33, 106, 0.98));
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 5px 12px rgba(0,0,0,0.17);
+    .stat-box {
+      min-height: 58px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(16,47,92,0.98), rgba(8,28,56,0.98));
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 7px 8px 6px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
       display: flex;
       flex-direction: column;
       justify-content: center;
     }
 
-    .stat-card.start-balance {
-      background: linear-gradient(180deg, rgba(111, 89, 205, 0.98), rgba(58, 40, 128, 0.98));
-    }
-
-    .stat-title {
-      font-size: 9px;
-      line-height: 1;
+    .stat-top {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 5px;
+      color: rgba(255,255,255,0.80);
+      font-size: 11px;
+      font-weight: 900;
       text-transform: uppercase;
-      font-weight: 700;
-      color: #d6cdf7;
-      letter-spacing: 0.35px;
-      margin-bottom: 4px;
+      letter-spacing: 0.2px;
+      line-height: 1;
     }
 
-    .stat-card.start-balance .stat-title {
-      color: #f1e9ff;
+    .stat-icon {
+      width: 12px;
+      text-align: center;
+      opacity: 0.86;
+      font-size: 11px;
     }
 
     .stat-value {
-      font-size: 17px;
+      font-size: 28px;
       line-height: 1;
       font-weight: 900;
       color: #ffffff;
-      text-shadow: 0 2px 7px rgba(0,0,0,0.24);
+      letter-spacing: -0.4px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.22);
     }
 
-    .stat-card.start-balance .stat-value {
-      font-size: 19px;
+    .stat-value.small {
+      font-size: 24px;
     }
 
-    .stat-value.negative {
-      color: #ffb2c4;
-    }
-
-    .stat-value.positive {
-      color: #9ff2bd;
-    }
-
-    .bonuses-wrap {
-      padding: 0 11px 7px;
-    }
-
-    .bonuses-bar {
-      background: linear-gradient(180deg, rgba(89, 66, 169, 0.96), rgba(45, 31, 102, 0.98));
-      border-radius: 11px;
-      padding: 6px;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        0 6px 16px rgba(0,0,0,0.17);
-    }
-
-    .bonuses-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 4px;
-    }
-
-    .bonuses-title {
-      font-size: 11px;
-      line-height: 1;
-      font-weight: 900;
-      text-transform: uppercase;
-      color: #ffffff;
-    }
-
-    .bonuses-count {
-      font-size: 15px;
-      line-height: 1;
-      font-weight: 900;
-      color: #ffffff;
-    }
-
-    .tag-row {
+    .type-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 5px;
-      margin-top: 2px;
+      gap: 6px;
+      margin-bottom: 7px;
     }
 
-    .tag {
-      position: relative;
-      min-height: 38px;
-      border-radius: 11px;
-      padding: 6px 8px;
+    .type-pill {
+      min-height: 28px;
+      border-radius: 999px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 7px;
-      overflow: hidden;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.06),
-        0 5px 12px rgba(0,0,0,0.13);
-    }
-
-    .tag::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      opacity: 0.28;
-      pointer-events: none;
-    }
-
-    .tag-left {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tag-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      box-shadow: 0 0 8px rgba(255,255,255,0.18);
-    }
-
-    .tag-label {
+      gap: 8px;
+      padding: 0 10px;
       font-size: 12px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.25px;
-      position: relative;
-      z-index: 1;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
-    .tag-value {
-      min-width: 28px;
-      height: 25px;
-      padding: 0 9px;
-      border-radius: 999px;
-      display: inline-flex;
+    .type-pill .left {
+      display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 6px;
+    }
+
+    .type-pill .count {
       font-size: 13px;
-      font-weight: 900;
-      position: relative;
-      z-index: 1;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+      line-height: 1;
     }
 
-    .tag.super {
-      background: linear-gradient(180deg, rgba(215, 177, 89, 0.22), rgba(166, 126, 33, 0.16));
-      border: 1px solid rgba(225, 189, 96, 0.28);
+    .type-pill.super {
+      background: linear-gradient(180deg, #cf9d1f, #a77710);
+      color: #fff5cb;
+      border: 1px solid rgba(255,255,255,0.10);
     }
 
-    .tag.super::before {
-      background: radial-gradient(circle at 18% 20%, rgba(255, 220, 120, 0.55), transparent 42%);
+    .type-pill.epic {
+      background: linear-gradient(180deg, #ff4b3a, #d22619);
+      color: #fff2ef;
+      border: 1px solid rgba(255,255,255,0.10);
     }
 
-    .tag.super .tag-dot {
-      background: #f0c866;
-    }
-
-    .tag.super .tag-label {
-      color: #f8e4aa;
-    }
-
-    .tag.super .tag-value {
-      background: rgba(245, 212, 122, 0.15);
-      color: #fff0bf;
-      border: 1px solid rgba(245, 212, 122, 0.22);
-    }
-
-    .tag.epic {
-      background: linear-gradient(180deg, rgba(180, 92, 123, 0.20), rgba(126, 45, 73, 0.14));
-      border: 1px solid rgba(198, 104, 136, 0.26);
-    }
-
-    .tag.epic::before {
-      background: radial-gradient(circle at 18% 20%, rgba(255, 128, 170, 0.40), transparent 42%);
-    }
-
-    .tag.epic .tag-dot {
-      background: #d87d9d;
-    }
-
-    .tag.epic .tag-label {
-      color: #ffd8e4;
-    }
-
-    .tag.epic .tag-value {
-      background: rgba(223, 133, 164, 0.12);
-      color: #ffe6ee;
-      border: 1px solid rgba(223, 133, 164, 0.22);
-    }
-
-    .progress-wrap {
-      margin-top: 5px;
-    }
-
-    .progress-head {
+    .progress-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 3px;
       gap: 8px;
-    }
-
-    .progress-label {
-      font-size: 9px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.84);
-      letter-spacing: 0.25px;
-    }
-
-    .progress-count {
-      font-size: 11px;
-      font-weight: 900;
-      color: #ffffff;
+      margin-bottom: 5px;
     }
 
     .progress-track {
-      width: 100%;
-      height: 9px;
+      flex: 1;
+      height: 10px;
       border-radius: 999px;
+      background: rgba(1, 10, 22, 0.55);
       overflow: hidden;
-      background: rgba(11, 7, 34, 0.42);
       box-shadow:
-        inset 0 2px 5px rgba(0,0,0,0.22),
+        inset 0 2px 4px rgba(0,0,0,0.28),
         inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
@@ -360,286 +241,24 @@
       height: 100%;
       width: 0%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #a574ff 0%, #6fceff 100%);
-      box-shadow: 0 0 12px rgba(129, 194, 255, 0.20);
+      background: linear-gradient(90deg, #f9cf4d 0%, #ff8e2b 100%);
       transition: width 0.35s ease;
     }
 
-    .current-opening {
-      margin-top: 5px;
-      border-radius: 11px;
-      overflow: hidden;
-      background: linear-gradient(135deg, rgba(132, 70, 93, 0.85) 0%, rgba(108, 44, 74, 0.88) 48%, rgba(73, 26, 66, 0.90) 100%);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.06),
-        0 6px 14px rgba(0,0,0,0.15);
-      display: none;
-    }
-
-    .current-opening.show {
-      display: grid;
-      grid-template-columns: 84px 1fr;
-      gap: 8px;
-      padding: 7px;
-      align-items: center;
-    }
-
-    .current-thumb {
-      width: 84px;
-      min-width: 84px;
-      height: 84px;
-      border-radius: 13px;
-      overflow: hidden;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
-      position: relative;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.06),
-        0 4px 10px rgba(0,0,0,0.18);
-    }
-
-    .current-thumb img,
-    .current-thumb .current-placeholder {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-    }
-
-    .current-thumb img {
-      filter: saturate(0.88) brightness(0.88) contrast(0.96);
-      transform: scale(1.03);
-    }
-
-    .current-thumb::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(180deg, rgba(10, 8, 24, 0.02), rgba(10, 8, 24, 0.18)),
-        radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 48%);
-      pointer-events: none;
-    }
-
-    .current-placeholder {
-      display: flex !important;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 4px;
-      font-size: 8px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.7);
-      background: rgba(255,255,255,0.04);
-    }
-
-    .current-content {
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 4px;
-    }
-
-    .current-name {
-      font-size: 12px;
-      line-height: 1.03;
-      font-weight: 900;
-      text-transform: uppercase;
-      color: #ffffff;
-      word-break: break-word;
-      text-shadow: 0 2px 7px rgba(0,0,0,0.25);
-    }
-
-    .current-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 4px;
-    }
-
-    .current-stat {
-      border-radius: 8px;
-      background: rgba(255,255,255,0.10);
-      padding: 4px 3px;
-      text-align: center;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-    }
-
-    .current-stat-label {
-      font-size: 8px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.78);
-      margin-bottom: 2px;
-    }
-
-    .current-stat-value {
-      font-size: 12px;
-      font-weight: 900;
-      color: #ffffff;
+    .progress-count {
+      min-width: 44px;
+      text-align: right;
+      font-size: 20px;
       line-height: 1;
-    }
-
-    .bestworst-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5px;
-      margin-top: 5px;
-    }
-
-    .mini-card {
-      background: linear-gradient(180deg, rgba(58, 40, 128, 0.92), rgba(36, 24, 85, 0.96));
-      border-radius: 11px;
-      padding: 6px;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 5px 12px rgba(0,0,0,0.14);
-      min-height: 82px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      overflow: hidden;
-    }
-
-    .mini-card.best {
-      border: 1px solid rgba(117, 224, 165, 0.20);
-    }
-
-    .mini-card.worst {
-      border: 1px solid rgba(236, 132, 156, 0.20);
-    }
-
-    .mini-thumb {
-      width: 68px;
-      min-width: 68px;
-      height: 68px;
-      border-radius: 12px;
-      overflow: hidden;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
-      position: relative;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 4px 10px rgba(0,0,0,0.16);
-    }
-
-    .mini-thumb img,
-    .mini-thumb .mini-placeholder {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
-    }
-
-    .mini-thumb img {
-      filter: saturate(0.88) brightness(0.88) contrast(0.96);
-      transform: scale(1.03);
-    }
-
-    .mini-thumb::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(180deg, rgba(10, 8, 24, 0.02), rgba(10, 8, 24, 0.18)),
-        radial-gradient(circle at top, rgba(255,255,255,0.06), transparent 48%);
-      pointer-events: none;
-    }
-
-    .mini-placeholder {
-      display: flex !important;
-      align-items: center;
-      justify-content: center;
-      font-size: 7px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.6);
-      text-align: center;
-      padding: 4px;
-      background: rgba(255,255,255,0.04);
-    }
-
-    .mini-content {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 2px;
-    }
-
-    .mini-topline {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 4px;
-    }
-
-    .mini-label {
-      font-size: 9px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.2px;
-    }
-
-    .mini-card.best .mini-label {
-      color: #9ff2bd;
-    }
-
-    .mini-card.worst .mini-label {
-      color: #ffb2c4;
-    }
-
-    .mini-badge {
-      font-size: 8px;
-      font-weight: 900;
-      padding: 2px 5px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      color: rgba(255,255,255,0.85);
-      white-space: nowrap;
-    }
-
-    .mini-name {
-      font-size: 10px;
       font-weight: 900;
       color: #ffffff;
-      line-height: 1.04;
-      text-transform: uppercase;
-      word-break: break-word;
+      letter-spacing: -0.2px;
     }
 
-    .mini-stats {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .mini-stat {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-    }
-
-    .mini-stat-label {
-      font-size: 7px;
-      font-weight: 800;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.65);
-    }
-
-    .mini-stat-value {
-      font-size: 10px;
-      font-weight: 900;
-      color: #ffffff;
-      line-height: 1;
-    }
-
-    .slots-section {
+    .slots-panel {
       flex: 1;
       min-height: 0;
-      overflow: hidden;
+      padding: 6px;
     }
 
     .slots-viewport {
@@ -650,370 +269,294 @@
 
     .slots-track {
       will-change: transform;
-      display: block;
       transform: translateY(0px);
     }
 
     .slots-group {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 8px;
     }
 
     .slots-gap {
-      height: 8px;
+      height: 10px;
       flex-shrink: 0;
     }
 
     .slot-card {
-      position: relative;
-      background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      border-radius: 12px;
-      padding: 7px;
+      background: linear-gradient(180deg, #09244a 0%, #061b37 100%);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        0 6px 16px rgba(0,0,0,0.19);
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 8px 18px rgba(0,0,0,0.18);
       overflow: hidden;
-      transition: 0.25s ease;
-      border: 1px solid rgba(255,255,255,0.04);
+      transition: 0.22s ease;
     }
 
     .slot-card.opened {
-      opacity: 0.42;
+      opacity: 0.44;
     }
 
     .slot-card.current {
       opacity: 1;
-      border: 2px solid rgba(153, 215, 255, 0.52);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.07),
-        0 0 0 1px rgba(255,255,255,0.05),
-        0 8px 20px rgba(0,0,0,0.22),
-        0 0 18px rgba(111, 206, 255, 0.20);
-      background: linear-gradient(180deg, #4b368d, #302060);
-    }
-
-    .slot-card.super-slot {
-      border: 1px solid rgba(244, 206, 103, 0.55);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 6px 16px rgba(0,0,0,0.19),
-        0 0 12px rgba(244, 206, 103, 0.12);
-    }
-
-    .slot-card.super-slot::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 12px;
-      pointer-events: none;
-      background: linear-gradient(135deg, rgba(244, 206, 103, 0.10), transparent 30%, transparent 70%, rgba(244, 206, 103, 0.08));
-    }
-
-    .slot-card.epic-slot {
-      border: 1px solid rgba(224, 126, 177, 0.58);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 6px 16px rgba(0,0,0,0.19),
-        0 0 12px rgba(224, 126, 177, 0.12);
-    }
-
-    .slot-card.epic-slot::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 12px;
-      pointer-events: none;
-      background: linear-gradient(135deg, rgba(224, 126, 177, 0.10), transparent 30%, transparent 70%, rgba(173, 118, 255, 0.10));
-    }
-
-    .slot-inner {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 84px 1fr auto;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .slot-thumb {
-      width: 84px;
-      min-width: 84px;
-      height: 84px;
-      border-radius: 13px;
-      overflow: hidden;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
-      position: relative;
+      border-color: rgba(255, 211, 84, 0.65);
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.06),
-        0 4px 10px rgba(0,0,0,0.18);
+        0 8px 18px rgba(0,0,0,0.20),
+        0 0 0 2px rgba(255, 211, 84, 0.14);
     }
 
-    .slot-thumb img,
-    .slot-thumb .slot-placeholder {
+    .slot-head {
+      padding: 8px 10px 6px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .slot-head-left {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .slot-name {
+      font-size: 28px;
+      line-height: 0.96;
+      font-weight: 900;
+      font-style: italic;
+      text-transform: uppercase;
+      color: #dfeaff;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.28);
+      word-break: break-word;
+    }
+
+    .slot-bet {
+      margin-top: 4px;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 900;
+      color: #f2f6ff;
+      opacity: 0.95;
+    }
+
+    .slot-rank {
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 900;
+      color: rgba(255,255,255,0.72);
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+
+    .slot-image-wrap {
+      padding: 0 8px 8px;
+    }
+
+    .slot-image-box {
+      width: 100%;
+      aspect-ratio: 0.78 / 1;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 4px 10px rgba(0,0,0,0.16);
+    }
+
+    .slot-image-box img,
+    .slot-placeholder {
       width: 100%;
       height: 100%;
       display: block;
       object-fit: cover;
     }
 
-    .slot-thumb img {
-      filter: saturate(0.88) brightness(0.88) contrast(0.96);
-      transform: scale(1.03);
+    .slot-image-box img {
+      filter: saturate(0.90) brightness(0.90) contrast(0.97);
+      transform: scale(1.02);
     }
 
-    .slot-thumb::after {
+    .slot-image-box::after {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(180deg, rgba(10, 8, 24, 0.02), rgba(10, 8, 24, 0.18)),
-        radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 50%);
+        linear-gradient(180deg, rgba(5,16,32,0.04), rgba(5,16,32,0.18)),
+        radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 45%);
       pointer-events: none;
-    }
-
-    .slot-meta {
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 5px;
-    }
-
-    .slot-name {
-      font-size: 12px;
-      font-weight: 900;
-      text-transform: uppercase;
-      color: #f4f8ff;
-      line-height: 1.06;
-      text-shadow: 0 2px 7px rgba(0,0,0,0.32);
-      word-break: break-word;
-    }
-
-    .slot-bet {
-      font-size: 10px;
-      font-weight: 900;
-      color: #dbe8ff;
-      line-height: 1;
-      opacity: 0.92;
-    }
-
-    .slot-index {
-      font-size: 10px;
-      font-weight: 900;
-      color: rgba(255,255,255,0.78);
-      flex-shrink: 0;
-      line-height: 1;
-      align-self: flex-start;
-      padding-top: 3px;
     }
 
     .slot-placeholder {
       display: flex !important;
       align-items: center;
       justify-content: center;
-      font-size: 9px;
-      font-weight: 800;
-      color: rgba(255,255,255,0.65);
-      text-transform: uppercase;
-      letter-spacing: 0.35px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      padding: 12px;
       text-align: center;
-      padding: 4px;
+      font-size: 16px;
+      line-height: 1.1;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.58);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    }
+
+    .bottom-panel {
+      padding: 8px;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .bottom-grid.one {
+      grid-template-columns: 1fr;
+      margin-bottom: 0;
+    }
+
+    .bottom-box {
+      min-height: 56px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(16,47,92,0.98), rgba(8,28,56,0.98));
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 7px 8px 6px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .bottom-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin-bottom: 5px;
+      font-size: 11px;
+      line-height: 1;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.80);
+    }
+
+    .bottom-value {
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+    }
+
+    .bottom-value.negative {
+      color: #ffb9c7;
+    }
+
+    .bottom-value.positive {
+      color: #abf1be;
     }
 
     .empty-state {
       height: 100%;
-      border-radius: 15px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #09244a 0%, #061b37 100%);
+      border: 1px solid rgba(255,255,255,0.06);
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 28px;
-      background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      font-size: 16px;
+      padding: 22px;
+      font-size: 18px;
+      line-height: 1.15;
       font-weight: 900;
-      color: rgba(255,255,255,0.82);
       text-transform: uppercase;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.04),
-        0 8px 18px rgba(0,0,0,0.20);
-    }
-
-    .footer-space {
-      height: 2px;
-      flex-shrink: 0;
+      color: rgba(255,255,255,0.72);
     }
   </style>
 </head>
 
 <body>
   <div id="app">
-    <div class="panel">
-      <div class="header">
-        <div class="header-left">
-          <div class="logo">✦</div>
+    <div class="panel top-panel">
+      <div class="top-head">
+        <div class="top-head-left">
+          <div class="logo-badge">◔</div>
 
-          <div class="hunt-meta">
-            <div id="huntLabel" class="hunt-label">BONUS HUNT</div>
-            <div id="huntSub" class="hunt-sub">A carregar...</div>
+          <div class="head-text">
+            <div id="huntLabel" class="head-title">BONUS HUNT</div>
+            <div id="huntSub" class="head-sub">A carregar...</div>
           </div>
+        </div>
+
+        <div id="huntId" class="head-id">#---</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-top">
+            <span class="stat-icon">▣</span>
+            <span>Start</span>
+          </div>
+          <div id="start" class="stat-value small">$0.00</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-top">
+            <span class="stat-icon">▣</span>
+            <span>Breakeven</span>
+          </div>
+          <div id="topBreakeven" class="stat-value small">0.00x</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-top">
+            <span class="stat-icon">▣</span>
+            <span>Bonuses</span>
+          </div>
+          <div id="total" class="stat-value">0</div>
+        </div>
+
+        <div class="stat-box">
+          <div class="stat-top">
+            <span class="stat-icon">▣</span>
+            <span>Opening</span>
+          </div>
+          <div id="open" class="stat-value">0/0</div>
         </div>
       </div>
 
-      <div class="stats-wrap">
-        <div class="stats-grid">
-          <div class="stat-card start-balance">
-            <div class="stat-title">Start Balance</div>
-            <div id="start" class="stat-value">$0.00</div>
+      <div class="type-row">
+        <div class="type-pill super">
+          <div class="left">
+            <span>⚡</span>
+            <span>Super</span>
           </div>
+          <span id="superCount" class="count">0</span>
+        </div>
 
-          <div class="stat-card">
-            <div class="stat-title">AVG</div>
-            <div id="avg" class="stat-value">0.00x</div>
+        <div class="type-pill epic">
+          <div class="left">
+            <span>✦</span>
+            <span>Epic</span>
           </div>
-
-          <div class="stat-card">
-            <div class="stat-title">BE Inicial</div>
-            <div id="be" class="stat-value">0%</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-title">Profit/Loss</div>
-            <div id="profitLoss" class="stat-value">$0.00</div>
-          </div>
-
-          <div class="stat-card">
-            <div class="stat-title">Total Pago</div>
-            <div id="totalPaid" class="stat-value">$0.00</div>
-          </div>
+          <span id="epicCount" class="count">0</span>
         </div>
       </div>
 
-      <div class="bonuses-wrap">
-        <div class="bonuses-bar">
-          <div class="bonuses-top">
-            <div class="bonuses-title">Bonuses</div>
-            <div id="total" class="bonuses-count">0</div>
-          </div>
-
-          <div class="tag-row">
-            <div class="tag super">
-              <div class="tag-left">
-                <div class="tag-dot"></div>
-                <div class="tag-label">Super</div>
-              </div>
-              <div id="superCount" class="tag-value">0</div>
-            </div>
-
-            <div class="tag epic">
-              <div class="tag-left">
-                <div class="tag-dot"></div>
-                <div class="tag-label">Epic</div>
-              </div>
-              <div id="epicCount" class="tag-value">0</div>
-            </div>
-          </div>
-
-          <div class="progress-wrap">
-            <div class="progress-head">
-              <div class="progress-label">Opening Progress</div>
-              <div id="open" class="progress-count">0/0</div>
-            </div>
-
-            <div class="progress-track">
-              <div id="progressFill" class="progress-fill"></div>
-            </div>
-          </div>
-
-          <div id="currentOpening" class="current-opening">
-            <div class="current-thumb" id="currentThumb">
-              <div class="current-placeholder">Sem imagem</div>
-            </div>
-
-            <div class="current-content">
-              <div id="currentName" class="current-name">À espera de abertura</div>
-
-              <div class="current-stats">
-                <div class="current-stat">
-                  <div class="current-stat-label">Win</div>
-                  <div id="currentWin" class="current-stat-value">$0.00</div>
-                </div>
-
-                <div class="current-stat">
-                  <div class="current-stat-label">Multi</div>
-                  <div id="currentMulti" class="current-stat-value">0.00x</div>
-                </div>
-
-                <div class="current-stat">
-                  <div class="current-stat-label">Bet</div>
-                  <div id="currentBet" class="current-stat-value">$0.00</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="bestworst-grid">
-            <div class="mini-card best" id="bestCard">
-              <div class="mini-thumb" id="bestThumb">
-                <div class="mini-placeholder">Sem abertura</div>
-              </div>
-
-              <div class="mini-content">
-                <div class="mini-topline">
-                  <div class="mini-label">Best Slot</div>
-                  <div class="mini-badge" id="bestRank">--</div>
-                </div>
-
-                <div class="mini-name" id="bestName">À espera</div>
-
-                <div class="mini-stats">
-                  <div class="mini-stat">
-                    <div class="mini-stat-label">Win</div>
-                    <div class="mini-stat-value" id="bestWin">$0.00</div>
-                  </div>
-
-                  <div class="mini-stat">
-                    <div class="mini-stat-label">Multi</div>
-                    <div class="mini-stat-value" id="bestMulti">0.00x</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mini-card worst" id="worstCard">
-              <div class="mini-thumb" id="worstThumb">
-                <div class="mini-placeholder">Sem abertura</div>
-              </div>
-
-              <div class="mini-content">
-                <div class="mini-topline">
-                  <div class="mini-label">Worst Slot</div>
-                  <div class="mini-badge" id="worstRank">--</div>
-                </div>
-
-                <div class="mini-name" id="worstName">À espera</div>
-
-                <div class="mini-stats">
-                  <div class="mini-stat">
-                    <div class="mini-stat-label">Win</div>
-                    <div class="mini-stat-value" id="worstWin">$0.00</div>
-                  </div>
-
-                  <div class="mini-stat">
-                    <div class="mini-stat-label">Multi</div>
-                    <div class="mini-stat-value" id="worstMulti">0.00x</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div class="progress-row">
+        <div class="progress-track">
+          <div id="progressFill" class="progress-fill"></div>
         </div>
+        <div id="progressCount" class="progress-count">0/0</div>
       </div>
     </div>
 
-    <div class="slots-section">
+    <div class="panel slots-panel">
       <div id="slotsViewport" class="slots-viewport">
         <div id="slotsTrack" class="slots-track">
           <div class="empty-state">A carregar slots...</div>
@@ -1021,7 +564,35 @@
       </div>
     </div>
 
-    <div class="footer-space"></div>
+    <div class="panel bottom-panel">
+      <div class="bottom-grid">
+        <div class="bottom-box">
+          <div class="bottom-label">
+            <span>◔</span>
+            <span>Average</span>
+          </div>
+          <div id="avg" class="bottom-value">0.00x</div>
+        </div>
+
+        <div class="bottom-box">
+          <div class="bottom-label">
+            <span>▣</span>
+            <span>Breakeven</span>
+          </div>
+          <div id="bottomBreakeven" class="bottom-value">0.00x</div>
+        </div>
+      </div>
+
+      <div class="bottom-grid one">
+        <div class="bottom-box">
+          <div class="bottom-label">
+            <span>◌</span>
+            <span>Total Pay</span>
+          </div>
+          <div id="totalPaid" class="bottom-value">$0.00</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -1037,10 +608,9 @@
     let scrollLastTimestamp = 0;
     let scrollPauseUntil = 0;
     let lastRenderedSignature = "";
-    let lastKnownLatestOpenedIndex = -1;
 
-    const SCROLL_GAP = 8;
-    const SCROLL_SPEED = 14;
+    const SCROLL_GAP = 10;
+    const SCROLL_SPEED = 13;
     const SCROLL_START_PAUSE = 1200;
     const SCROLL_LOOP_PAUSE = 900;
 
@@ -1076,10 +646,6 @@
 
     function formatMultiplier(value) {
       return parseMoney(value).toFixed(2) + "x";
-    }
-
-    function formatPercent(value) {
-      return Math.round(parseMoney(value)) + "%";
     }
 
     function escapeHtml(text) {
@@ -1134,6 +700,16 @@
       const payout = getBonusPayout(item);
       if (bet <= 0) return 0;
       return payout / bet;
+    }
+
+    function getTotalBetAmount(items) {
+      return items.reduce((sum, item) => sum + getBonusBet(item), 0);
+    }
+
+    function getBreakevenX(startValue, items) {
+      const totalBet = getTotalBetAmount(items);
+      if (startValue <= 0 || totalBet <= 0) return 0;
+      return startValue / totalBet;
     }
 
     async function loadSlotsCatalog() {
@@ -1275,69 +851,6 @@
       scrollAnimationId = requestAnimationFrame(animate);
     }
 
-    function renderMiniCard(prefix, item, index) {
-      const thumb = document.getElementById(prefix + "Thumb");
-      const rank = document.getElementById(prefix + "Rank");
-      const name = document.getElementById(prefix + "Name");
-      const win = document.getElementById(prefix + "Win");
-      const multi = document.getElementById(prefix + "Multi");
-
-      if (!item) {
-        thumb.innerHTML = `<div class="mini-placeholder">Sem abertura</div>`;
-        rank.innerText = "--";
-        name.innerText = "À espera";
-        win.innerText = "$0.00";
-        multi.innerText = "0.00x";
-        return;
-      }
-
-      const img = getImageFromBonus(item);
-      const bonusName = getBonusName(item);
-      const payout = getBonusPayout(item);
-      const multiValue = getBonusMulti(item);
-
-      thumb.innerHTML = img
-        ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(bonusName)}" />`
-        : `<div class="mini-placeholder">Sem imagem</div>`;
-
-      rank.innerText = "#" + (index + 1);
-      name.innerText = bonusName;
-      win.innerText = formatCurrency(payout);
-      multi.innerText = formatMultiplier(multiValue);
-    }
-
-    function renderCurrentOpening(item) {
-      const box = document.getElementById("currentOpening");
-      const thumb = document.getElementById("currentThumb");
-      const name = document.getElementById("currentName");
-      const win = document.getElementById("currentWin");
-      const multi = document.getElementById("currentMulti");
-      const bet = document.getElementById("currentBet");
-
-      if (!item) {
-        box.classList.remove("show");
-        thumb.innerHTML = `<div class="current-placeholder">Sem imagem</div>`;
-        name.innerText = "À espera de abertura";
-        win.innerText = "$0.00";
-        multi.innerText = "0.00x";
-        bet.innerText = "$0.00";
-        return;
-      }
-
-      const img = getImageFromBonus(item);
-      const bonusName = getBonusName(item);
-
-      box.classList.add("show");
-      thumb.innerHTML = img
-        ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(bonusName)}" />`
-        : `<div class="current-placeholder">Sem imagem</div>`;
-
-      name.innerText = bonusName;
-      win.innerText = formatCurrency(getBonusPayout(item));
-      multi.innerText = formatMultiplier(getBonusMulti(item));
-      bet.innerText = formatCurrency(getBonusBet(item));
-    }
-
     function renderSlots(items, latestOpenedIndex = -1, force = false) {
       const track = document.getElementById("slotsTrack");
       const signature = buildSlotsSignature(items, latestOpenedIndex);
@@ -1347,8 +860,6 @@
       }
 
       lastRenderedSignature = signature;
-      lastKnownLatestOpenedIndex = latestOpenedIndex;
-
       stopAutoScroll();
 
       if (!items.length) {
@@ -1365,29 +876,28 @@
 
         const classes = [
           "slot-card",
-          type === "super" ? "super-slot" : "",
-          type === "epic" ? "epic-slot" : "",
           payout > 0 ? "opened" : "",
           index === latestOpenedIndex ? "current" : ""
         ].filter(Boolean).join(" ");
 
         return `
           <div class="${classes}">
-            <div class="slot-inner">
-              <div class="slot-thumb">
+            <div class="slot-head">
+              <div class="slot-head-left">
+                <div class="slot-name">${escapeHtml(name)}</div>
+                <div class="slot-bet">${formatCurrency(bet)}</div>
+              </div>
+              <div class="slot-rank">#${index + 1}</div>
+            </div>
+
+            <div class="slot-image-wrap">
+              <div class="slot-image-box">
                 ${
                   img
                     ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(name)}" />`
                     : `<div class="slot-placeholder">Sem imagem</div>`
                 }
               </div>
-
-              <div class="slot-meta">
-                <div class="slot-name">${escapeHtml(name)}</div>
-                <div class="slot-bet">${formatCurrency(bet)}</div>
-              </div>
-
-              <div class="slot-index">#${index + 1}</div>
             </div>
           </div>
         `;
@@ -1407,23 +917,20 @@
     function resetOverlayNoHunt(message = "Sem hunt ativa") {
       stopAutoScroll();
       lastRenderedSignature = "";
-      lastKnownLatestOpenedIndex = -1;
       document.getElementById("huntLabel").innerText = "BONUS HUNT";
       document.getElementById("huntSub").innerText = message;
+      document.getElementById("huntId").innerText = "#---";
       document.getElementById("start").innerText = "$0.00";
+      document.getElementById("topBreakeven").innerText = "0.00x";
+      document.getElementById("bottomBreakeven").innerText = "0.00x";
       document.getElementById("avg").innerText = "0.00x";
-      document.getElementById("be").innerText = "0%";
-      document.getElementById("profitLoss").innerText = "$0.00";
       document.getElementById("totalPaid").innerText = "$0.00";
-      document.getElementById("profitLoss").className = "stat-value";
       document.getElementById("total").innerText = "0";
       document.getElementById("superCount").innerText = "0";
       document.getElementById("epicCount").innerText = "0";
       document.getElementById("open").innerText = "0/0";
+      document.getElementById("progressCount").innerText = "0/0";
       document.getElementById("progressFill").style.width = "0%";
-      renderCurrentOpening(null);
-      renderMiniCard("best", null, -1);
-      renderMiniCard("worst", null, -1);
       document.getElementById("slotsTrack").innerHTML = `<div class="empty-state">${message}</div>`;
     }
 
@@ -1449,8 +956,6 @@
 
         await loadSlotsCatalog();
 
-        const startValue = getStartFromHunt(hunt);
-
         const huntSlotsRes = await fetch(
           `${SUPABASE_URL}/rest/v1/hunt_slots?select=*&hunt_id=eq.${hunt.id}&order=id.asc`,
           {
@@ -1464,17 +969,14 @@
         const huntSlotsData = await huntSlotsRes.json();
         const bonuses = Array.isArray(huntSlotsData) ? huntSlotsData : [];
 
+        const startValue = getStartFromHunt(hunt);
         const total = bonuses.length;
+        const totalPaid = bonuses.reduce((sum, b) => sum + getBonusPayout(b), 0);
         const opened = bonuses
           .map((bonus, index) => ({ bonus, index }))
           .filter(item => getBonusPayout(item.bonus) > 0);
 
         const latestOpened = opened.length ? opened[opened.length - 1] : null;
-        const totalPaid = bonuses.reduce((sum, b) => sum + getBonusPayout(b), 0);
-
-        document.getElementById("huntLabel").innerText = "BONUS HUNT";
-        document.getElementById("huntSub").innerText = hunt.nome || "Sem nome";
-        document.getElementById("start").innerText = formatCurrency(startValue);
 
         let superCount = 0;
         let epicCount = 0;
@@ -1485,51 +987,30 @@
           if (type === "epic") epicCount++;
         }
 
-        document.getElementById("total").innerText = total;
-        document.getElementById("superCount").innerText = superCount;
-        document.getElementById("epicCount").innerText = epicCount;
-        document.getElementById("open").innerText = opened.length + "/" + total;
-
-        const progress = total > 0 ? (opened.length / total) * 100 : 0;
-        document.getElementById("progressFill").style.width = progress + "%";
-
+        const topBreakevenX = getBreakevenX(startValue, bonuses);
         const openedCount = opened.length;
         const avgMulti = openedCount > 0
           ? opened.reduce((sum, item) => sum + getBonusMulti(item.bonus), 0) / openedCount
           : 0;
 
-        const bePercent = startValue > 0
-          ? (totalPaid / startValue) * 100
-          : 0;
-
-        const profitLoss = totalPaid - startValue;
-
+        document.getElementById("huntLabel").innerText = "BONUS HUNT";
+        document.getElementById("huntSub").innerText = (hunt.nome || "Sem nome").toUpperCase();
+        document.getElementById("huntId").innerText = "#" + hunt.id;
+        document.getElementById("start").innerText = formatCurrency(startValue);
+        document.getElementById("topBreakeven").innerText = formatMultiplier(topBreakevenX);
+        document.getElementById("bottomBreakeven").innerText = formatMultiplier(topBreakevenX);
         document.getElementById("avg").innerText = formatMultiplier(avgMulti);
-        document.getElementById("be").innerText = formatPercent(bePercent);
         document.getElementById("totalPaid").innerText = formatCurrency(totalPaid);
+        document.getElementById("total").innerText = total;
+        document.getElementById("superCount").innerText = superCount;
+        document.getElementById("epicCount").innerText = epicCount;
+        document.getElementById("open").innerText = opened.length;
+        document.getElementById("progressCount").innerText = `${opened.length}/${total}`;
 
-        const profitEl = document.getElementById("profitLoss");
-        profitEl.innerText = formatCurrency(profitLoss);
-        profitEl.className = "stat-value" + (profitLoss > 0 ? " positive" : profitLoss < 0 ? " negative" : "");
+        const progress = total > 0 ? (opened.length / total) * 100 : 0;
+        document.getElementById("progressFill").style.width = progress + "%";
 
-        let bestItem = null;
-        let worstItem = null;
-
-        if (opened.length) {
-          bestItem = opened.reduce((best, current) => {
-            return getBonusMulti(current.bonus) > getBonusMulti(best.bonus) ? current : best;
-          });
-
-          worstItem = opened.reduce((worst, current) => {
-            return getBonusMulti(current.bonus) < getBonusMulti(worst.bonus) ? current : worst;
-          });
-        }
-
-        renderCurrentOpening(latestOpened?.bonus || null);
-        renderMiniCard("best", bestItem?.bonus || null, bestItem?.index ?? -1);
-        renderMiniCard("worst", worstItem?.bonus || null, worstItem?.index ?? -1);
         renderSlots(bonuses, latestOpened?.index ?? -1);
-
       } catch (e) {
         console.log(e);
         resetOverlayNoHunt("Erro overlay");
