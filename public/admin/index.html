@@ -982,13 +982,41 @@
       }
     }
 
-    function openHunt(id) {
-      if (isEditing) return;
-      selectedHunt = id;
-      renderHunts(huntsCache);
-      setSelectedHuntBadge();
-      loadSlots();
+    async function openHunt(id, silent = false) {
+  if (isEditing) return;
+
+  try {
+    await fetchJson(`${SUPABASE_URL}/rest/v1/hunts?is_active=eq.true`, {
+      method: "PATCH",
+      headers: headers(true),
+      body: JSON.stringify({ is_active: false })
+    });
+
+    const { res, data } = await fetchJson(`${SUPABASE_URL}/rest/v1/hunts?id=eq.${id}`, {
+      method: "PATCH",
+      headers: headers(true),
+      body: JSON.stringify({ is_active: true, status: "active" })
+    });
+
+    if (!res.ok) {
+      console.log(data);
+      showNotice("Não consegui marcar a hunt como ativa na base de dados.", "error");
+      return;
     }
+
+    selectedHunt = id;
+    renderHunts(huntsCache);
+    setSelectedHuntBadge();
+    await loadSlots();
+
+    if (!silent) {
+      showNotice("Hunt ativa atualizada para o overlay.", "success");
+    }
+  } catch (err) {
+    console.log(err);
+    showNotice("Erro ao abrir a hunt.", "error");
+  }
+}
 
     async function patchHuntSlot(id, body) {
       const { res, data } = await fetchJson(`${SUPABASE_URL}/rest/v1/hunt_slots?id=eq.${id}`, {
