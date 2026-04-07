@@ -31,25 +31,20 @@
 
       --text-main: #ffffff;
       --text-soft: rgba(234, 244, 255, 0.76);
-      --text-muted: rgba(213, 228, 255, 0.62);
 
       --yellow: #ffd447;
       --light-blue: #8fd6ff;
       --blue: #2b9dff;
       --green: #72efac;
 
-      --super-soft: rgba(244, 199, 73, 0.18);
       --super-border: rgba(244, 199, 73, 0.50);
       --super-text: #f8d974;
 
-      --epic-soft: rgba(255, 120, 170, 0.16);
       --epic-border: rgba(255, 132, 181, 0.48);
       --epic-text: #ff9ac0;
 
       --shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
       --radius-shell: 28px;
-      --radius-card: 14px;
-      --radius-mini: 10px;
     }
 
     html,
@@ -267,18 +262,14 @@
       background: linear-gradient(180deg, rgba(244, 199, 73, 0.20), rgba(244, 199, 73, 0.10));
       border: 1px solid var(--super-border);
       color: var(--super-text);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.08),
-        0 0 10px rgba(244, 199, 73, 0.10);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     .type-pill.epic {
       background: linear-gradient(180deg, rgba(255, 120, 170, 0.18), rgba(255, 120, 170, 0.09));
       border: 1px solid var(--epic-border);
       color: var(--epic-text);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.08),
-        0 0 10px rgba(255, 120, 170, 0.10);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     .progress-row {
@@ -691,16 +682,16 @@
       window.SUPABASE_URL ||
       window.ENV?.SUPABASE_URL ||
       localStorage.getItem("SUPABASE_URL") ||
-      "";
+      "https://cwengomkuhqvrdcpkgwp.supabase.co";
 
     const SUPABASE_ANON_KEY =
       window.CT_SUPABASE_ANON_KEY ||
       window.SUPABASE_ANON_KEY ||
       window.ENV?.SUPABASE_ANON_KEY ||
       localStorage.getItem("SUPABASE_ANON_KEY") ||
-      "";
+      "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
-    const refreshMs = 5000;
+    const refreshMs = 3000;
 
     const listEl = document.getElementById("slotsList");
     const loadingEl = document.getElementById("loadingState");
@@ -779,12 +770,7 @@
 
     function isOpened(item) {
       const raw = String(
-        pick(item, [
-          "status",
-          "state",
-          "opening_status",
-          "result_status"
-        ], "")
+        pick(item, ["status", "state", "opening_status", "result_status"], "")
       ).toLowerCase();
 
       if (raw) {
@@ -800,73 +786,46 @@
 
     function normalizeBonusType(item) {
       const raw = String(
-        pick(item, ["bonus_type", "type", "rarity", "tier"], "normal")
+        pick(item, ["bonus_type", "type", "rarity", "tier", "tipo_slot"], "normal")
       ).toLowerCase();
 
       if (raw.includes("epic")) return "epic";
       if (raw.includes("super")) return "super";
+      if (raw.includes("extreme")) return "epic";
       return "normal";
     }
 
     function normalizeSlot(item, index = 0) {
       return {
         id: pick(item, ["id", "slot_id", "bonus_id"], "slot-" + index),
-        name: pick(item, ["slot_name", "name", "title", "slot"], "Slot"),
-        image: pick(item, ["slot_image", "image_url", "image", "thumb", "thumbnail_url"], ""),
+        name: pick(item, ["slot_name", "name", "nome", "title", "slot"], "Slot"),
+        image: pick(item, ["image_url", "imagem_url", "slot_image", "image", "thumb", "thumbnail_url"], ""),
         type: normalizeBonusType(item),
         payout: Number(pick(item, ["payout", "result", "paid_amount", "win_amount"], 0) || 0),
         bet: Number(pick(item, ["bet", "bet_size", "base_bet", "stake"], 0) || 0),
+        provider: pick(item, ["provider"], ""),
         opened: isOpened(item),
-        order:
-          Number(
-            pick(item, ["sort_order", "position", "display_order", "order_index"], index)
-          ) || index
+        order: Number(pick(item, ["sort_order", "position", "display_order", "order_index", "id"], index)) || index
       };
     }
 
     async function tryGetActiveHunt() {
-      const huntTables = ["hunts", "bonus_hunts", "hunt_sessions"];
-      const strategies = [
-        (q) => q.eq("is_active", true),
-        (q) => q.eq("active", true),
-        (q) => q.eq("status", "active")
+      const attempts = [
+        () => supabase.from("hunts").select("*").eq("is_active", true).order("id", { ascending: false }).limit(1),
+        () => supabase.from("hunts").select("*").eq("status", "active").order("id", { ascending: false }).limit(1),
+        () => supabase.from("hunts").select("*").order("id", { ascending: false }).limit(20)
       ];
 
-      for (const table of huntTables) {
-        for (const applyStrategy of strategies) {
-          try {
-            let query = supabase
-              .from(table)
-              .select("*")
-              .order("updated_at", { ascending: false })
-              .limit(1);
-
-            query = applyStrategy(query);
-
-            const { data, error } = await query;
-            if (!error && Array.isArray(data) && data.length) {
-              return { table, hunt: data[0] };
-            }
-          } catch (_) {}
-        }
-
+      for (const run of attempts) {
         try {
-          const { data, error } = await supabase
-            .from(table)
-            .select("*")
-            .order("updated_at", { ascending: false })
-            .order("created_at", { ascending: false })
-            .limit(10);
+          const { data, error } = await run();
+          if (error || !Array.isArray(data) || !data.length) continue;
 
-          if (!error && Array.isArray(data) && data.length) {
-            const active = data.find((row) => {
-              const isActive = pick(row, ["is_active", "active"], false) === true;
-              const status = String(pick(row, ["status"], "")).toLowerCase() === "active";
-              return isActive || status;
-            });
+          const active =
+            data.find(row => row.is_active === true || String(row.status || "").toLowerCase() === "active") ||
+            data[0];
 
-            if (active) return { table, hunt: active };
-          }
+          if (active) return active;
         } catch (_) {}
       }
 
@@ -874,21 +833,39 @@
     }
 
     async function tryGetBonuses(huntId) {
-      const bonusTables = ["hunt_entries", "hunt_items", "hunt_bonuses", "bonuses"];
-      const possibleHuntKeys = ["hunt_id", "bonus_hunt_id", "session_id"];
+      const attempts = [
+        {
+          table: "hunt_slots",
+          keys: ["hunt_id"],
+          orders: ["id"]
+        },
+        {
+          table: "hunt_entries",
+          keys: ["hunt_id"],
+          orders: ["sort_order", "position", "created_at"]
+        },
+        {
+          table: "hunt_items",
+          keys: ["hunt_id"],
+          orders: ["sort_order", "position", "created_at"]
+        }
+      ];
 
-      for (const table of bonusTables) {
-        for (const huntKey of possibleHuntKeys) {
+      for (const attempt of attempts) {
+        for (const huntKey of attempt.keys) {
           try {
-            const { data, error } = await supabase
-              .from(table)
+            let query = supabase
+              .from(attempt.table)
               .select("*")
-              .eq(huntKey, huntId)
-              .order("sort_order", { ascending: true })
-              .order("position", { ascending: true })
-              .order("created_at", { ascending: true });
+              .eq(huntKey, huntId);
 
-            if (!error && Array.isArray(data)) {
+            for (const field of attempt.orders) {
+              query = query.order(field, { ascending: true });
+            }
+
+            const { data, error } = await query;
+
+            if (!error && Array.isArray(data) && data.length) {
               return data;
             }
           } catch (_) {}
@@ -904,13 +881,13 @@
       );
 
       const total = slots.length;
-      const openedSlots = slots.filter((s) => s.opened);
+      const openedSlots = slots.filter(s => s.opened);
       const opened = openedSlots.length;
       const totalPaid = openedSlots.reduce((sum, s) => sum + Number(s.payout || 0), 0);
       const breakevenPct = start > 0 ? (totalPaid / start) * 100 : 0;
       const averageX = start > 0 && opened > 0 ? totalPaid / start : 0;
-      const superCount = slots.filter((s) => s.type === "super").length;
-      const epicCount = slots.filter((s) => s.type === "epic").length;
+      const superCount = slots.filter(s => s.type === "super").length;
+      const epicCount = slots.filter(s => s.type === "epic").length;
 
       return {
         start,
@@ -964,12 +941,11 @@
     }
 
     function renderHeader(hunt, stats) {
-      const huntName = pick(hunt, ["name", "title"], "Bonus Hunt");
-      const huntSubtitle = pick(hunt, ["provider", "subtitle", "label"], "Hunt ativa");
-      const huntId = pick(hunt, ["display_id", "hunt_number", "number", "id"], "000");
+      const huntName = pick(hunt, ["nome", "name", "title"], "Bonus Hunt");
+      const huntId = pick(hunt, ["id", "display_id", "hunt_number", "number"], "000");
 
-      els.huntTitle.textContent = huntName;
-      els.huntSubtitle.textContent = String(huntSubtitle);
+      els.huntTitle.textContent = "Bonus Hunt";
+      els.huntSubtitle.textContent = huntName;
       els.huntId.textContent = "#" + String(huntId);
 
       const progress = stats.total > 0 ? (stats.opened / stats.total) * 100 : 0;
@@ -1038,7 +1014,7 @@
       }
 
       const signature = JSON.stringify(
-        slots.map((s) => [s.id, s.name, s.image, s.type, s.payout, s.bet, s.opened, s.order])
+        slots.map(s => [s.id, s.name, s.image, s.type, s.payout, s.bet, s.opened, s.order])
       );
 
       if (signature !== lastRenderedSignature) {
@@ -1095,16 +1071,14 @@
       }
 
       try {
-        const active = await tryGetActiveHunt();
+        const hunt = await tryGetActiveHunt();
 
-        if (!active || !active.hunt) {
+        if (!hunt) {
           renderNoActiveHunt();
           return;
         }
 
-        const hunt = active.hunt;
         const huntId = pick(hunt, ["id"]);
-
         const rawBonuses = await tryGetBonuses(huntId);
         const slots = rawBonuses
           .map((item, index) => normalizeSlot(item, index))
