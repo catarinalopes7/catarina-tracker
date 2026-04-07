@@ -21,7 +21,7 @@
     }
 
     body {
-      padding: 22px;
+      padding: 18px;
     }
 
     #app {
@@ -29,22 +29,23 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
 
     .panel {
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      border-radius: 26px;
+      border-radius: 24px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       overflow: hidden;
+      flex-shrink: 0;
     }
 
     .header {
-      padding: 18px 22px 16px;
+      padding: 16px 20px 12px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 18px;
+      gap: 16px;
     }
 
     .header-left {
@@ -56,8 +57,8 @@
     }
 
     .logo {
-      width: 62px;
-      height: 62px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       flex-shrink: 0;
       display: flex;
@@ -67,7 +68,7 @@
       box-shadow:
         inset 0 0 0 3px rgba(255,255,255,0.08),
         0 8px 18px rgba(0,0,0,0.35);
-      font-size: 30px;
+      font-size: 28px;
       font-weight: 900;
       color: #f5edff;
     }
@@ -77,7 +78,7 @@
     }
 
     .hunt-label {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 900;
       letter-spacing: 1px;
       text-transform: uppercase;
@@ -91,8 +92,8 @@
     }
 
     .hunt-sub {
-      margin-top: 6px;
-      font-size: 18px;
+      margin-top: 5px;
+      font-size: 16px;
       font-weight: 700;
       color: #ffffff;
       text-transform: uppercase;
@@ -104,22 +105,22 @@
     }
 
     .stats-wrap {
-      padding: 0 22px 14px;
+      padding: 0 20px 12px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
 
     .stat-card {
-      min-height: 118px;
+      min-height: 92px;
       border-radius: 18px;
-      padding: 16px;
+      padding: 12px;
       text-align: center;
       background: linear-gradient(180deg, rgba(94, 73, 174, 0.95), rgba(48, 33, 106, 0.98));
       box-shadow:
@@ -131,18 +132,18 @@
     }
 
     .stat-card.start-balance {
-      min-height: 126px;
+      min-height: 100px;
       background: linear-gradient(180deg, rgba(111, 89, 205, 0.98), rgba(58, 40, 128, 0.98));
     }
 
     .stat-title {
-      font-size: 18px;
+      font-size: 16px;
       line-height: 1;
       text-transform: uppercase;
       font-weight: 700;
       color: #d6cdf7;
       letter-spacing: 0.6px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .stat-card.start-balance .stat-title {
@@ -150,7 +151,7 @@
     }
 
     .stat-value {
-      font-size: 36px;
+      font-size: 30px;
       line-height: 1;
       font-weight: 900;
       color: #ffffff;
@@ -158,7 +159,7 @@
     }
 
     .stat-card.start-balance .stat-value {
-      font-size: 44px;
+      font-size: 40px;
     }
 
     .stat-value.negative {
@@ -170,13 +171,13 @@
     }
 
     .bonuses-wrap {
-      padding: 0 22px 16px;
+      padding: 0 20px 14px;
     }
 
     .bonuses-bar {
       background: linear-gradient(180deg, rgba(89, 66, 169, 0.96), rgba(45, 31, 102, 0.98));
       border-radius: 18px;
-      padding: 14px;
+      padding: 12px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
         0 8px 24px rgba(0,0,0,0.20);
@@ -187,7 +188,7 @@
       justify-content: space-between;
       align-items: center;
       gap: 16px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .bonuses-title {
@@ -208,15 +209,15 @@
     .tag-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 10px;
+      gap: 10px;
+      margin-top: 8px;
     }
 
     .tag {
       position: relative;
-      min-height: 74px;
+      min-height: 66px;
       border-radius: 18px;
-      padding: 14px 16px;
+      padding: 12px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -252,7 +253,7 @@
     }
 
     .tag-label {
-      font-size: 21px;
+      font-size: 18px;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -261,14 +262,14 @@
     }
 
     .tag-value {
-      min-width: 44px;
-      height: 44px;
+      min-width: 42px;
+      height: 42px;
       padding: 0 14px;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 900;
       position: relative;
       z-index: 1;
@@ -322,7 +323,7 @@
     }
 
     .progress-wrap {
-      margin-top: 14px;
+      margin-top: 12px;
     }
 
     .progress-head {
@@ -334,7 +335,7 @@
     }
 
     .progress-label {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.84);
@@ -342,7 +343,7 @@
     }
 
     .progress-count {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 900;
       color: #ffffff;
     }
@@ -368,7 +369,7 @@
     }
 
     .current-opening {
-      margin-top: 14px;
+      margin-top: 12px;
       border-radius: 18px;
       overflow: hidden;
       background: linear-gradient(135deg, rgba(132, 70, 93, 0.85) 0%, rgba(108, 44, 74, 0.88) 48%, rgba(73, 26, 66, 0.90) 100%);
@@ -380,16 +381,16 @@
 
     .current-opening.show {
       display: grid;
-      grid-template-columns: 140px 1fr;
-      gap: 14px;
-      padding: 12px;
+      grid-template-columns: 120px 1fr;
+      gap: 12px;
+      padding: 10px;
     }
 
     .current-thumb {
-      width: 140px;
-      min-width: 140px;
-      height: 140px;
-      border-radius: 16px;
+      width: 120px;
+      min-width: 120px;
+      height: 120px;
+      border-radius: 14px;
       overflow: hidden;
       background: rgba(255,255,255,0.06);
     }
@@ -408,7 +409,7 @@
       justify-content: center;
       text-align: center;
       padding: 8px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.7);
@@ -420,11 +421,11 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
     }
 
     .current-name {
-      font-size: 26px;
+      font-size: 22px;
       line-height: 1.02;
       font-weight: 900;
       text-transform: uppercase;
@@ -436,27 +437,27 @@
     .current-stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      gap: 8px;
     }
 
     .current-stat {
       border-radius: 14px;
       background: rgba(255,255,255,0.10);
-      padding: 12px 10px;
+      padding: 10px 8px;
       text-align: center;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
     }
 
     .current-stat-label {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.78);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .current-stat-value {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1;
@@ -465,18 +466,18 @@
     .bestworst-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 14px;
+      gap: 10px;
+      margin-top: 12px;
     }
 
     .mini-card {
       background: linear-gradient(180deg, rgba(58, 40, 128, 0.92), rgba(36, 24, 85, 0.96));
       border-radius: 18px;
-      padding: 12px;
+      padding: 10px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
         0 8px 20px rgba(0,0,0,0.18);
-      min-height: 128px;
+      min-height: 112px;
       display: flex;
       gap: 10px;
       align-items: stretch;
@@ -492,8 +493,8 @@
     }
 
     .mini-thumb {
-      width: 108px;
-      min-width: 108px;
+      width: 96px;
+      min-width: 96px;
       border-radius: 14px;
       overflow: hidden;
       background: rgba(255,255,255,0.05);
@@ -512,7 +513,7 @@
       display: flex !important;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.6);
@@ -527,18 +528,18 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 8px;
+      gap: 6px;
     }
 
     .mini-topline {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
     }
 
     .mini-label {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0.4px;
@@ -553,9 +554,9 @@
     }
 
     .mini-badge {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 900;
-      padding: 6px 10px;
+      padding: 5px 10px;
       border-radius: 999px;
       background: rgba(255,255,255,0.06);
       color: rgba(255,255,255,0.85);
@@ -563,7 +564,7 @@
     }
 
     .mini-name {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1.05;
@@ -573,7 +574,7 @@
 
     .mini-stats {
       display: flex;
-      gap: 14px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
@@ -584,14 +585,14 @@
     }
 
     .mini-stat-label {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.65);
     }
 
     .mini-stat-value {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1;
@@ -608,14 +609,14 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       padding-right: 4px;
     }
 
     .slot-card {
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
       border-radius: 16px;
-      padding: 10px;
+      padding: 9px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
         0 10px 24px rgba(0,0,0,0.26);
@@ -642,7 +643,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 16px;
+      gap: 14px;
       margin-bottom: 6px;
     }
 
@@ -652,7 +653,7 @@
     }
 
     .slot-name {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 900;
       text-transform: uppercase;
       color: #f4f8ff;
@@ -664,7 +665,7 @@
 
     .slot-bet {
       margin-top: 4px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 900;
       color: #dbe8ff;
       line-height: 1;
@@ -672,7 +673,7 @@
     }
 
     .slot-index {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 900;
       color: rgba(255,255,255,0.78);
       flex-shrink: 0;
@@ -702,7 +703,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
       color: rgba(255,255,255,0.65);
       text-transform: uppercase;
@@ -720,7 +721,7 @@
       text-align: center;
       padding: 40px;
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 900;
       color: rgba(255,255,255,0.82);
       text-transform: uppercase;
@@ -730,7 +731,7 @@
     }
 
     .footer-space {
-      height: 4px;
+      height: 2px;
       flex-shrink: 0;
     }
   </style>
