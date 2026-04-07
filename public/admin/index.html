@@ -190,6 +190,16 @@
       font-weight: 700;
     }
 
+    .slot-provider {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.62);
+      text-transform: uppercase;
+      letter-spacing: 0.25px;
+    }
+
     button {
       padding: 9px 14px;
       border: none;
@@ -399,6 +409,9 @@
       font-weight: 800;
       color: #fff;
       border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
     }
 
     .autocomplete-item:last-child {
@@ -408,6 +421,22 @@
     .autocomplete-item:hover,
     .autocomplete-item.active {
       background: rgba(122, 92, 255, 0.22);
+    }
+
+    .autocomplete-main {
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.15;
+    }
+
+    .autocomplete-sub {
+      font-size: 11px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.62);
+      text-transform: uppercase;
+      letter-spacing: 0.25px;
+      line-height: 1.1;
     }
 
     .helper {
@@ -615,12 +644,43 @@
       }, 3500);
     }
 
+    function normalizeBonusType(value) {
+      const raw = String(value || "").trim().toLowerCase();
+
+      if (raw.includes("super")) return "super";
+      if (raw.includes("epic")) return "epic";
+      if (raw.includes("extreme")) return "epic";
+      return "normal";
+    }
+
     function getCatalogSlotName(item) {
-      return item?.name || item?.nome || item?.slot_name || item?.title || "";
+      return item?.nome || item?.name || item?.slot_name || item?.title || "";
+    }
+
+    function getCatalogProvider(item) {
+      return item?.provider || "";
+    }
+
+    function getCatalogSlug(item) {
+      return item?.slug || "";
+    }
+
+    function getCatalogImage(item) {
+      return item?.imagem_url || item?.image_url || item?.image || "";
     }
 
     function getCatalogSlotId(item) {
       return item?.id ?? item?.slot_id ?? null;
+    }
+
+    function getCatalogType(item) {
+      return normalizeBonusType(item?.tipo_slot || item?.bonus_type || item?.type || "normal");
+    }
+
+    function getCatalogDisplayLabel(item) {
+      const name = getCatalogSlotName(item);
+      const provider = getCatalogProvider(item);
+      return provider ? `${name} — ${provider}` : name;
     }
 
     function getSlotTypeValue(slot) {
@@ -723,12 +783,14 @@
 
         const safeName = JSON.stringify(slot.slot_name || "");
         const slotType = getSlotTypeValue(slot);
+        const provider = slot.provider ? `<span class="slot-provider">${escapeHtml(slot.provider)}</span>` : "";
 
         return `
           <tr>
             <td><span class="slot-id">#${slot.id}</span></td>
             <td class="editable" onclick='editSlotName(this, ${slot.id}, ${safeName})'>
               <span class="slot-name">${escapeHtml(slot.slot_name || "Sem nome")}</span>
+              ${provider}
             </td>
             <td class="editable" onclick='editType(this, ${slot.id}, "${slotType}")'>
               ${getSlotTypePill(slotType)}
@@ -762,78 +824,60 @@
       return { res, data };
     }
 
-    async function tryLoadCatalogWithSelect(selectClause) {
-      const { res, data } = await fetchJson(
-        `${SUPABASE_URL}/rest/v1/slots?select=${encodeURIComponent(selectClause)}&limit=5000`,
-        { headers: headers(false) }
-      );
-
-      if (!res.ok) {
-        return { ok: false, data };
-      }
-
-      if (!Array.isArray(data)) {
-        return { ok: false, data };
-      }
-
-      const mapped = data.map(item => ({
-        id: item?.id ?? item?.slot_id ?? null,
-        name: item?.name || item?.nome || item?.slot_name || item?.title || ""
-      })).filter(item => item.name);
-
-      if (!mapped.length) {
-        return { ok: false, data };
-      }
-
-      return { ok: true, data: mapped };
-    }
-
     async function loadSlotsCatalog() {
-      const attempts = [
-        "id,name,nome",
-        "id,name",
-        "id,nome",
-        "id,slot_name",
-        "id,title",
-        "*"
-      ];
+      try {
+        const { res, data } = await fetchJson(
+          `${SUPABASE_URL}/rest/v1/slots?select=id,nome,provider,slug,imagem_url,tipo_slot&order=provider.asc,nome.asc&limit=5000`,
+          { headers: headers(false) }
+        );
 
-      for (const selectClause of attempts) {
-        try {
-          const result = await tryLoadCatalogWithSelect(selectClause);
-          if (result.ok) {
-            slotsCatalog = result.data;
-            return true;
-          }
-          console.log("Falhou catálogo com select:", selectClause, result.data);
-        } catch (err) {
-          console.log("Erro catálogo com select:", selectClause, err);
+        if (!res.ok) {
+          console.log(data);
+          slotsCatalog = [];
+          return false;
         }
-      }
 
-      slotsCatalog = [];
-      return false;
+        const rows = Array.isArray(data) ? data : [];
+
+        slotsCatalog = rows
+          .map(item => ({
+            id: item?.id ?? null,
+            nome: item?.nome || "",
+            provider: item?.provider || "",
+            slug: item?.slug || "",
+            imagem_url: item?.imagem_url || "",
+            tipo_slot: item?.tipo_slot || ""
+          }))
+          .filter(item => item.nome);
+
+        return slotsCatalog.length > 0;
+      } catch (err) {
+        console.log(err);
+        slotsCatalog = [];
+        return false;
+      }
     }
 
     function getSuggestions(query, limit = 8) {
       const q = normalizeText(query);
       if (!q) return [];
 
-      const uniqueMap = new Map();
+      const results = [];
 
       for (const item of slotsCatalog) {
         const name = getCatalogSlotName(item);
-        if (!name) continue;
+        const provider = getCatalogProvider(item);
+        const combined = normalizeText(name + " " + provider);
+        const normalizedName = normalizeText(name);
 
-        const normalized = normalizeText(name);
-        if (!normalized.includes(q)) continue;
+        if (!normalizedName.includes(q) && !combined.includes(q)) continue;
 
-        if (!uniqueMap.has(normalized)) {
-          uniqueMap.set(normalized, name);
-        }
+        results.push(item);
+
+        if (results.length >= limit) break;
       }
 
-      return Array.from(uniqueMap.values()).slice(0, limit);
+      return results;
     }
 
     function findCatalogMatchByName(name) {
@@ -850,18 +894,26 @@
         return;
       }
 
-      box.innerHTML = items.map((item, index) => `
-        <div class="autocomplete-item ${index === activeIndex ? "active" : ""}" data-value="${escapeHtml(item)}">
-          ${escapeHtml(item)}
-        </div>
-      `).join("");
+      box.innerHTML = items.map((item, index) => {
+        const name = getCatalogSlotName(item);
+        const provider = getCatalogProvider(item);
+
+        return `
+          <div class="autocomplete-item ${index === activeIndex ? "active" : ""}" data-index="${index}">
+            <div class="autocomplete-main">${escapeHtml(name)}</div>
+            <div class="autocomplete-sub">${escapeHtml(provider || "Sem provider")}</div>
+          </div>
+        `;
+      }).join("");
 
       box.classList.add("show");
 
       box.querySelectorAll(".autocomplete-item").forEach(el => {
         el.addEventListener("mousedown", (e) => {
           e.preventDefault();
-          onPick(el.getAttribute("data-value"));
+          const index = Number(el.getAttribute("data-index"));
+          const item = items[index];
+          if (item) onPick(item);
         });
       });
     }
@@ -953,24 +1005,13 @@
     }
 
     async function patchTypeFallback(id, typeValue) {
-      const attempts = [
-        { bonus_type: typeValue },
-        { type: typeValue },
-        { categoria: typeValue },
-        { rarity: typeValue },
-        { tipo_slot: typeValue }
-      ];
-
-      for (const body of attempts) {
-        try {
-          await patchHuntSlot(id, body);
-          return true;
-        } catch (err) {
-          console.log("Falhou patch type:", body, err);
-        }
+      try {
+        await patchHuntSlot(id, { bonus_type: normalizeBonusType(typeValue) });
+        return true;
+      } catch (err) {
+        console.log("Falhou patch type:", err);
+        return false;
       }
-
-      return false;
     }
 
     function finishEdit() {
@@ -1076,7 +1117,7 @@
         <option value="super">Super</option>
         <option value="epic">Epic</option>
       `;
-      select.value = getSlotTypeValue({ bonus_type: currentValue });
+      select.value = normalizeBonusType(currentValue);
 
       td.innerHTML = "";
       td.appendChild(select);
@@ -1145,12 +1186,32 @@
       let currentSuggestions = [];
 
       async function saveValue(value) {
+        const trimmed = String(value || "").trim();
+        const matchedCatalog = findCatalogMatchByName(trimmed);
+
+        const payload = {
+          slot_name: trimmed
+        };
+
+        if (matchedCatalog) {
+          payload.slot_id = getCatalogSlotId(matchedCatalog);
+          payload.provider = getCatalogProvider(matchedCatalog) || null;
+          payload.slug = getCatalogSlug(matchedCatalog) || null;
+          payload.image_url = getCatalogImage(matchedCatalog) || null;
+        } else {
+          payload.slot_id = null;
+          payload.provider = null;
+          payload.slug = null;
+          payload.image_url = null;
+        }
+
         try {
-          await patchHuntSlot(id, { slot_name: value.trim() });
+          await patchHuntSlot(id, payload);
         } catch (err) {
           console.log(err);
           showNotice("Não consegui guardar o nome da slot.", "error");
         }
+
         finishEdit();
       }
 
@@ -1159,9 +1220,9 @@
         if (activeIndex >= currentSuggestions.length) activeIndex = -1;
 
         renderAutocomplete(box, currentSuggestions, async (picked) => {
-          input.value = picked;
+          input.value = getCatalogSlotName(picked);
           handled = true;
-          await saveValue(picked);
+          await saveValue(getCatalogSlotName(picked));
         }, activeIndex);
       }
 
@@ -1178,9 +1239,9 @@
           e.preventDefault();
           activeIndex = Math.min(activeIndex + 1, currentSuggestions.length - 1);
           renderAutocomplete(box, currentSuggestions, async (picked) => {
-            input.value = picked;
+            input.value = getCatalogSlotName(picked);
             handled = true;
-            await saveValue(picked);
+            await saveValue(getCatalogSlotName(picked));
           }, activeIndex);
         }
 
@@ -1189,9 +1250,9 @@
           e.preventDefault();
           activeIndex = Math.max(activeIndex - 1, 0);
           renderAutocomplete(box, currentSuggestions, async (picked) => {
-            input.value = picked;
+            input.value = getCatalogSlotName(picked);
             handled = true;
-            await saveValue(picked);
+            await saveValue(getCatalogSlotName(picked));
           }, activeIndex);
         }
 
@@ -1201,7 +1262,7 @@
 
           let valueToSave = input.value.trim();
           if (activeIndex >= 0 && currentSuggestions[activeIndex]) {
-            valueToSave = currentSuggestions[activeIndex];
+            valueToSave = getCatalogSlotName(currentSuggestions[activeIndex]);
           }
 
           await saveValue(valueToSave);
@@ -1235,7 +1296,7 @@
         if (activeIndex >= currentSuggestions.length) activeIndex = -1;
 
         renderAutocomplete(box, currentSuggestions, (picked) => {
-          input.value = picked;
+          input.value = getCatalogSlotName(picked);
           closeAutocomplete(box);
         }, activeIndex);
       }
@@ -1253,7 +1314,7 @@
           e.preventDefault();
           activeIndex = Math.min(activeIndex + 1, currentSuggestions.length - 1);
           renderAutocomplete(box, currentSuggestions, (picked) => {
-            input.value = picked;
+            input.value = getCatalogSlotName(picked);
             closeAutocomplete(box);
           }, activeIndex);
         }
@@ -1263,7 +1324,7 @@
           e.preventDefault();
           activeIndex = Math.max(activeIndex - 1, 0);
           renderAutocomplete(box, currentSuggestions, (picked) => {
-            input.value = picked;
+            input.value = getCatalogSlotName(picked);
             closeAutocomplete(box);
           }, activeIndex);
         }
@@ -1271,7 +1332,7 @@
         if (e.key === "Enter") {
           if (activeIndex >= 0 && currentSuggestions[activeIndex]) {
             e.preventDefault();
-            input.value = currentSuggestions[activeIndex];
+            input.value = getCatalogSlotName(currentSuggestions[activeIndex]);
             closeAutocomplete(box);
           }
         }
@@ -1311,7 +1372,7 @@
 
       const slotName = nameInput.value.trim();
       const betSize = parseMoney(betInput.value);
-      const slotType = typeInput.value || "normal";
+      const chosenType = normalizeBonusType(typeInput.value || "normal");
 
       if (!slotName) {
         nameInput.focus();
@@ -1326,25 +1387,31 @@
         slot_name: slotName,
         bet_size: betSize,
         payout: 0,
-        status: "pending"
+        status: "pending",
+        bonus_type: chosenType
       };
 
-      if (matchedCatalog && getCatalogSlotId(matchedCatalog) !== null) {
+      if (matchedCatalog) {
         basePayload.slot_id = getCatalogSlotId(matchedCatalog);
+        basePayload.provider = getCatalogProvider(matchedCatalog) || null;
+        basePayload.slug = getCatalogSlug(matchedCatalog) || null;
+        basePayload.image_url = getCatalogImage(matchedCatalog) || null;
       }
 
       try {
-        const inserted = await insertHuntSlotBase(basePayload);
-
-        if (inserted?.id) {
-          await patchTypeFallback(inserted.id, slotType);
-        }
+        await insertHuntSlotBase(basePayload);
 
         nameInput.value = "";
         betInput.value = betSize > 0 ? betSize.toFixed(2) : "0.20";
         typeInput.value = "normal";
         closeAutocomplete(document.getElementById("newSlotSuggestions"));
-        showNotice("Slot adicionada com sucesso.", "success");
+
+        if (matchedCatalog) {
+          showNotice("Slot adicionada com catálogo completo.", "success");
+        } else {
+          showNotice("Slot adicionada manualmente. Pode não ter imagem automática.", "success");
+        }
+
         loadSlots();
       } catch (err) {
         console.log(err);
