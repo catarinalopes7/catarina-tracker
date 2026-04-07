@@ -5,649 +5,822 @@
   <meta name="viewport" content="width=1080, height=1920" />
   <title>Catarina Tracker Overlay</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <style>
     * {
       box-sizing: border-box;
     }
 
-    html, body {
+    :root {
+      --bg-top: #4f3ec7;
+      --bg-bottom: #2b1d74;
+      --panel-top: rgba(56, 40, 118, 0.96);
+      --panel-bottom: rgba(37, 24, 87, 0.96);
+      --card-top: rgba(82, 61, 170, 0.95);
+      --card-bottom: rgba(51, 33, 120, 0.95);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --text-main: #ffffff;
+      --text-soft: rgba(255, 255, 255, 0.76);
+      --title-yellow: #ffd54a;
+      --blue: #49a7ff;
+      --green: #4ee48c;
+      --orange: #ffb347;
+      --red: #ff6b81;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.26);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 18px;
+    }
+
+    html,
+    body {
       width: 1080px;
       height: 1920px;
       margin: 0;
       overflow: hidden;
-      font-family: 'Rajdhani', Arial, sans-serif;
-      color: #ffffff;
-      background: transparent;
+      font-family: "Outfit", Arial, sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.10), transparent 28%),
+        linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
     }
 
     body {
-      padding: 0;
+      padding: 22px;
     }
 
     #app {
-      width: 372px;
-      height: 1920px;
-      padding: 8px 10px 8px 8px;
+      width: 100%;
+      height: 100%;
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      background: linear-gradient(180deg, #1a0b3d 0%, #32126f 58%, #1a0b3d 100%);
-      border-right: 2px solid rgba(255,255,255,0.06);
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.03) inset;
+      justify-content: center;
     }
 
-    .panel {
-      background: linear-gradient(180deg, #52259c 0%, #2c145d 100%);
-      border-radius: 20px;
-      border: 2px solid rgba(160, 124, 255, 0.34);
-      box-shadow:
-        0 12px 26px rgba(0,0,0,0.34),
-        inset 0 1px 0 rgba(255,255,255,0.08);
-      overflow: hidden;
-      flex-shrink: 0;
+    .overlay-shell {
+      width: 760px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .top-panel {
-      padding: 10px 10px 8px;
+      background: linear-gradient(180deg, var(--panel-top), var(--panel-bottom));
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: var(--shadow);
+      padding: 20px 20px 18px;
+      backdrop-filter: blur(8px);
     }
 
-    .top-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .top-head-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 0;
-      flex: 1;
-    }
-
-    .logo-badge {
-      width: 28px;
-      height: 28px;
-      min-width: 28px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid #44b2ff;
-      color: #44b2ff;
-      box-shadow: 0 0 10px rgba(68,178,255,0.18);
-      font-weight: 700;
-      font-size: 15px;
-      line-height: 1;
-    }
-
-    .head-text {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .head-title {
-      font-size: 22px;
-      line-height: 1;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: #ffffff;
-      letter-spacing: 0.2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .head-sub {
-      margin-top: 3px;
-      font-size: 11px;
-      line-height: 1;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.72);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .head-id {
-      font-size: 24px;
-      line-height: 1;
-      font-weight: 700;
-      color: rgba(255,255,255,0.55);
-      text-transform: uppercase;
-      align-self: flex-start;
-      padding-top: 1px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-bottom: 7px;
-    }
-
-    .stat-box {
-      min-height: 58px;
-      border-radius: 12px;
-      background: linear-gradient(180deg, rgba(88,44,165,0.98), rgba(48,24,102,0.98));
-      border: 1px solid rgba(255,255,255,0.06);
-      padding: 7px 8px 6px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    .hunt-header {
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
-    .stat-top {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      margin-bottom: 5px;
-      color: rgba(255,255,255,0.80);
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.15px;
-      line-height: 1;
-    }
-
-    .stat-icon {
-      width: 12px;
-      text-align: center;
-      opacity: 0.86;
-      font-size: 11px;
-    }
-
-    .stat-value {
-      font-size: 28px;
-      line-height: 1;
-      font-weight: 700;
-      color: #ffffff;
-      letter-spacing: -0.3px;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.22);
-    }
-
-    .stat-value.small {
-      font-size: 24px;
-    }
-
-    .type-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-bottom: 7px;
-    }
-
-    .type-pill {
-      min-height: 28px;
-      border-radius: 999px;
+    .hunt-title-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      padding: 0 10px;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      gap: 14px;
     }
 
-    .type-pill .left {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .type-pill .count {
-      font-size: 13px;
+    .hunt-title {
+      font-size: 44px;
+      font-weight: 800;
       line-height: 1;
-    }
-
-    .type-pill.super {
-      background: linear-gradient(180deg, rgba(215, 177, 89, 0.22), rgba(166, 126, 33, 0.16));
-      border: 1px solid rgba(225, 189, 96, 0.28);
-      color: #f8e4aa;
-    }
-
-    .type-pill.epic {
-      background: linear-gradient(180deg, rgba(180, 92, 123, 0.20), rgba(126, 45, 73, 0.14));
-      border: 1px solid rgba(198, 104, 136, 0.26);
-      color: #ffd8e4;
-    }
-
-    .progress-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 5px;
-    }
-
-    .progress-track {
-      flex: 1;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(7, 11, 33, 0.55);
+      letter-spacing: 0.2px;
+      color: var(--title-yellow);
+      text-shadow: 0 4px 14px rgba(0,0,0,0.28);
+      white-space: nowrap;
       overflow: hidden;
-      box-shadow:
-        inset 0 2px 4px rgba(0,0,0,0.28),
-        inset 0 1px 0 rgba(255,255,255,0.04);
+      text-overflow: ellipsis;
+    }
+
+    .hunt-subtitle {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-soft);
+      letter-spacing: 0.25px;
+      min-height: 22px;
+    }
+
+    .progress-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .progress-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 18px;
+      color: var(--text-soft);
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 18px;
+      background: rgba(255,255,255,0.10);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.18);
     }
 
     .progress-fill {
       height: 100%;
       width: 0%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #4fb2ff 0%, #2d7dff 100%);
+      background: linear-gradient(90deg, #2f8cff 0%, #57bbff 100%);
+      box-shadow: 0 0 14px rgba(73, 167, 255, 0.45);
       transition: width 0.35s ease;
-      box-shadow: 0 0 10px rgba(79,178,255,0.20);
     }
 
-    .progress-count {
-      min-width: 52px;
-      text-align: right;
-      font-size: 20px;
-      line-height: 1;
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .stat-card {
+      min-height: 94px;
+      background: linear-gradient(180deg, var(--card-top), var(--card-bottom));
+      border-radius: 20px;
+      border: 1px solid var(--card-border);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .stat-card.big {
+      min-height: 102px;
+      padding: 14px 16px;
+    }
+
+    .stat-card.super {
+      grid-column: span 2;
+    }
+
+    .stat-card.epic {
+      grid-column: span 2;
+    }
+
+    .stat-label {
+      font-size: 16px;
       font-weight: 700;
-      color: #ffffff;
-      letter-spacing: -0.2px;
+      color: rgba(255,255,255,0.74);
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      white-space: nowrap;
     }
 
-    .slots-panel {
+    .stat-value {
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stat-value.small-fit {
+      font-size: 27px;
+    }
+
+    .stat-value.blue { color: #8fd0ff; }
+    .stat-value.green { color: #74f0a7; }
+    .stat-value.orange { color: #ffc56f; }
+    .stat-value.red { color: #ff96a8; }
+    .stat-value.yellow { color: #ffe07d; }
+
+    .list-panel {
       flex: 1;
       min-height: 0;
-      padding: 6px;
+      background: linear-gradient(180deg, rgba(47, 30, 106, 0.96), rgba(31, 20, 74, 0.96));
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(8px);
     }
 
-    .slots-viewport {
-      height: 100%;
+    .list-header {
+      padding: 16px 18px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .list-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.2px;
+    }
+
+    .list-counter {
+      font-size: 17px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.76);
+    }
+
+    .slots-scroll {
+      flex: 1;
+      min-height: 0;
       overflow: hidden;
       position: relative;
     }
 
-    .slots-track {
-      will-change: transform;
-      transform: translateY(0px);
-    }
-
-    .slots-group {
+    .slots-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-    }
-
-    .slots-gap {
-      height: 10px;
-      flex-shrink: 0;
+      gap: 10px;
+      padding: 14px 14px 18px;
+      will-change: transform;
     }
 
     .slot-card {
-      background: linear-gradient(180deg, #43208a 0%, #271353 100%);
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 8px 18px rgba(0,0,0,0.18);
-      overflow: hidden;
-      transition: 0.22s ease;
+      min-height: 128px;
+      display: grid;
+      grid-template-columns: 118px minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(93, 70, 184, 0.94), rgba(55, 35, 129, 0.96));
+      border: 1px solid rgba(255,255,255,0.11);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
-    .slot-card.opened {
-      opacity: 0.44;
-    }
-
-    .slot-card.current {
-      opacity: 1;
-      border-color: rgba(255, 211, 84, 0.65);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.06),
-        0 8px 18px rgba(0,0,0,0.20),
-        0 0 0 2px rgba(255, 211, 84, 0.14);
-    }
-
-    .slot-head {
-      padding: 8px 10px 6px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .slot-head-left {
-      min-width: 0;
-      flex: 1;
-    }
-
-    .slot-name {
-      font-size: 24px;
-      line-height: 0.97;
-      font-weight: 700;
-      font-style: italic;
-      text-transform: uppercase;
-      color: #eef3ff;
-      letter-spacing: -0.25px;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.28);
-      word-break: break-word;
-    }
-
-    .slot-bet {
-      margin-top: 4px;
-      font-size: 20px;
-      line-height: 1;
-      font-weight: 700;
-      color: #f2f6ff;
-      opacity: 0.95;
-    }
-
-    .slot-rank {
-      font-size: 22px;
-      line-height: 1;
-      font-weight: 700;
-      color: rgba(255,255,255,0.72);
-      flex-shrink: 0;
-      padding-top: 1px;
-    }
-
-    .slot-image-wrap {
-      padding: 0 8px 8px;
-    }
-
-    .slot-image-box {
-      width: 100%;
-      aspect-ratio: 0.88 / 1;
-      border-radius: 14px;
+    .slot-thumb {
+      width: 118px;
+      height: 104px;
+      border-radius: 18px;
       overflow: hidden;
       position: relative;
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 4px 10px rgba(0,0,0,0.16);
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.18), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,0.10), rgba(0,0,0,0.16));
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.16);
     }
 
-    .slot-image-box img,
-    .slot-placeholder {
+    .slot-thumb img {
       width: 100%;
       height: 100%;
       display: block;
-      object-fit: contain;
+      object-fit: cover;
       object-position: center center;
+      transform: scale(1.06);
     }
 
-    .slot-image-box img {
-      filter: saturate(0.88) brightness(0.88) contrast(0.96);
-      transform: scale(0.975);
-    }
-
-    .slot-image-box::after {
-      content: "";
+    .slot-thumb.fallback::before {
+      content: "🎰";
       position: absolute;
       inset: 0;
-      background:
-        linear-gradient(180deg, rgba(10, 8, 24, 0.02), rgba(10, 8, 24, 0.18)),
-        radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 45%);
-      pointer-events: none;
-    }
-
-    .slot-placeholder {
-      display: flex !important;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 12px;
-      text-align: center;
-      font-size: 16px;
-      line-height: 1.1;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.58);
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      font-size: 44px;
+      opacity: 0.92;
     }
 
-    .bottom-panel {
-      padding: 8px;
-    }
-
-    .bottom-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-bottom: 6px;
-    }
-
-    .bottom-grid.one {
-      grid-template-columns: 1fr;
-      margin-bottom: 0;
-    }
-
-    .bottom-box {
-      min-height: 56px;
-      border-radius: 12px;
-      background: linear-gradient(180deg, rgba(88,44,165,0.98), rgba(48,24,102,0.98));
-      border: 1px solid rgba(255,255,255,0.06);
-      padding: 7px 8px 6px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    .slot-info {
+      min-width: 0;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      text-align: center;
+      gap: 10px;
     }
 
-    .bottom-label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      margin-bottom: 5px;
-      font-size: 11px;
-      line-height: 1;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.80);
-    }
-
-    .bottom-value {
-      font-size: 24px;
-      line-height: 1;
-      font-weight: 700;
+    .slot-name {
+      font-size: 27px;
+      font-weight: 800;
+      line-height: 1.04;
+      letter-spacing: -0.01em;
       color: #ffffff;
-      letter-spacing: -0.2px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      word-break: break-word;
     }
 
-    .empty-state {
-      height: 100%;
-      border-radius: 16px;
-      background: linear-gradient(180deg, #43208a 0%, #271353 100%);
-      border: 1px solid rgba(255,255,255,0.06);
+    .slot-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.10);
+      white-space: nowrap;
+    }
+
+    .badge.normal {
+      background: rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.92);
+    }
+
+    .badge.super {
+      background: rgba(255, 179, 71, 0.18);
+      color: #ffd17f;
+    }
+
+    .badge.epic {
+      background: rgba(255, 107, 129, 0.18);
+      color: #ff9db0;
+    }
+
+    .badge.opened {
+      background: rgba(78, 228, 140, 0.16);
+      color: #8bf3b3;
+    }
+
+    .badge.pending {
+      background: rgba(73, 167, 255, 0.16);
+      color: #9fd6ff;
+    }
+
+    .slot-right {
+      min-width: 132px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 10px;
+      padding-right: 4px;
+    }
+
+    .slot-payout-label {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      color: rgba(255,255,255,0.66);
+      text-transform: uppercase;
+    }
+
+    .slot-payout {
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+      color: #79f1ad;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.22);
+      white-space: nowrap;
+    }
+
+    .slot-pending-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.72);
+      text-align: right;
+      line-height: 1.1;
+    }
+
+    .empty-state,
+    .loading-state {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 22px;
-      font-size: 18px;
-      line-height: 1.15;
+      padding: 30px;
+      color: rgba(255,255,255,0.74);
+      font-size: 28px;
       font-weight: 700;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.72);
+      line-height: 1.3;
+    }
+
+    .footer-note {
+      font-size: 15px;
+      color: rgba(255,255,255,0.45);
+      text-align: right;
+      padding-top: 2px;
+      padding-right: 6px;
+    }
+
+    .hide {
+      display: none !important;
     }
   </style>
 </head>
-
 <body>
   <div id="app">
-    <div class="panel top-panel">
-      <div class="top-head">
-        <div class="top-head-left">
-          <div class="logo-badge">◔</div>
+    <div class="overlay-shell">
+      <section class="top-panel">
+        <div class="hunt-header">
+          <div class="hunt-title-row">
+            <div id="huntTitle" class="hunt-title">Sem hunt ativa</div>
+          </div>
 
-          <div class="head-text">
-            <div id="huntLabel" class="head-title">BONUS HUNT</div>
-            <div id="huntSub" class="head-sub">A carregar...</div>
+          <div id="huntSubtitle" class="hunt-subtitle">À espera de dados...</div>
+
+          <div class="progress-wrap">
+            <div class="progress-meta">
+              <span id="progressText">0 / 0 abertos</span>
+              <span id="progressPct">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
           </div>
         </div>
 
-        <div id="huntId" class="head-id">#---</div>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-top">
-            <span class="stat-icon">▣</span>
-            <span>Start</span>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Start</div>
+            <div id="statStart" class="stat-value yellow">0€</div>
           </div>
-          <div id="start" class="stat-value small">$0.00</div>
-        </div>
 
-        <div class="stat-box">
-          <div class="stat-top">
-            <span class="stat-icon">▣</span>
-            <span>Breakeven</span>
+          <div class="stat-card">
+            <div class="stat-label">Breakeven</div>
+            <div id="statBreakeven" class="stat-value blue">0%</div>
           </div>
-          <div id="topBreakeven" class="stat-value small">0.00x</div>
-        </div>
 
-        <div class="stat-box">
-          <div class="stat-top">
-            <span class="stat-icon">▣</span>
-            <span>Bonuses</span>
+          <div class="stat-card">
+            <div class="stat-label">Bonuses</div>
+            <div id="statBonuses" class="stat-value">0</div>
           </div>
-          <div id="total" class="stat-value">0</div>
-        </div>
 
-        <div class="stat-box">
-          <div class="stat-top">
-            <span class="stat-icon">▣</span>
-            <span>Opening</span>
+          <div class="stat-card">
+            <div class="stat-label">Opening</div>
+            <div id="statOpening" class="stat-value blue">0/0</div>
           </div>
-          <div id="open" class="stat-value">0/0</div>
-        </div>
-      </div>
 
-      <div class="type-row">
-        <div class="type-pill super">
-          <div class="left">
-            <span>⚡</span>
-            <span>Super</span>
+          <div class="stat-card big super">
+            <div class="stat-label">Super</div>
+            <div id="statSuper" class="stat-value orange">0</div>
           </div>
-          <span id="superCount" class="count">0</span>
-        </div>
 
-        <div class="type-pill epic">
-          <div class="left">
-            <span>✦</span>
-            <span>Epic</span>
+          <div class="stat-card big epic">
+            <div class="stat-label">Epic</div>
+            <div id="statEpic" class="stat-value red">0</div>
           </div>
-          <span id="epicCount" class="count">0</span>
         </div>
-      </div>
+      </section>
 
-      <div class="progress-row">
-        <div class="progress-track">
-          <div id="progressFill" class="progress-fill"></div>
-        </div>
-        <div id="progressCount" class="progress-count">0/0</div>
-      </div>
-    </div>
-
-    <div class="panel slots-panel">
-      <div id="slotsViewport" class="slots-viewport">
-        <div id="slotsTrack" class="slots-track">
-          <div class="empty-state">A carregar slots...</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel bottom-panel">
-      <div class="bottom-grid">
-        <div class="bottom-box">
-          <div class="bottom-label">
-            <span>◔</span>
-            <span>Average</span>
-          </div>
-          <div id="avg" class="bottom-value">0.00x</div>
+      <section class="list-panel">
+        <div class="list-header">
+          <div class="list-title">Hunt</div>
+          <div id="listCounter" class="list-counter">0 slots</div>
         </div>
 
-        <div class="bottom-box">
-          <div class="bottom-label">
-            <span>▣</span>
-            <span>Breakeven</span>
-          </div>
-          <div id="bottomBreakeven" class="bottom-value">0.00x</div>
+        <div class="slots-scroll" id="slotsScroll">
+          <div id="loadingState" class="loading-state">A carregar overlay...</div>
+          <div id="emptyState" class="empty-state hide">Sem slots para mostrar.</div>
+          <div id="slotsList" class="slots-list hide"></div>
         </div>
-      </div>
+      </section>
 
-      <div class="bottom-grid one">
-        <div class="bottom-box">
-          <div class="bottom-label">
-            <span>◌</span>
-            <span>Total Pay</span>
-          </div>
-          <div id="totalPaid" class="bottom-value">$0.00</div>
-        </div>
-      </div>
+      <div id="footerNote" class="footer-note">Catarina Tracker Overlay</div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
-    const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
+    const SUPABASE_URL =
+      window.CT_SUPABASE_URL ||
+      window.SUPABASE_URL ||
+      window.ENV?.SUPABASE_URL ||
+      localStorage.getItem("SUPABASE_URL") ||
+      "";
 
-    let slotsCatalogCache = [];
-    let slotsCatalogLoaded = false;
+    const SUPABASE_ANON_KEY =
+      window.CT_SUPABASE_ANON_KEY ||
+      window.SUPABASE_ANON_KEY ||
+      window.ENV?.SUPABASE_ANON_KEY ||
+      localStorage.getItem("SUPABASE_ANON_KEY") ||
+      "";
 
-    let scrollAnimationId = null;
-    let scrollOffset = 0;
-    let scrollSingleHeight = 0;
-    let scrollLastTimestamp = 0;
-    let scrollPauseUntil = 0;
+    const refreshMs = 5000;
+    const listEl = document.getElementById("slotsList");
+    const loadingEl = document.getElementById("loadingState");
+    const emptyEl = document.getElementById("emptyState");
+    const scrollEl = document.getElementById("slotsScroll");
+
+    const els = {
+      huntTitle: document.getElementById("huntTitle"),
+      huntSubtitle: document.getElementById("huntSubtitle"),
+      progressText: document.getElementById("progressText"),
+      progressPct: document.getElementById("progressPct"),
+      progressFill: document.getElementById("progressFill"),
+      listCounter: document.getElementById("listCounter"),
+      statStart: document.getElementById("statStart"),
+      statBreakeven: document.getElementById("statBreakeven"),
+      statBonuses: document.getElementById("statBonuses"),
+      statOpening: document.getElementById("statOpening"),
+      statSuper: document.getElementById("statSuper"),
+      statEpic: document.getElementById("statEpic")
+    };
+
+    let supabase = null;
+    let autoScrollY = 0;
+    let autoScrollDirection = 1;
     let lastRenderedSignature = "";
 
-    const SCROLL_GAP = 10;
-    const SCROLL_SPEED = 13;
-    const SCROLL_START_PAUSE = 1200;
-    const SCROLL_LOOP_PAUSE = 900;
-
-    function parseMoney(value) {
-      if (value === null || value === undefined) return 0;
-      const str = String(value).trim().replace(",", ".");
-      const num = parseFloat(str);
-      return isNaN(num) ? 0 : num;
+    function euro(value) {
+      const n = Number(value || 0);
+      return new Intl.NumberFormat("pt-PT", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2
+      }).format(n) + "€";
     }
 
-    function normalizeText(text) {
-      return String(text || "")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]/g, "");
+    function pct(value) {
+      const n = Number(value || 0);
+      return new Intl.NumberFormat("pt-PT", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 1
+      }).format(n) + "%";
     }
 
-    function getStartFromHunt(hunt) {
-      const startBalance = parseMoney(hunt?.start_balance);
-      const startValue = parseMoney(hunt?.start_value);
-
-      if (startBalance > 0) return startBalance;
-      if (startValue > 0) return startValue;
-      return 0;
+    function num(value) {
+      return new Intl.NumberFormat("pt-PT").format(Number(value || 0));
     }
 
-    function formatCurrency(value) {
-      const num = parseMoney(value);
-      const sign = num < 0 ? "-" : "";
-      return sign + "$" + Math.abs(num).toFixed(2);
+    function pick(obj, keys, fallback = null) {
+      if (!obj) return fallback;
+      for (const key of keys) {
+        if (obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
+          return obj[key];
+        }
+      }
+      return fallback;
     }
 
-    function formatMultiplier(value) {
-      return parseMoney(value).toFixed(2) + "x";
+    function isOpened(item) {
+      const raw = String(
+        pick(item, [
+          "status",
+          "state",
+          "opening_status",
+          "result_status"
+        ], "")
+      ).toLowerCase();
+
+      if (raw) {
+        return ["opened", "open", "done", "finished", "paid", "completed"].includes(raw);
+      }
+
+      if (pick(item, ["opened", "is_opened", "opened_bonus"], false) === true) return true;
+      if (pick(item, ["opened_at", "completed_at", "finished_at"], null)) return true;
+
+      const payout = Number(pick(item, ["payout", "result", "win_amount", "paid_amount"], 0) || 0);
+      return payout > 0;
     }
 
-    function escapeHtml(text) {
-      return String(text ?? "")
+    function normalizeBonusType(item) {
+      const raw = String(
+        pick(item, ["bonus_type", "type", "rarity", "tier"], "normal")
+      ).toLowerCase();
+
+      if (raw.includes("epic")) return "epic";
+      if (raw.includes("super")) return "super";
+      return "normal";
+    }
+
+    function normalizeSlot(item, index = 0) {
+      return {
+        id: pick(item, ["id", "slot_id", "bonus_id"], "slot-" + index),
+        name: pick(item, ["slot_name", "name", "title", "slot"], "Slot"),
+        image: pick(item, ["slot_image", "image_url", "image", "thumb", "thumbnail_url"], ""),
+        type: normalizeBonusType(item),
+        payout: Number(pick(item, ["payout", "result", "paid_amount", "win_amount"], 0) || 0),
+        opened: isOpened(item),
+        order:
+          Number(
+            pick(item, ["sort_order", "position", "display_order", "order_index"], index)
+          ) || index
+      };
+    }
+
+    async function tryGetActiveHunt() {
+      const huntTables = ["hunts", "bonus_hunts", "hunt_sessions"];
+      const strategies = [
+        (q) => q.eq("is_active", true),
+        (q) => q.eq("active", true),
+        (q) => q.eq("status", "active")
+      ];
+
+      for (const table of huntTables) {
+        for (const applyStrategy of strategies) {
+          try {
+            let query = supabase
+              .from(table)
+              .select("*")
+              .order("updated_at", { ascending: false })
+              .limit(1);
+
+            query = applyStrategy(query);
+
+            const { data, error } = await query;
+            if (!error && Array.isArray(data) && data.length) {
+              return { table, hunt: data[0] };
+            }
+          } catch (_) {}
+        }
+
+        try {
+          const { data, error } = await supabase
+            .from(table)
+            .select("*")
+            .order("updated_at", { ascending: false })
+            .order("created_at", { ascending: false })
+            .limit(10);
+
+          if (!error && Array.isArray(data) && data.length) {
+            const active = data.find((row) => {
+              const isActive = pick(row, ["is_active", "active"], false) === true;
+              const status = String(pick(row, ["status"], "")).toLowerCase() === "active";
+              return isActive || status;
+            });
+
+            if (active) return { table, hunt: active };
+          }
+        } catch (_) {}
+      }
+
+      return null;
+    }
+
+    async function tryGetBonuses(huntId) {
+      const bonusTables = ["hunt_entries", "hunt_items", "hunt_bonuses", "bonuses"];
+      const possibleHuntKeys = ["hunt_id", "bonus_hunt_id", "session_id"];
+
+      for (const table of bonusTables) {
+        for (const huntKey of possibleHuntKeys) {
+          try {
+            const { data, error } = await supabase
+              .from(table)
+              .select("*")
+              .eq(huntKey, huntId)
+              .order("sort_order", { ascending: true })
+              .order("position", { ascending: true })
+              .order("created_at", { ascending: true });
+
+            if (!error && Array.isArray(data)) {
+              return data;
+            }
+          } catch (_) {}
+        }
+      }
+
+      return [];
+    }
+
+    function computeStats(hunt, slots) {
+      const start = Number(
+        pick(hunt, ["start_balance", "start", "starting_balance", "hunt_start"], 0) || 0
+      );
+
+      const total = slots.length;
+      const opened = slots.filter((s) => s.opened).length;
+      const totalPaid = slots
+        .filter((s) => s.opened)
+        .reduce((sum, s) => sum + Number(s.payout || 0), 0);
+
+      const breakevenPct = start > 0 ? (totalPaid / start) * 100 : 0;
+      const superCount = slots.filter((s) => s.type === "super").length;
+      const epicCount = slots.filter((s) => s.type === "epic").length;
+
+      return {
+        start,
+        total,
+        opened,
+        totalPaid,
+        breakevenPct,
+        superCount,
+        epicCount
+      };
+    }
+
+    function setMainState(message) {
+      loadingEl.textContent = message;
+      loadingEl.classList.remove("hide");
+      emptyEl.classList.add("hide");
+      listEl.classList.add("hide");
+      listEl.innerHTML = "";
+    }
+
+    function setEmptyState(message) {
+      loadingEl.classList.add("hide");
+      emptyEl.textContent = message;
+      emptyEl.classList.remove("hide");
+      listEl.classList.add("hide");
+      listEl.innerHTML = "";
+    }
+
+    function renderHeader(hunt, stats) {
+      const huntName = pick(hunt, ["name", "title"], "Sem hunt ativa");
+      els.huntTitle.textContent = huntName;
+
+      const subtitleParts = [];
+      subtitleParts.push("Hunt ativa");
+      if (stats.start > 0) subtitleParts.push("Start " + euro(stats.start));
+      els.huntSubtitle.textContent = subtitleParts.join(" • ");
+
+      const progress = stats.total > 0 ? (stats.opened / stats.total) * 100 : 0;
+      els.progressText.textContent = `${num(stats.opened)} / ${num(stats.total)} abertos`;
+      els.progressPct.textContent = pct(progress);
+      els.progressFill.style.width = Math.max(0, Math.min(progress, 100)) + "%";
+
+      els.statStart.textContent = euro(stats.start);
+      els.statBreakeven.textContent = pct(stats.breakevenPct);
+      els.statBonuses.textContent = num(stats.total);
+      els.statOpening.textContent = `${num(stats.opened)}/${num(stats.total)}`;
+      els.statSuper.textContent = num(stats.superCount);
+      els.statEpic.textContent = num(stats.epicCount);
+      els.listCounter.textContent = `${num(stats.total)} slots`;
+    }
+
+    function renderNoActiveHunt() {
+      els.huntTitle.textContent = "Sem hunt ativa";
+      els.huntSubtitle.textContent = "Ativa uma hunt no painel para aparecer aqui";
+      els.progressText.textContent = "0 / 0 abertos";
+      els.progressPct.textContent = "0%";
+      els.progressFill.style.width = "0%";
+      els.statStart.textContent = "0€";
+      els.statBreakeven.textContent = "0%";
+      els.statBonuses.textContent = "0";
+      els.statOpening.textContent = "0/0";
+      els.statSuper.textContent = "0";
+      els.statEpic.textContent = "0";
+      els.listCounter.textContent = "0 slots";
+      setEmptyState("Sem hunt ativa.");
+    }
+
+    function slotCardTemplate(slot) {
+      const badgeClass =
+        slot.type === "epic" ? "epic" : slot.type === "super" ? "super" : "normal";
+
+      const rightSide = slot.opened
+        ? `
+          <div class="slot-right">
+            <div class="badge opened">Aberto</div>
+            <div class="slot-payout-label">Payout</div>
+            <div class="slot-payout">${euro(slot.payout)}</div>
+          </div>
+        `
+        : `
+          <div class="slot-right">
+            <div class="badge pending">Pendente</div>
+            <div class="slot-pending-text">À espera<br>de abrir</div>
+          </div>
+        `;
+
+      const imageMarkup = slot.image
+        ? `<img src="${slot.image}" alt="${escapeHtml(slot.name)}" onerror="this.parentNode.classList.add('fallback'); this.remove();" />`
+        : "";
+
+      return `
+        <div class="slot-card">
+          <div class="slot-thumb ${slot.image ? "" : "fallback"}">
+            ${imageMarkup}
+          </div>
+
+          <div class="slot-info">
+            <div class="slot-name">${escapeHtml(slot.name)}</div>
+            <div class="slot-meta">
+              <span class="badge ${badgeClass}">${slot.type}</span>
+            </div>
+          </div>
+
+          ${rightSide}
+        </div>
+      `;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -655,371 +828,96 @@
         .replaceAll("'", "&#039;");
     }
 
-    function getBonusTypeLabel(item) {
-      const raw = String(
-        item?.bonus_type ||
-        item?.type ||
-        item?.categoria ||
-        item?.rarity ||
-        item?.tipo_slot ||
-        ""
-      ).trim().toLowerCase();
-
-      if (raw.includes("super")) return "super";
-      if (raw.includes("epic")) return "epic";
-      if (raw.includes("extreme")) return "epic";
-      return "normal";
-    }
-
-    function getBonusName(item) {
-      return item?.slot_name || item?.nome || item?.name || "Sem nome";
-    }
-
-    function getBonusBet(item) {
-      return parseMoney(
-        item?.bet_size ??
-        item?.bet ??
-        item?.aposta ??
-        0
-      );
-    }
-
-    function getBonusPayout(item) {
-      return parseMoney(
-        item?.payout ??
-        item?.valor_pago ??
-        item?.total_pago ??
-        0
-      );
-    }
-
-    function getBonusMulti(item) {
-      const bet = getBonusBet(item);
-      const payout = getBonusPayout(item);
-      if (bet <= 0) return 0;
-      return payout / bet;
-    }
-
-    function getTotalBetAmount(items) {
-      return items.reduce((sum, item) => sum + getBonusBet(item), 0);
-    }
-
-    function getBreakevenX(startValue, items) {
-      const totalBet = getTotalBetAmount(items);
-      if (startValue <= 0 || totalBet <= 0) return 0;
-      return startValue / totalBet;
-    }
-
-    async function loadSlotsCatalog() {
-      if (slotsCatalogLoaded) return slotsCatalogCache;
-
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/slots?select=name,nome,image_url,imagem_url,image,thumbnail,thumb,cover,slug,tipo_slot`,
-        {
-          headers: {
-            apikey: SUPABASE_KEY,
-            Authorization: `Bearer ${SUPABASE_KEY}`
-          }
-        }
-      );
-
-      const data = await res.json();
-      slotsCatalogCache = Array.isArray(data) ? data : [];
-      slotsCatalogLoaded = true;
-      return slotsCatalogCache;
-    }
-
-    function getCatalogMatch(item) {
-      const itemName = normalizeText(getBonusName(item));
-      if (!itemName || !slotsCatalogCache.length) return null;
-
-      let exact = slotsCatalogCache.find(slot => {
-        const slotName = normalizeText(slot?.name || slot?.nome || "");
-        return slotName === itemName;
-      });
-
-      if (exact) return exact;
-
-      let slugMatch = slotsCatalogCache.find(slot => {
-        const slug = normalizeText(slot?.slug || "");
-        return slug === itemName;
-      });
-
-      return slugMatch || null;
-    }
-
-    function getImageFromBonus(item) {
-      const direct =
-        item?.image_url ||
-        item?.imagem_url ||
-        item?.image ||
-        item?.thumbnail ||
-        item?.thumb ||
-        item?.cover ||
-        "";
-
-      if (direct) return direct;
-
-      const catalog = getCatalogMatch(item);
-      if (!catalog) return "";
-
-      return (
-        catalog?.image_url ||
-        catalog?.imagem_url ||
-        catalog?.image ||
-        catalog?.thumbnail ||
-        catalog?.thumb ||
-        catalog?.cover ||
-        ""
-      );
-    }
-
-    function stopAutoScroll() {
-      if (scrollAnimationId) {
-        cancelAnimationFrame(scrollAnimationId);
-        scrollAnimationId = null;
-      }
-
-      scrollOffset = 0;
-      scrollSingleHeight = 0;
-      scrollLastTimestamp = 0;
-      scrollPauseUntil = 0;
-
-      const track = document.getElementById("slotsTrack");
-      if (track) {
-        track.style.transform = "translateY(0px)";
-      }
-    }
-
-    function buildSlotsSignature(items, latestOpenedIndex) {
-      return JSON.stringify({
-        latestOpenedIndex,
-        items: items.map(item => ({
-          id: item?.id ?? null,
-          name: getBonusName(item),
-          bet: getBonusBet(item),
-          payout: getBonusPayout(item),
-          type: getBonusTypeLabel(item),
-          image: getImageFromBonus(item)
-        }))
-      });
-    }
-
-    function startAutoScrollIfNeeded() {
-      stopAutoScroll();
-
-      const viewport = document.getElementById("slotsViewport");
-      const track = document.getElementById("slotsTrack");
-      const firstGroup = track.querySelector(".slots-group");
-
-      if (!viewport || !track || !firstGroup) return;
-
-      const viewportHeight = viewport.clientHeight;
-      const contentHeight = firstGroup.offsetHeight;
-
-      if (contentHeight <= viewportHeight + 2) {
-        track.style.transform = "translateY(0px)";
+    function renderSlots(slots) {
+      if (!slots.length) {
+        setEmptyState("Esta hunt ainda não tem slots.");
         return;
       }
 
-      scrollSingleHeight = contentHeight + SCROLL_GAP;
-      scrollPauseUntil = performance.now() + SCROLL_START_PAUSE;
+      const signature = JSON.stringify(
+        slots.map((s) => [s.id, s.name, s.image, s.type, s.payout, s.opened, s.order])
+      );
 
-      function animate(timestamp) {
-        if (!scrollLastTimestamp) {
-          scrollLastTimestamp = timestamp;
-        }
-
-        const delta = (timestamp - scrollLastTimestamp) / 1000;
-        scrollLastTimestamp = timestamp;
-
-        if (timestamp >= scrollPauseUntil) {
-          scrollOffset += SCROLL_SPEED * delta;
-
-          if (scrollOffset >= scrollSingleHeight) {
-            scrollOffset = 0;
-            scrollPauseUntil = timestamp + SCROLL_LOOP_PAUSE;
-          }
-        }
-
-        track.style.transform = `translateY(-${scrollOffset}px)`;
-        scrollAnimationId = requestAnimationFrame(animate);
+      if (signature !== lastRenderedSignature) {
+        lastRenderedSignature = signature;
+        listEl.innerHTML = slots.map(slotCardTemplate).join("");
       }
 
-      scrollAnimationId = requestAnimationFrame(animate);
+      loadingEl.classList.add("hide");
+      emptyEl.classList.add("hide");
+      listEl.classList.remove("hide");
     }
 
-    function renderSlots(items, latestOpenedIndex = -1, force = false) {
-      const track = document.getElementById("slotsTrack");
-      const signature = buildSlotsSignature(items, latestOpenedIndex);
+    function startAutoScroll() {
+      const speed = 0.35;
 
-      if (!force && signature === lastRenderedSignature) {
-        return;
-      }
-
-      lastRenderedSignature = signature;
-      stopAutoScroll();
-
-      if (!items.length) {
-        track.innerHTML = '<div class="empty-state">Sem bónus nesta hunt</div>';
-        return;
-      }
-
-      const cardsHtml = items.map((item, index) => {
-        const name = getBonusName(item);
-        const bet = getBonusBet(item);
-        const img = getImageFromBonus(item);
-        const payout = getBonusPayout(item);
-
-        const classes = [
-          "slot-card",
-          payout > 0 ? "opened" : "",
-          index === latestOpenedIndex ? "current" : ""
-        ].filter(Boolean).join(" ");
-
-        return `
-          <div class="${classes}">
-            <div class="slot-head">
-              <div class="slot-head-left">
-                <div class="slot-name">${escapeHtml(name)}</div>
-                <div class="slot-bet">${formatCurrency(bet)}</div>
-              </div>
-              <div class="slot-rank">#${index + 1}</div>
-            </div>
-
-            <div class="slot-image-wrap">
-              <div class="slot-image-box">
-                ${
-                  img
-                    ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(name)}" />`
-                    : `<div class="slot-placeholder">Sem imagem</div>`
-                }
-              </div>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      track.innerHTML = `
-        <div class="slots-group">${cardsHtml}</div>
-        <div class="slots-gap"></div>
-        <div class="slots-group">${cardsHtml}</div>
-      `;
-
-      requestAnimationFrame(() => {
-        startAutoScrollIfNeeded();
-      });
-    }
-
-    function resetOverlayNoHunt(message = "Sem hunt ativa") {
-      stopAutoScroll();
-      lastRenderedSignature = "";
-      document.getElementById("huntLabel").innerText = "BONUS HUNT";
-      document.getElementById("huntSub").innerText = message;
-      document.getElementById("huntId").innerText = "#---";
-      document.getElementById("start").innerText = "$0.00";
-      document.getElementById("topBreakeven").innerText = "0.00x";
-      document.getElementById("bottomBreakeven").innerText = "0.00x";
-      document.getElementById("avg").innerText = "0.00x";
-      document.getElementById("totalPaid").innerText = "$0.00";
-      document.getElementById("total").innerText = "0";
-      document.getElementById("superCount").innerText = "0";
-      document.getElementById("epicCount").innerText = "0";
-      document.getElementById("open").innerText = "0/0";
-      document.getElementById("progressCount").innerText = "0/0";
-      document.getElementById("progressFill").style.width = "0%";
-      document.getElementById("slotsTrack").innerHTML = `<div class="empty-state">${message}</div>`;
-    }
-
-    async function load() {
-      try {
-        const huntRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/hunts?select=*&is_active=eq.true&order=id.desc&limit=1`,
-          {
-            headers: {
-              apikey: SUPABASE_KEY,
-              Authorization: `Bearer ${SUPABASE_KEY}`
-            }
-          }
-        );
-
-        const huntData = await huntRes.json();
-        const hunt = Array.isArray(huntData) ? huntData[0] : null;
-
-        if (!hunt) {
-          resetOverlayNoHunt("Sem hunt ativa");
+      function step() {
+        const maxScroll = Math.max(0, listEl.scrollHeight - scrollEl.clientHeight);
+        if (maxScroll <= 0 || listEl.classList.contains("hide")) {
+          listEl.style.transform = "translateY(0px)";
+          autoScrollY = 0;
+          requestAnimationFrame(step);
           return;
         }
 
-        await loadSlotsCatalog();
+        autoScrollY += speed * autoScrollDirection;
 
-        const huntSlotsRes = await fetch(
-          `${SUPABASE_URL}/rest/v1/hunt_slots?select=*&hunt_id=eq.${hunt.id}&order=id.asc`,
-          {
-            headers: {
-              apikey: SUPABASE_KEY,
-              Authorization: `Bearer ${SUPABASE_KEY}`
-            }
-          }
-        );
-
-        const huntSlotsData = await huntSlotsRes.json();
-        const bonuses = Array.isArray(huntSlotsData) ? huntSlotsData : [];
-
-        const startValue = getStartFromHunt(hunt);
-        const total = bonuses.length;
-        const totalPaid = bonuses.reduce((sum, b) => sum + getBonusPayout(b), 0);
-        const opened = bonuses
-          .map((bonus, index) => ({ bonus, index }))
-          .filter(item => getBonusPayout(item.bonus) > 0);
-
-        const latestOpened = opened.length ? opened[opened.length - 1] : null;
-
-        let superCount = 0;
-        let epicCount = 0;
-
-        for (const bonus of bonuses) {
-          const type = getBonusTypeLabel(bonus);
-          if (type === "super") superCount++;
-          if (type === "epic") epicCount++;
+        if (autoScrollY >= maxScroll) {
+          autoScrollY = maxScroll;
+          autoScrollDirection = -1;
+        } else if (autoScrollY <= 0) {
+          autoScrollY = 0;
+          autoScrollDirection = 1;
         }
 
-        const topBreakevenX = getBreakevenX(startValue, bonuses);
-        const openedCount = opened.length;
-        const avgMulti = openedCount > 0
-          ? opened.reduce((sum, item) => sum + getBonusMulti(item.bonus), 0) / openedCount
-          : 0;
+        listEl.style.transform = `translateY(${-autoScrollY}px)`;
+        requestAnimationFrame(step);
+      }
 
-        document.getElementById("huntLabel").innerText = "BONUS HUNT";
-        document.getElementById("huntSub").innerText = (hunt.nome || "Sem nome").toUpperCase();
-        document.getElementById("huntId").innerText = "#" + hunt.id;
-        document.getElementById("start").innerText = formatCurrency(startValue);
-        document.getElementById("topBreakeven").innerText = formatMultiplier(topBreakevenX);
-        document.getElementById("bottomBreakeven").innerText = formatMultiplier(topBreakevenX);
-        document.getElementById("avg").innerText = formatMultiplier(avgMulti);
-        document.getElementById("totalPaid").innerText = formatCurrency(totalPaid);
-        document.getElementById("total").innerText = total;
-        document.getElementById("superCount").innerText = superCount;
-        document.getElementById("epicCount").innerText = epicCount;
-        document.getElementById("open").innerText = opened.length + "/" + total;
-        document.getElementById("progressCount").innerText = `${opened.length}/${total}`;
+      requestAnimationFrame(step);
+    }
 
-        const progress = total > 0 ? (opened.length / total) * 100 : 0;
-        document.getElementById("progressFill").style.width = progress + "%";
+    async function loadOverlay() {
+      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        els.huntTitle.textContent = "Configuração em falta";
+        els.huntSubtitle.textContent = "Supabase URL / Key não encontrados";
+        setMainState("Faltam as credenciais do Supabase neste overlay.");
+        return;
+      }
 
-        renderSlots(bonuses, latestOpened?.index ?? -1);
-      } catch (e) {
-        console.log(e);
-        resetOverlayNoHunt("Erro overlay");
+      if (!supabase) {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      }
+
+      try {
+        const active = await tryGetActiveHunt();
+
+        if (!active || !active.hunt) {
+          renderNoActiveHunt();
+          return;
+        }
+
+        const hunt = active.hunt;
+        const huntId = pick(hunt, ["id"]);
+        const rawBonuses = await tryGetBonuses(huntId);
+        const slots = rawBonuses
+          .map((item, index) => normalizeSlot(item, index))
+          .sort((a, b) => a.order - b.order);
+
+        const stats = computeStats(hunt, slots);
+        renderHeader(hunt, stats);
+        renderSlots(slots);
+      } catch (error) {
+        console.error(error);
+        els.huntTitle.textContent = "Erro no overlay";
+        els.huntSubtitle.textContent = "Não foi possível carregar os dados";
+        setMainState("Erro ao carregar a hunt.");
       }
     }
 
-    window.addEventListener("resize", () => {
-      requestAnimationFrame(() => startAutoScrollIfNeeded());
-    });
-
-    setInterval(load, 2000);
-    load();
+    startAutoScroll();
+    loadOverlay();
+    setInterval(loadOverlay, refreshMs);
   </script>
 </body>
 </html>
