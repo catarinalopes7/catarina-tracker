@@ -103,11 +103,17 @@
       max-width: 900px;
     }
 
+    .stats-wrap {
+      padding: 0 22px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      padding: 0 22px 14px;
     }
 
     .stat-card {
@@ -124,6 +130,11 @@
       justify-content: center;
     }
 
+    .stat-card.start-balance {
+      min-height: 126px;
+      background: linear-gradient(180deg, rgba(111, 89, 205, 0.98), rgba(58, 40, 128, 0.98));
+    }
+
     .stat-title {
       font-size: 18px;
       line-height: 1;
@@ -134,12 +145,20 @@
       margin-bottom: 10px;
     }
 
+    .stat-card.start-balance .stat-title {
+      color: #f1e9ff;
+    }
+
     .stat-value {
       font-size: 36px;
       line-height: 1;
       font-weight: 900;
       color: #ffffff;
       text-shadow: 0 3px 10px rgba(0,0,0,0.28);
+    }
+
+    .stat-card.start-balance .stat-value {
+      font-size: 44px;
     }
 
     .stat-value.negative {
@@ -731,25 +750,32 @@
         </div>
       </div>
 
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-title">AVG</div>
-          <div id="avg" class="stat-value">0.00x</div>
+      <div class="stats-wrap">
+        <div class="stat-card start-balance">
+          <div class="stat-title">Start Balance</div>
+          <div id="start" class="stat-value">$0.00</div>
         </div>
 
-        <div class="stat-card">
-          <div class="stat-title">BE Inicial</div>
-          <div id="be" class="stat-value">0%</div>
-        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-title">AVG</div>
+            <div id="avg" class="stat-value">0.00x</div>
+          </div>
 
-        <div class="stat-card">
-          <div class="stat-title">Profit/Loss</div>
-          <div id="profitLoss" class="stat-value">$0.00</div>
-        </div>
+          <div class="stat-card">
+            <div class="stat-title">BE Inicial</div>
+            <div id="be" class="stat-value">0%</div>
+          </div>
 
-        <div class="stat-card">
-          <div class="stat-title">Total Pago</div>
-          <div id="totalPaid" class="stat-value">$0.00</div>
+          <div class="stat-card">
+            <div class="stat-title">Profit/Loss</div>
+            <div id="profitLoss" class="stat-value">$0.00</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">Total Pago</div>
+            <div id="totalPaid" class="stat-value">$0.00</div>
+          </div>
         </div>
       </div>
 
@@ -1155,6 +1181,7 @@
     function resetOverlayNoHunt(message = "Sem hunt ativa") {
       document.getElementById("huntLabel").innerText = "BONUS HUNT";
       document.getElementById("huntSub").innerText = message;
+      document.getElementById("start").innerText = "$0.00";
       document.getElementById("avg").innerText = "0.00x";
       document.getElementById("be").innerText = "0%";
       document.getElementById("profitLoss").innerText = "$0.00";
@@ -1218,6 +1245,7 @@
 
         document.getElementById("huntLabel").innerText = "BONUS HUNT";
         document.getElementById("huntSub").innerText = hunt.nome || "Sem nome";
+        document.getElementById("start").innerText = formatCurrency(startValue);
 
         let superCount = 0;
         let epicCount = 0;
