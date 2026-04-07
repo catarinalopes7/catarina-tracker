@@ -675,14 +675,402 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL =
-      window.CT_SUPABASE_URL ||
-      window.SUPABASE_URL ||
-      window.ENV?.SUPABASE_URL ||
-      localStorage.getItem("SUPABASE_URL") ||
-      "https://cwengomkuhqvrdcpkgwp.supabase.co";
+  const SUPABASE_URL =
+    window.CT_SUPABASE_URL ||
+    window.SUPABASE_URL ||
+    window.ENV?.SUPABASE_URL ||
+    localStorage.getItem("SUPABASE_URL") ||
+    "https://cwengomkuhqvrdcpkgwp.supabase.co";
+
+  const SUPABASE_ANON_KEY =
+    window.CT_SUPABASE_ANON_KEY ||
+    window.SUPABASE_ANON_KEY ||
+    window.ENV?.SUPABASE_ANON_KEY ||
+    localStorage.getItem("SUPABASE_ANON_KEY") ||
+    "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
+
+  const refreshMs = 3000;
+
+  const listEl = document.getElementById("slotsList");
+  const loadingEl = document.getElementById("loadingState");
+  const emptyEl = document.getElementById("emptyState");
+  const scrollEl = document.getElementById("slotsScroll");
+
+  const els = {
+    huntTitle: document.getElementById("huntTitle"),
+    huntSubtitle: document.getElementById("huntSubtitle"),
+    huntId: document.getElementById("huntId"),
+    progressFill: document.getElementById("progressFill"),
+    progressText: document.getElementById("progressText"),
+    listCounter: document.getElementById("listCounter"),
+    statStart: document.getElementById("statStart"),
+    statBreakeven: document.getElementById("statBreakeven"),
+    statBonuses: document.getElementById("statBonuses"),
+    statOpening: document.getElementById("statOpening"),
+    statSuper: document.getElementById("statSuper"),
+    statEpic: document.getElementById("statEpic"),
+    footerAverage: document.getElementById("footerAverage"),
+    footerBreakeven: document.getElementById("footerBreakeven"),
+    footerTotalPay: document.getElementById("footerTotalPay")
+  };
+
+  let autoScrollY = 0;
+  let autoScrollDirection = 1;
+  let lastRenderedSignature = "";
+
+  function headers(includeJson = false) {
+    const h = {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: "Bearer " + SUPABASE_ANON_KEY
+    };
+
+    if (includeJson) {
+      h["Content-Type"] = "application/json";
+    }
+
+    return h;
+  }
+
+  async function fetchJson(url, options = {}) {
+    const res = await fetch(url, options);
+    const text = await res.text();
+    let data = null;
+
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = text || null;
+    }
+
+    return { res, data };
+  }
+
+  function euro(value) {
+    const n = Number(value || 0);
+    return new Intl.NumberFormat("pt-PT", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(n) + "€";
+  }
+
+  function pct(value) {
+    const n = Number(value || 0);
+    return new Intl.NumberFormat("pt-PT", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(n) + "%";
+  }
+
+  function num(value) {
+    return new Intl.NumberFormat("pt-PT").format(Number(value || 0));
+  }
+
+  function multi(value) {
+    const n = Number(value || 0);
+    return new Intl.NumberFormat("pt-PT", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(n) + "x";
+  }
+
+  function pick(obj, keys, fallback = null) {
+    if (!obj) return fallback;
+    for (const key of keys) {
+      if (obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
+        return obj[key];
+      }
+    }
+    return fallback;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function isOpened(item) {
+    const raw = String(
+      pick(item, ["status", "state", "opening_status", "result_status"], "")
+    ).toLowerCase();
+
+    if (raw) {
+      return ["opened", "open", "done", "finished", "paid", "completed"].includes(raw);
+    }
+
+    const payout = Number(pick(item, ["payout", "result", "win_amount", "paid_amount"], 0) || 0);
+    return payout > 0;
+  }
+
+  function normalizeBonusType(item) {
+    const raw = String(
+      pick(item, ["bonus_type", "type", "rarity", "tier", "tipo_slot"], "normal")
+    ).toLowerCase();
+
+    if (raw.includes("epic")) return "epic";
+    if (raw.includes("super")) return "super";
+    if (raw.includes("extreme")) return "epic";
+    return "normal";
+  }
+
+  function normalizeSlot(item, index = 0) {
+    return {
+      id: pick(item, ["id", "slot_id", "bonus_id"], "slot-" + index),
+      name: pick(item, ["slot_name", "name", "nome", "title", "slot"], "Slot"),
+      image: pick(item, ["image_url", "imagem_url", "slot_image", "image", "thumb", "thumbnail_url"], ""),
+      type: normalizeBonusType(item),
+      payout: Number(pick(item, ["payout", "result", "paid_amount", "win_amount"], 0) || 0),
+      bet: Number(pick(item, ["bet", "bet_size", "base_bet", "stake"], 0) || 0),
+      provider: pick(item, ["provider"], ""),
+      opened: isOpened(item),
+      order: Number(pick(item, ["sort_order", "position", "display_order", "order_index", "id"], index)) || index
+    };
+  }
+
+  async function getActiveHunt() {
+    const { res, data } = await fetchJson(
+      `${SUPABASE_URL}/rest/v1/hunts?select=*&order=id.desc`,
+      { headers: headers(false) }
+    );
+
+    if (!res.ok || !Array.isArray(data) || !data.length) {
+      return null;
+    }
+
+    return data.find(h => h.is_active === true || String(h.status || "").toLowerCase() === "active") || null;
+  }
+
+  async function getHuntSlots(huntId) {
+    const { res, data } = await fetchJson(
+      `${SUPABASE_URL}/rest/v1/hunt_slots?hunt_id=eq.${huntId}&select=*&order=id.asc`,
+      { headers: headers(false) }
+    );
+
+    if (!res.ok || !Array.isArray(data)) {
+      return [];
+    }
+
+    return data;
+  }
+
+  function computeStats(hunt, slots) {
+    const start = Number(
+      pick(hunt, ["start_balance", "start", "starting_balance", "hunt_start"], 0) || 0
+    );
+
+    const total = slots.length;
+    const openedSlots = slots.filter(s => s.opened);
+    const opened = openedSlots.length;
+    const totalPaid = openedSlots.reduce((sum, s) => sum + Number(s.payout || 0), 0);
+    const breakevenPct = start > 0 ? (totalPaid / start) * 100 : 0;
+    const averageX = start > 0 && opened > 0 ? totalPaid / start : 0;
+    const superCount = slots.filter(s => s.type === "super").length;
+    const epicCount = slots.filter(s => s.type === "epic").length;
+
+    return {
+      start,
+      total,
+      opened,
+      totalPaid,
+      breakevenPct,
+      averageX,
+      superCount,
+      epicCount
+    };
+  }
+
+  function setMainState(message) {
+    loadingEl.textContent = message;
+    loadingEl.classList.remove("hide");
+    emptyEl.classList.add("hide");
+    listEl.classList.add("hide");
+    listEl.innerHTML = "";
+  }
+
+  function setEmptyState(message) {
+    loadingEl.classList.add("hide");
+    emptyEl.textContent = message;
+    emptyEl.classList.remove("hide");
+    listEl.classList.add("hide");
+    listEl.innerHTML = "";
+  }
+
+  function renderNoActiveHunt() {
+    els.huntTitle.textContent = "Bonus Hunt";
+    els.huntSubtitle.textContent = "Sem hunt ativa";
+    els.huntId.textContent = "#000";
+
+    els.progressFill.style.width = "0%";
+    els.progressText.textContent = "0/0";
+
+    els.statStart.textContent = "0€";
+    els.statBreakeven.textContent = "0%";
+    els.statBonuses.textContent = "0";
+    els.statOpening.textContent = "0/0";
+    els.statSuper.textContent = "0";
+    els.statEpic.textContent = "0";
+
+    els.footerAverage.textContent = "0.00x";
+    els.footerBreakeven.textContent = "0%";
+    els.footerTotalPay.textContent = "0€";
+
+    els.listCounter.textContent = "0 slots";
+    setEmptyState("Sem hunt ativa.");
+  }
+
+  function renderHeader(hunt, stats) {
+    const huntName = pick(hunt, ["nome", "name", "title"], "Bonus Hunt");
+    const huntId = pick(hunt, ["id", "display_id", "hunt_number", "number"], "000");
+
+    els.huntTitle.textContent = "Bonus Hunt";
+    els.huntSubtitle.textContent = huntName;
+    els.huntId.textContent = "#" + String(huntId);
+
+    const progress = stats.total > 0 ? (stats.opened / stats.total) * 100 : 0;
+    els.progressFill.style.width = Math.max(0, Math.min(progress, 100)) + "%";
+    els.progressText.textContent = `${num(stats.opened)}/${num(stats.total)}`;
+
+    els.statStart.textContent = euro(stats.start);
+    els.statBreakeven.textContent = pct(stats.breakevenPct);
+    els.statBonuses.textContent = num(stats.total);
+    els.statOpening.textContent = `${num(stats.opened)}/${num(stats.total)}`;
+    els.statSuper.textContent = num(stats.superCount);
+    els.statEpic.textContent = num(stats.epicCount);
+
+    els.footerAverage.textContent = multi(stats.averageX);
+    els.footerBreakeven.textContent = pct(stats.breakevenPct);
+    els.footerTotalPay.textContent = euro(stats.totalPaid);
+
+    els.listCounter.textContent = `${num(stats.total)} slots`;
+  }
+
+  function slotCardTemplate(slot, index) {
+    const imageMarkup = slot.image
+      ? `<img class="slot-image" src="${slot.image}" alt="${escapeHtml(slot.name)}" onerror="this.parentNode.classList.add('fallback'); this.remove();" />`
+      : "";
+
+    const statusMarkup = slot.opened
+      ? `
+        <div class="slot-status opened">
+          <div class="slot-status-label">Payout</div>
+          <div class="slot-status-value">${euro(slot.payout)}</div>
+        </div>
+      `
+      : `
+        <div class="slot-status pending">
+          <div class="slot-status-label">Estado</div>
+          <div class="slot-status-value">Pendente</div>
+        </div>
+      `;
+
+    return `
+      <div class="slot-card">
+        <div class="slot-top">
+          <div class="slot-top-left">
+            <div class="slot-name">${escapeHtml(slot.name)}</div>
+            <div class="slot-bet">${slot.bet > 0 ? euro(slot.bet) : "&nbsp;"}</div>
+          </div>
+          <div class="slot-index">#${index + 1}</div>
+        </div>
+
+        <div class="slot-image-wrap ${slot.image ? "" : "fallback"}">
+          ${imageMarkup}
+        </div>
+
+        <div class="slot-bottom">
+          <div class="slot-type ${slot.type}">${slot.type}</div>
+          ${statusMarkup}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderSlots(slots) {
+    if (!slots.length) {
+      setEmptyState("Esta hunt ainda não tem slots.");
+      return;
+    }
+
+    const signature = JSON.stringify(
+      slots.map(s => [s.id, s.name, s.image, s.type, s.payout, s.bet, s.opened, s.order])
+    );
+
+    if (signature !== lastRenderedSignature) {
+      lastRenderedSignature = signature;
+      listEl.innerHTML = slots.map((slot, index) => slotCardTemplate(slot, index)).join("");
+    }
+
+    loadingEl.classList.add("hide");
+    emptyEl.classList.add("hide");
+    listEl.classList.remove("hide");
+  }
+
+  function startAutoScroll() {
+    const speed = 0.38;
+
+    function step() {
+      const maxScroll = Math.max(0, listEl.scrollHeight - scrollEl.clientHeight);
+
+      if (maxScroll <= 0 || listEl.classList.contains("hide")) {
+        listEl.style.transform = "translateY(0px)";
+        autoScrollY = 0;
+        requestAnimationFrame(step);
+        return;
+      }
+
+      autoScrollY += speed * autoScrollDirection;
+
+      if (autoScrollY >= maxScroll) {
+        autoScrollY = maxScroll;
+        autoScrollDirection = -1;
+      } else if (autoScrollY <= 0) {
+        autoScrollY = 0;
+        autoScrollDirection = 1;
+      }
+
+      listEl.style.transform = `translateY(${-autoScrollY}px)`;
+      requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  async function loadOverlay() {
+    try {
+      const hunt = await getActiveHunt();
+
+      if (!hunt) {
+        renderNoActiveHunt();
+        return;
+      }
+
+      const huntId = pick(hunt, ["id"]);
+      const rawBonuses = await getHuntSlots(huntId);
+      const slots = rawBonuses
+        .map((item, index) => normalizeSlot(item, index))
+        .sort((a, b) => a.order - b.order);
+
+      const stats = computeStats(hunt, slots);
+
+      renderHeader(hunt, stats);
+      renderSlots(slots);
+    } catch (error) {
+      console.error(error);
+      els.huntTitle.textContent = "Erro";
+      els.huntSubtitle.textContent = "Não foi possível carregar";
+      els.huntId.textContent = "#ERR";
+      setMainState("Erro ao carregar a hunt.");
+    }
+  }
+
+  startAutoScroll();
+  loadOverlay();
+  setInterval(loadOverlay, refreshMs);
+</script>
 
     const SUPABASE_ANON_KEY =
       window.CT_SUPABASE_ANON_KEY ||
