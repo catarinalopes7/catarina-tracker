@@ -33,7 +33,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
 
     .title-wrap h2 {
@@ -59,6 +59,32 @@
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.08);
       white-space: nowrap;
+    }
+
+    .notice {
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      display: none;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .notice.show {
+      display: block;
+    }
+
+    .notice.success {
+      background: rgba(42, 214, 160, 0.14);
+      color: #aef5da;
+      border-color: rgba(42, 214, 160, 0.24);
+    }
+
+    .notice.error {
+      background: rgba(255, 125, 146, 0.14);
+      color: #ffd0d8;
+      border-color: rgba(255, 125, 146, 0.24);
     }
 
     .layout {
@@ -424,6 +450,8 @@
       <div id="selectedHuntBadge" class="status-badge">Nenhuma hunt aberta</div>
     </div>
 
+    <div id="notice" class="notice"></div>
+
     <div class="layout">
       <div class="panel">
         <div class="panel-head">
@@ -479,7 +507,7 @@
             <div class="field-wrap">
               <input id="newSlotName" class="form-input" type="text" placeholder="Escreve o nome da slot..." autocomplete="off" />
               <div id="newSlotSuggestions" class="autocomplete-box"></div>
-              <div class="helper">Escreve umas letras e escolhe a slot da lista</div>
+              <div class="helper">Escreve umas letras e escolhe a slot da lista, ou adiciona manualmente</div>
             </div>
 
             <div>
@@ -534,12 +562,17 @@
     let isEditing = false;
     let refreshTimer = null;
 
-    function headers() {
-      return {
+    function headers(includeJson = true) {
+      const base = {
         apikey: SUPABASE_KEY,
-        Authorization: "Bearer " + SUPABASE_KEY,
-        "Content-Type": "application/json"
+        Authorization: "Bearer " + SUPABASE_KEY
       };
+
+      if (includeJson) {
+        base["Content-Type"] = "application/json";
+      }
+
+      return base;
     }
 
     function parseMoney(value) {
@@ -570,8 +603,24 @@
         .replace(/[^a-z0-9]/g, "");
     }
 
+    function showNotice(message, type = "success") {
+      const el = document.getElementById("notice");
+      el.className = `notice show ${type}`;
+      el.textContent = message;
+
+      clearTimeout(showNotice._timer);
+      showNotice._timer = setTimeout(() => {
+        el.className = "notice";
+        el.textContent = "";
+      }, 3500);
+    }
+
     function getCatalogSlotName(item) {
       return item?.name || item?.nome || "";
+    }
+
+    function getCatalogSlotId(item) {
+      return item?.id ?? null;
     }
 
     function getSlotTypeValue(slot) {
@@ -699,14 +748,33 @@
       }).join("");
     }
 
+    async function fetchJson(url, options = {}) {
+      const res = await fetch(url, options);
+      const text = await res.text();
+      let data = null;
+
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch {
+        data = text || null;
+      }
+
+      return { res, data };
+    }
+
     async function loadSlotsCatalog() {
       try {
-        const res = await fetch(
+        const { res, data } = await fetchJson(
           `${SUPABASE_URL}/rest/v1/slots?select=id,name,nome&order=id.asc`,
-          { headers: headers() }
+          { headers: headers(false) }
         );
 
-        const data = await res.json();
+        if (!res.ok) {
+          console.log(data);
+          slotsCatalog = [];
+          return;
+        }
+
         slotsCatalog = Array.isArray(data) ? data : [];
       } catch (err) {
         console.log(err);
@@ -718,12 +786,28 @@
       const q = normalizeText(query);
       if (!q) return [];
 
-      return slotsCatalog
-        .map(item => getCatalogSlotName(item))
-        .filter(Boolean)
-        .filter((name, index, arr) => arr.indexOf(name) === index)
-        .filter(name => normalizeText(name).includes(q))
-        .slice(0, limit);
+      const uniqueMap = new Map();
+
+      for (const item of slotsCatalog) {
+        const name = getCatalogSlotName(item);
+        if (!name) continue;
+
+        const normalized = normalizeText(name);
+        if (!normalized.includes(q)) continue;
+
+        if (!uniqueMap.has(normalized)) {
+          uniqueMap.set(normalized, name);
+        }
+      }
+
+      return Array.from(uniqueMap.values()).slice(0, limit);
+    }
+
+    function findCatalogMatchByName(name) {
+      const target = normalizeText(name);
+      if (!target) return null;
+
+      return slotsCatalog.find(item => normalizeText(getCatalogSlotName(item)) === target) || null;
     }
 
     function renderAutocomplete(box, items, onPick, activeIndex = -1) {
@@ -756,12 +840,16 @@
 
     async function loadHunts() {
       try {
-        const res = await fetch(
+        const { res, data } = await fetchJson(
           `${SUPABASE_URL}/rest/v1/hunts?select=*&order=id.desc`,
-          { headers: headers() }
+          { headers: headers(false) }
         );
 
-        const data = await res.json();
+        if (!res.ok) {
+          console.log(data);
+          return;
+        }
+
         huntsCache = Array.isArray(data) ? data : [];
 
         if (!selectedHunt && huntsCache.length) {
@@ -787,19 +875,20 @@
     }
 
     async function loadSlots() {
-      if (!selectedHunt || isEditing) {
-        return;
-      }
+      if (!selectedHunt || isEditing) return;
 
       try {
-        const res = await fetch(
+        const { res, data } = await fetchJson(
           `${SUPABASE_URL}/rest/v1/hunt_slots?hunt_id=eq.${selectedHunt}&select=*&order=id.asc`,
-          { headers: headers() }
+          { headers: headers(false) }
         );
 
-        const data = await res.json();
-        const rows = Array.isArray(data) ? data : [];
+        if (!res.ok) {
+          console.log(data);
+          return;
+        }
 
+        const rows = Array.isArray(data) ? data : [];
         renderSlots(rows);
         renderHunts(huntsCache);
         setSelectedHuntBadge();
@@ -817,11 +906,38 @@
     }
 
     async function patchHuntSlot(id, body) {
-      await fetch(`${SUPABASE_URL}/rest/v1/hunt_slots?id=eq.${id}`, {
+      const { res, data } = await fetchJson(`${SUPABASE_URL}/rest/v1/hunt_slots?id=eq.${id}`, {
         method: "PATCH",
-        headers: headers(),
+        headers: headers(true),
         body: JSON.stringify(body)
       });
+
+      if (!res.ok) {
+        throw new Error(typeof data === "string" ? data : JSON.stringify(data));
+      }
+
+      return data;
+    }
+
+    async function patchTypeFallback(id, typeValue) {
+      const attempts = [
+        { bonus_type: typeValue },
+        { type: typeValue },
+        { categoria: typeValue },
+        { rarity: typeValue },
+        { tipo_slot: typeValue }
+      ];
+
+      for (const body of attempts) {
+        try {
+          await patchHuntSlot(id, body);
+          return true;
+        } catch (err) {
+          console.log("Falhou patch type:", body, err);
+        }
+      }
+
+      return false;
     }
 
     function finishEdit() {
@@ -852,6 +968,7 @@
             await patchHuntSlot(id, { bet_size: parseMoney(input.value) });
           } catch (err) {
             console.log(err);
+            showNotice("Não consegui guardar a bet.", "error");
           }
           finishEdit();
         }
@@ -896,6 +1013,7 @@
             });
           } catch (err) {
             console.log(err);
+            showNotice("Não consegui guardar o payout.", "error");
           }
 
           finishEdit();
@@ -935,11 +1053,12 @@
 
       async function save() {
         handled = true;
-        try {
-          await patchHuntSlot(id, { bonus_type: select.value });
-        } catch (err) {
-          console.log(err);
+        const ok = await patchTypeFallback(id, select.value);
+
+        if (!ok) {
+          showNotice("A slot foi mantida, mas não consegui guardar o tipo de bónus nesta base de dados.", "error");
         }
+
         finishEdit();
       }
 
@@ -997,6 +1116,7 @@
           await patchHuntSlot(id, { slot_name: value.trim() });
         } catch (err) {
           console.log(err);
+          showNotice("Não consegui guardar o nome da slot.", "error");
         }
         finishEdit();
       }
@@ -1129,8 +1249,28 @@
       });
     }
 
+    async function insertHuntSlotBase(payload) {
+      const { res, data } = await fetchJson(`${SUPABASE_URL}/rest/v1/hunt_slots`, {
+        method: "POST",
+        headers: {
+          ...headers(true),
+          Prefer: "return=representation"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        throw new Error(typeof data === "string" ? data : JSON.stringify(data));
+      }
+
+      return Array.isArray(data) ? data[0] : data;
+    }
+
     async function addSlotToHunt() {
-      if (!selectedHunt || isEditing) return;
+      if (!selectedHunt || isEditing) {
+        showNotice("Abre primeiro uma hunt.", "error");
+        return;
+      }
 
       const nameInput = document.getElementById("newSlotName");
       const betInput = document.getElementById("newSlotBet");
@@ -1142,30 +1282,40 @@
 
       if (!slotName) {
         nameInput.focus();
+        showNotice("Escreve o nome da slot antes de adicionar.", "error");
         return;
       }
 
+      const matchedCatalog = findCatalogMatchByName(slotName);
+
+      const basePayload = {
+        hunt_id: selectedHunt,
+        slot_name: slotName,
+        bet_size: betSize,
+        payout: 0,
+        status: "pending"
+      };
+
+      if (matchedCatalog && getCatalogSlotId(matchedCatalog) !== null) {
+        basePayload.slot_id = getCatalogSlotId(matchedCatalog);
+      }
+
       try {
-        await fetch(`${SUPABASE_URL}/rest/v1/hunt_slots`, {
-          method: "POST",
-          headers: headers(),
-          body: JSON.stringify({
-            hunt_id: selectedHunt,
-            slot_name: slotName,
-            bet_size: betSize,
-            bonus_type: slotType,
-            payout: 0,
-            status: "pending"
-          })
-        });
+        const inserted = await insertHuntSlotBase(basePayload);
+
+        if (inserted?.id) {
+          await patchTypeFallback(inserted.id, slotType);
+        }
 
         nameInput.value = "";
         betInput.value = betSize > 0 ? betSize.toFixed(2) : "0.20";
         typeInput.value = "normal";
         closeAutocomplete(document.getElementById("newSlotSuggestions"));
+        showNotice("Slot adicionada com sucesso.", "success");
         loadSlots();
       } catch (err) {
         console.log(err);
+        showNotice("Não consegui adicionar a slot. Verifica se a hunt está aberta e tenta novamente.", "error");
       }
     }
 
@@ -1176,13 +1326,21 @@
       if (!confirmed) return;
 
       try {
-        await fetch(`${SUPABASE_URL}/rest/v1/hunt_slots?id=eq.${id}`, {
+        const { res, data } = await fetchJson(`${SUPABASE_URL}/rest/v1/hunt_slots?id=eq.${id}`, {
           method: "DELETE",
-          headers: headers()
+          headers: headers(false)
         });
+
+        if (!res.ok) {
+          console.log(data);
+          showNotice("Não consegui apagar a slot.", "error");
+          return;
+        }
+
         loadSlots();
       } catch (err) {
         console.log(err);
+        showNotice("Não consegui apagar a slot.", "error");
       }
     }
 
@@ -1197,14 +1355,18 @@
     }
 
     document.getElementById("addSlotBtn").addEventListener("click", addSlotToHunt);
+
     document.getElementById("newSlotBet").addEventListener("keydown", (e) => {
       if (e.key === "Enter") addSlotToHunt();
     });
+
     document.getElementById("newSlotType").addEventListener("keydown", (e) => {
       if (e.key === "Enter") addSlotToHunt();
     });
+
     document.getElementById("newSlotName").addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !document.getElementById("newSlotSuggestions").classList.contains("show")) {
+      const suggestionsOpen = document.getElementById("newSlotSuggestions").classList.contains("show");
+      if (e.key === "Enter" && !suggestionsOpen) {
         addSlotToHunt();
       }
     });
@@ -1214,6 +1376,10 @@
       setupAddSlotAutocomplete();
       startAutoRefresh();
       loadHunts();
+
+      if (!slotsCatalog.length) {
+        showNotice("Não foi possível carregar a lista de slots para autocomplete. Ainda podes adicionar manualmente.", "error");
+      }
     })();
   </script>
 </body>
