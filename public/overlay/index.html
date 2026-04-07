@@ -25,7 +25,7 @@
     }
 
     #app {
-      width: 340px;
+      width: 372px;
       height: 1920px;
       padding: 8px 10px 8px 8px;
       display: flex;
@@ -207,15 +207,15 @@
     }
 
     .type-pill.super {
-      background: linear-gradient(180deg, #cf9d1f, #a77710);
-      color: #fff5cb;
-      border: 1px solid rgba(255,255,255,0.10);
+      background: linear-gradient(180deg, rgba(215, 177, 89, 0.22), rgba(166, 126, 33, 0.16));
+      border: 1px solid rgba(225, 189, 96, 0.28);
+      color: #f8e4aa;
     }
 
     .type-pill.epic {
-      background: linear-gradient(180deg, #ff4b3a, #d22619);
-      color: #fff2ef;
-      border: 1px solid rgba(255,255,255,0.10);
+      background: linear-gradient(180deg, rgba(180, 92, 123, 0.20), rgba(126, 45, 73, 0.14));
+      border: 1px solid rgba(198, 104, 136, 0.26);
+      color: #ffd8e4;
     }
 
     .progress-row {
@@ -241,12 +241,12 @@
       height: 100%;
       width: 0%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #f9cf4d 0%, #ff8e2b 100%);
+      background: linear-gradient(90deg, #a574ff 0%, #6fceff 100%);
       transition: width 0.35s ease;
     }
 
     .progress-count {
-      min-width: 44px;
+      min-width: 52px;
       text-align: right;
       font-size: 20px;
       line-height: 1;
@@ -321,20 +321,20 @@
     }
 
     .slot-name {
-      font-size: 28px;
-      line-height: 0.96;
+      font-size: 24px;
+      line-height: 0.97;
       font-weight: 900;
       font-style: italic;
       text-transform: uppercase;
       color: #dfeaff;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.45px;
       text-shadow: 0 2px 8px rgba(0,0,0,0.28);
       word-break: break-word;
     }
 
     .slot-bet {
       margin-top: 4px;
-      font-size: 22px;
+      font-size: 20px;
       line-height: 1;
       font-weight: 900;
       color: #f2f6ff;
@@ -342,7 +342,7 @@
     }
 
     .slot-rank {
-      font-size: 24px;
+      font-size: 22px;
       line-height: 1;
       font-weight: 900;
       color: rgba(255,255,255,0.72);
@@ -356,7 +356,7 @@
 
     .slot-image-box {
       width: 100%;
-      aspect-ratio: 0.78 / 1;
+      aspect-ratio: 0.88 / 1;
       border-radius: 14px;
       overflow: hidden;
       position: relative;
@@ -372,10 +372,11 @@
       height: 100%;
       display: block;
       object-fit: cover;
+      object-position: center top;
     }
 
     .slot-image-box img {
-      filter: saturate(0.90) brightness(0.90) contrast(0.97);
+      filter: saturate(0.88) brightness(0.88) contrast(0.96);
       transform: scale(1.02);
     }
 
@@ -384,7 +385,7 @@
       position: absolute;
       inset: 0;
       background:
-        linear-gradient(180deg, rgba(5,16,32,0.04), rgba(5,16,32,0.18)),
+        linear-gradient(180deg, rgba(10, 8, 24, 0.02), rgba(10, 8, 24, 0.18)),
         radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 45%);
       pointer-events: none;
     }
@@ -451,14 +452,6 @@
       font-weight: 900;
       color: #ffffff;
       letter-spacing: -0.3px;
-    }
-
-    .bottom-value.negative {
-      color: #ffb9c7;
-    }
-
-    .bottom-value.positive {
-      color: #abf1be;
     }
 
     .empty-state {
@@ -872,7 +865,6 @@
         const bet = getBonusBet(item);
         const img = getImageFromBonus(item);
         const payout = getBonusPayout(item);
-        const type = getBonusTypeLabel(item);
 
         const classes = [
           "slot-card",
@@ -1004,7 +996,7 @@
         document.getElementById("total").innerText = total;
         document.getElementById("superCount").innerText = superCount;
         document.getElementById("epicCount").innerText = epicCount;
-        document.getElementById("open").innerText = opened.length;
+        document.getElementById("open").innerText = opened.length + "/" + total;
         document.getElementById("progressCount").innerText = `${opened.length}/${total}`;
 
         const progress = total > 0 ? (opened.length / total) * 100 : 0;
