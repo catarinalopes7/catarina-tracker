@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
 
   <style>
     * {
@@ -36,10 +36,13 @@
       --light-blue: #8fd6ff;
       --green: #72efac;
 
-      --super-border: rgba(244, 199, 73, 0.50);
-      --super-glow: rgba(244, 199, 73, 0.18);
-      --epic-border: rgba(255, 132, 181, 0.48);
-      --epic-glow: rgba(255, 120, 170, 0.18);
+      --super-border: rgba(255, 214, 90, 0.96);
+      --super-glow: rgba(255, 211, 77, 0.48);
+      --super-inner: rgba(255, 223, 124, 0.20);
+
+      --epic-border: rgba(255, 126, 179, 0.96);
+      --epic-glow: rgba(255, 120, 170, 0.46);
+      --epic-inner: rgba(255, 155, 196, 0.18);
 
       --shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
       --radius-shell: 28px;
@@ -156,28 +159,31 @@
     }
 
     .hunt-title {
-      font-size: 26px;
-      font-weight: 800;
-      line-height: 1;
-      letter-spacing: -0.02em;
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: 0.01em;
       color: #ffffff;
-      text-transform: uppercase;
+      font-family: "Caveat", cursive;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 235px;
+      text-transform: none;
     }
 
     .hunt-subtitle {
-      margin-top: 2px;
-      font-size: 12px;
+      margin-top: 1px;
+      font-size: 22px;
       font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      letter-spacing: 0.01em;
       color: var(--text-soft);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-family: "Caveat", cursive;
+      text-transform: none;
+      line-height: 0.95;
     }
 
     .hunt-id {
@@ -257,17 +263,21 @@
     }
 
     .type-pill.super {
-      background: linear-gradient(180deg, rgba(244, 199, 73, 0.20), rgba(244, 199, 73, 0.10));
-      border: 1px solid var(--super-border);
-      color: #f8d974;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(244, 199, 73, 0.22), rgba(244, 199, 73, 0.12));
+      border: 1px solid rgba(255, 214, 90, 0.72);
+      color: #ffe388;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        0 0 14px rgba(255, 214, 90, 0.16);
     }
 
     .type-pill.epic {
-      background: linear-gradient(180deg, rgba(255, 120, 170, 0.18), rgba(255, 120, 170, 0.09));
-      border: 1px solid var(--epic-border);
-      color: #ff9ac0;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(255, 120, 170, 0.20), rgba(255, 120, 170, 0.10));
+      border: 1px solid rgba(255, 126, 179, 0.72);
+      color: #ffaad0;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        0 0 14px rgba(255, 120, 170, 0.16);
     }
 
     .progress-row {
@@ -367,20 +377,41 @@
       background: linear-gradient(180deg, #5845bc, #322387);
       border: 1px solid rgba(188, 176, 255, 0.14);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      position: relative;
     }
 
     .slot-card.super {
-      border: 1px solid var(--super-border);
+      border: 2px solid var(--super-border);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 0 14px var(--super-glow);
+        inset 0 0 0 1px var(--super-inner),
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        0 0 18px 2px var(--super-glow);
+    }
+
+    .slot-card.super::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: 10px;
+      box-shadow: inset 0 0 22px rgba(255, 214, 90, 0.18);
     }
 
     .slot-card.epic {
-      border: 1px solid var(--epic-border);
+      border: 2px solid var(--epic-border);
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 0 14px var(--epic-glow);
+        inset 0 0 0 1px var(--epic-inner),
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        0 0 18px 2px var(--epic-glow);
+    }
+
+    .slot-card.epic::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: 10px;
+      box-shadow: inset 0 0 22px rgba(255, 126, 179, 0.18);
     }
 
     .slot-top {
@@ -397,16 +428,17 @@
     }
 
     .slot-name {
-      font-size: 13px;
-      font-weight: 800;
-      line-height: 1.05;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 0.95;
       color: #ffffff;
-      text-transform: uppercase;
       letter-spacing: 0.01em;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 245px;
+      font-family: "Caveat", cursive;
+      text-transform: none;
     }
 
     .slot-bet {
