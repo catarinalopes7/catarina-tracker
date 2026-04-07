@@ -229,6 +229,24 @@
       background: #ff7d92;
     }
 
+    .pill.type-normal {
+      color: #dfe6ff;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .pill.type-super {
+      color: #2e1f00;
+      background: linear-gradient(180deg, #ffd76a, #f0b93e);
+      border: 1px solid rgba(255, 221, 120, 0.35);
+    }
+
+    .pill.type-epic {
+      color: #fff1f6;
+      background: linear-gradient(180deg, #ff8fb0, #db5b82);
+      border: 1px solid rgba(255, 171, 199, 0.30);
+    }
+
     .editable {
       cursor: pointer;
       transition: 0.18s ease;
@@ -247,7 +265,9 @@
     }
 
     .edit-input,
-    .form-input {
+    .form-input,
+    .form-select,
+    .edit-select {
       width: 100%;
       padding: 10px 12px;
       border-radius: 10px;
@@ -257,6 +277,17 @@
       color: #fff;
       font-weight: 800;
       font-size: 14px;
+    }
+
+    .form-select,
+    .edit-select {
+      cursor: pointer;
+    }
+
+    .form-select option,
+    .edit-select option {
+      background: #141a31;
+      color: #fff;
     }
 
     .edit-input.wide {
@@ -307,7 +338,7 @@
 
     .add-grid {
       display: grid;
-      grid-template-columns: minmax(280px, 1fr) 140px 120px;
+      grid-template-columns: minmax(280px, 1fr) 120px 140px 120px;
       gap: 10px;
       align-items: start;
     }
@@ -456,6 +487,14 @@
             </div>
 
             <div>
+              <select id="newSlotType" class="form-select">
+                <option value="normal">Normal</option>
+                <option value="super">Super</option>
+                <option value="epic">Epic</option>
+              </select>
+            </div>
+
+            <div>
               <button id="addSlotBtn" class="btn-add" type="button">Adicionar</button>
             </div>
           </div>
@@ -467,6 +506,7 @@
               <tr>
                 <th>ID</th>
                 <th>Slot</th>
+                <th>Tipo</th>
                 <th>Bet</th>
                 <th>Payout</th>
                 <th>Estado</th>
@@ -475,7 +515,7 @@
             </thead>
             <tbody id="slots">
               <tr>
-                <td colspan="6" class="empty">Abre uma hunt para veres os slots</td>
+                <td colspan="7" class="empty">Abre uma hunt para veres os slots</td>
               </tr>
             </tbody>
           </table>
@@ -532,6 +572,36 @@
 
     function getCatalogSlotName(item) {
       return item?.name || item?.nome || "";
+    }
+
+    function getSlotTypeValue(slot) {
+      const raw = String(
+        slot?.bonus_type ||
+        slot?.type ||
+        slot?.categoria ||
+        slot?.rarity ||
+        slot?.tipo_slot ||
+        "normal"
+      ).trim().toLowerCase();
+
+      if (raw.includes("super")) return "super";
+      if (raw.includes("epic")) return "epic";
+      if (raw.includes("extreme")) return "epic";
+      return "normal";
+    }
+
+    function getSlotTypePill(type) {
+      const normalized = getSlotTypeValue({ bonus_type: type });
+
+      if (normalized === "super") {
+        return `<span class="pill type-super">Super</span>`;
+      }
+
+      if (normalized === "epic") {
+        return `<span class="pill type-epic">Epic</span>`;
+      }
+
+      return `<span class="pill type-normal">Normal</span>`;
     }
 
     function setSelectedHuntBadge() {
@@ -592,7 +662,7 @@
       document.getElementById("sumPaid").textContent = formatMoney(totalPaid);
 
       if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="6" class="empty">Sem slots nesta hunt</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="empty">Sem slots nesta hunt</td></tr>`;
         return;
       }
 
@@ -603,12 +673,16 @@
           : `<span class="pill red">FECHADO</span>`;
 
         const safeName = JSON.stringify(slot.slot_name || "");
+        const slotType = getSlotTypeValue(slot);
 
         return `
           <tr>
             <td><span class="slot-id">#${slot.id}</span></td>
             <td class="editable" onclick='editSlotName(this, ${slot.id}, ${safeName})'>
               <span class="slot-name">${escapeHtml(slot.slot_name || "Sem nome")}</span>
+            </td>
+            <td class="editable" onclick='editType(this, ${slot.id}, "${slotType}")'>
+              ${getSlotTypePill(slotType)}
             </td>
             <td class="editable" onclick="editBet(this, ${slot.id}, ${parseMoney(slot.bet_size)})">
               <span class="slot-bet">${formatMoney(slot.bet_size)}</span>
@@ -839,6 +913,56 @@
       });
     }
 
+    function editType(td, id, currentValue) {
+      if (isEditing) return;
+      isEditing = true;
+      td.classList.add("editing");
+
+      const select = document.createElement("select");
+      select.className = "edit-select";
+      select.innerHTML = `
+        <option value="normal">Normal</option>
+        <option value="super">Super</option>
+        <option value="epic">Epic</option>
+      `;
+      select.value = getSlotTypeValue({ bonus_type: currentValue });
+
+      td.innerHTML = "";
+      td.appendChild(select);
+      select.focus();
+
+      let handled = false;
+
+      async function save() {
+        handled = true;
+        try {
+          await patchHuntSlot(id, { bonus_type: select.value });
+        } catch (err) {
+          console.log(err);
+        }
+        finishEdit();
+      }
+
+      select.addEventListener("change", save);
+
+      select.addEventListener("keydown", async (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          await save();
+        }
+
+        if (e.key === "Escape") {
+          handled = true;
+          finishEdit();
+        }
+      });
+
+      select.addEventListener("blur", () => {
+        if (handled) return;
+        finishEdit();
+      });
+    }
+
     function editSlotName(td, id, currentValue) {
       if (isEditing) return;
       isEditing = true;
@@ -1010,9 +1134,11 @@
 
       const nameInput = document.getElementById("newSlotName");
       const betInput = document.getElementById("newSlotBet");
+      const typeInput = document.getElementById("newSlotType");
 
       const slotName = nameInput.value.trim();
       const betSize = parseMoney(betInput.value);
+      const slotType = typeInput.value || "normal";
 
       if (!slotName) {
         nameInput.focus();
@@ -1027,6 +1153,7 @@
             hunt_id: selectedHunt,
             slot_name: slotName,
             bet_size: betSize,
+            bonus_type: slotType,
             payout: 0,
             status: "pending"
           })
@@ -1034,6 +1161,7 @@
 
         nameInput.value = "";
         betInput.value = betSize > 0 ? betSize.toFixed(2) : "0.20";
+        typeInput.value = "normal";
         closeAutocomplete(document.getElementById("newSlotSuggestions"));
         loadSlots();
       } catch (err) {
@@ -1070,6 +1198,9 @@
 
     document.getElementById("addSlotBtn").addEventListener("click", addSlotToHunt);
     document.getElementById("newSlotBet").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") addSlotToHunt();
+    });
+    document.getElementById("newSlotType").addEventListener("keydown", (e) => {
       if (e.key === "Enter") addSlotToHunt();
     });
     document.getElementById("newSlotName").addEventListener("keydown", (e) => {
