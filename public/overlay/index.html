@@ -37,8 +37,14 @@
       --light-blue: #8fd6ff;
       --blue: #2b9dff;
       --green: #72efac;
-      --orange: #f0c13c;
-      --red: #ff4a4a;
+
+      --super-soft: rgba(244, 199, 73, 0.18);
+      --super-border: rgba(244, 199, 73, 0.50);
+      --super-text: #f8d974;
+
+      --epic-soft: rgba(255, 120, 170, 0.16);
+      --epic-border: rgba(255, 132, 181, 0.48);
+      --epic-text: #ff9ac0;
 
       --shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
       --radius-shell: 28px;
@@ -253,18 +259,26 @@
       line-height: 1;
       text-transform: uppercase;
       letter-spacing: 0.01em;
-      border: 1px solid rgba(255,255,255,0.10);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
     }
 
     .type-pill.super {
-      background: linear-gradient(180deg, #f1c23b, #dbab1f);
-      color: #142240;
+      background: linear-gradient(180deg, rgba(244, 199, 73, 0.20), rgba(244, 199, 73, 0.10));
+      border: 1px solid var(--super-border);
+      color: var(--super-text);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 0 10px rgba(244, 199, 73, 0.10);
     }
 
     .type-pill.epic {
-      background: linear-gradient(180deg, #ff5555, #e33232);
-      color: #ffffff;
+      background: linear-gradient(180deg, rgba(255, 120, 170, 0.18), rgba(255, 120, 170, 0.09));
+      border: 1px solid var(--epic-border);
+      color: var(--epic-text);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 0 10px rgba(255, 120, 170, 0.10);
     }
 
     .progress-row {
@@ -465,13 +479,15 @@
     }
 
     .slot-type.super {
-      background: linear-gradient(180deg, #f2c73f, #d9a71d);
-      color: #12213e;
+      background: linear-gradient(180deg, rgba(244, 199, 73, 0.20), rgba(244, 199, 73, 0.10));
+      border-color: rgba(244, 199, 73, 0.45);
+      color: var(--super-text);
     }
 
     .slot-type.epic {
-      background: linear-gradient(180deg, #ff5050, #de2e2e);
-      color: #ffffff;
+      background: linear-gradient(180deg, rgba(255, 120, 170, 0.18), rgba(255, 120, 170, 0.09));
+      border-color: rgba(255, 132, 181, 0.44);
+      color: var(--epic-text);
     }
 
     .slot-status {
