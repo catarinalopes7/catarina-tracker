@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Marck+Script&display=swap" rel="stylesheet" />
 
   <style>
     * {
@@ -36,16 +36,19 @@
       --light-blue: #8fd6ff;
       --green: #72efac;
 
-      --super-border: rgba(255, 214, 90, 0.96);
-      --super-glow: rgba(255, 211, 77, 0.48);
-      --super-inner: rgba(255, 223, 124, 0.20);
+      --super-border: rgba(255, 219, 92, 1);
+      --super-glow: rgba(255, 214, 90, 0.70);
+      --super-inner: rgba(255, 228, 130, 0.22);
+      --super-neon: rgba(255, 228, 122, 0.42);
 
-      --epic-border: rgba(255, 126, 179, 0.96);
-      --epic-glow: rgba(255, 120, 170, 0.46);
-      --epic-inner: rgba(255, 155, 196, 0.18);
+      --epic-border: rgba(255, 128, 186, 1);
+      --epic-glow: rgba(255, 120, 170, 0.70);
+      --epic-inner: rgba(255, 170, 210, 0.22);
+      --epic-neon: rgba(255, 140, 190, 0.40);
 
       --shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
       --radius-shell: 28px;
+      --script-font: "Marck Script", cursive;
     }
 
     html,
@@ -159,12 +162,12 @@
     }
 
     .hunt-title {
-      font-size: 34px;
-      font-weight: 700;
+      font-size: 33px;
+      font-weight: 400;
       line-height: 0.95;
       letter-spacing: 0.01em;
       color: #ffffff;
-      font-family: "Caveat", cursive;
+      font-family: var(--script-font);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -174,14 +177,14 @@
 
     .hunt-subtitle {
       margin-top: 1px;
-      font-size: 22px;
-      font-weight: 700;
+      font-size: 20px;
+      font-weight: 400;
       letter-spacing: 0.01em;
       color: var(--text-soft);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      font-family: "Caveat", cursive;
+      font-family: var(--script-font);
       text-transform: none;
       line-height: 0.95;
     }
@@ -215,13 +218,14 @@
     }
 
     .stat-label {
-      font-size: 10px;
-      font-weight: 700;
+      font-size: 16px;
+      font-weight: 400;
       line-height: 1;
-      color: rgba(236, 230, 255, 0.76);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      color: rgba(236, 230, 255, 0.88);
+      letter-spacing: 0.01em;
       white-space: nowrap;
+      font-family: var(--script-font);
+      text-transform: none;
     }
 
     .stat-value {
@@ -247,37 +251,49 @@
     }
 
     .type-pill {
-      min-height: 26px;
+      min-height: 28px;
       border-radius: 7px;
       padding: 0 9px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .type-pill .type-label {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: 0.01em;
+      font-family: var(--script-font);
+      text-transform: none;
+    }
+
+    .type-pill .type-value {
       font-size: 13px;
       font-weight: 800;
       line-height: 1;
       text-transform: uppercase;
       letter-spacing: 0.01em;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
     }
 
     .type-pill.super {
-      background: linear-gradient(180deg, rgba(244, 199, 73, 0.22), rgba(244, 199, 73, 0.12));
-      border: 1px solid rgba(255, 214, 90, 0.72);
+      background: linear-gradient(180deg, rgba(244, 199, 73, 0.24), rgba(244, 199, 73, 0.12));
+      border: 1px solid rgba(255, 214, 90, 0.82);
       color: #ffe388;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.10),
-        0 0 14px rgba(255, 214, 90, 0.16);
+        0 0 16px rgba(255, 214, 90, 0.18);
     }
 
     .type-pill.epic {
-      background: linear-gradient(180deg, rgba(255, 120, 170, 0.20), rgba(255, 120, 170, 0.10));
-      border: 1px solid rgba(255, 126, 179, 0.72);
+      background: linear-gradient(180deg, rgba(255, 120, 170, 0.22), rgba(255, 120, 170, 0.10));
+      border: 1px solid rgba(255, 126, 179, 0.82);
       color: #ffaad0;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.10),
-        0 0 14px rgba(255, 120, 170, 0.16);
+        0 0 16px rgba(255, 120, 170, 0.18);
     }
 
     .progress-row {
@@ -385,7 +401,8 @@
       box-shadow:
         inset 0 0 0 1px var(--super-inner),
         inset 0 1px 0 rgba(255,255,255,0.07),
-        0 0 18px 2px var(--super-glow);
+        0 0 10px 1px var(--super-glow),
+        0 0 22px 4px var(--super-neon);
     }
 
     .slot-card.super::after {
@@ -394,7 +411,9 @@
       inset: 0;
       pointer-events: none;
       border-radius: 10px;
-      box-shadow: inset 0 0 22px rgba(255, 214, 90, 0.18);
+      box-shadow:
+        inset 0 0 26px rgba(255, 219, 92, 0.22),
+        inset 0 0 2px rgba(255,255,255,0.08);
     }
 
     .slot-card.epic {
@@ -402,7 +421,8 @@
       box-shadow:
         inset 0 0 0 1px var(--epic-inner),
         inset 0 1px 0 rgba(255,255,255,0.07),
-        0 0 18px 2px var(--epic-glow);
+        0 0 10px 1px var(--epic-glow),
+        0 0 22px 4px var(--epic-neon);
     }
 
     .slot-card.epic::after {
@@ -411,7 +431,9 @@
       inset: 0;
       pointer-events: none;
       border-radius: 10px;
-      box-shadow: inset 0 0 22px rgba(255, 126, 179, 0.18);
+      box-shadow:
+        inset 0 0 26px rgba(255, 128, 186, 0.22),
+        inset 0 0 2px rgba(255,255,255,0.08);
     }
 
     .slot-top {
@@ -428,8 +450,8 @@
     }
 
     .slot-name {
-      font-size: 24px;
-      font-weight: 700;
+      font-size: 22px;
+      font-weight: 400;
       line-height: 0.95;
       color: #ffffff;
       letter-spacing: 0.01em;
@@ -437,7 +459,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 245px;
-      font-family: "Caveat", cursive;
+      font-family: var(--script-font);
       text-transform: none;
     }
 
@@ -634,12 +656,12 @@
 
         <div class="types-row">
           <div class="type-pill super">
-            <span>Super</span>
-            <span id="statSuper">0</span>
+            <span class="type-label">Super</span>
+            <span id="statSuper" class="type-value">0</span>
           </div>
           <div class="type-pill epic">
-            <span>Epic</span>
-            <span id="statEpic">0</span>
+            <span class="type-label">Epic</span>
+            <span id="statEpic" class="type-value">0</span>
           </div>
         </div>
 
