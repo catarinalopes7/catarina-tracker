@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Marck+Script&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Marck+Script&display=swap" rel="stylesheet" />
 
   <style>
     * {
@@ -49,6 +49,7 @@
       --shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
       --radius-shell: 28px;
       --script-font: "Marck Script", cursive;
+      --number-font: "Nunito", sans-serif;
     }
 
     html,
@@ -57,7 +58,7 @@
       height: 1920px;
       margin: 0;
       overflow: hidden;
-      font-family: "Sora", Arial, sans-serif;
+      font-family: var(--number-font);
       color: var(--text-main);
       background:
         radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 24%),
@@ -192,7 +193,8 @@
     .hunt-id {
       padding-top: 4px;
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 800;
+      font-family: var(--number-font);
       color: rgba(240, 236, 255, 0.82);
       white-space: nowrap;
     }
@@ -231,12 +233,13 @@
     .stat-value {
       margin-top: 4px;
       font-size: 18px;
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.02em;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-family: var(--number-font);
     }
 
     .stat-value.yellow { color: var(--yellow); }
@@ -272,10 +275,11 @@
 
     .type-pill .type-value {
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1;
       text-transform: uppercase;
       letter-spacing: 0.01em;
+      font-family: var(--number-font);
     }
 
     .type-pill.super {
@@ -334,8 +338,9 @@
       min-width: 44px;
       text-align: right;
       font-size: 15px;
-      font-weight: 800;
+      font-weight: 900;
       color: #ffffff;
+      font-family: var(--number-font);
     }
 
     .list-panel {
@@ -359,17 +364,22 @@
     }
 
     .list-title {
-      font-size: 16px;
-      font-weight: 800;
+      font-size: 21px;
+      font-weight: 400;
       color: rgba(248, 245, 255, 0.92);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.01em;
+      font-family: var(--script-font);
+      text-transform: none;
+      line-height: 1;
     }
 
     .list-counter {
-      font-size: 13px;
-      font-weight: 700;
-      color: rgba(233, 226, 255, 0.72);
+      font-size: 18px;
+      font-weight: 400;
+      color: rgba(233, 226, 255, 0.82);
+      font-family: var(--script-font);
+      text-transform: none;
+      line-height: 1;
     }
 
     .slots-scroll {
@@ -466,16 +476,18 @@
     .slot-bet {
       margin-top: 2px;
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 800;
       color: rgba(238, 232, 255, 0.82);
       letter-spacing: 0.01em;
+      font-family: var(--number-font);
     }
 
     .slot-index {
       flex: 0 0 auto;
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 900;
       color: rgba(238, 232, 255, 0.72);
+      font-family: var(--number-font);
     }
 
     .slot-image-wrap {
@@ -531,15 +543,17 @@
       text-transform: uppercase;
       letter-spacing: 0.08em;
       opacity: 0.86;
+      font-family: var(--number-font);
     }
 
     .slot-status-value {
       margin-top: 2px;
       font-size: 18px;
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.02em;
       white-space: nowrap;
+      font-family: var(--number-font);
     }
 
     .footer-stats {
@@ -576,18 +590,20 @@
       text-transform: uppercase;
       letter-spacing: 0.04em;
       line-height: 1;
+      font-family: var(--number-font);
     }
 
     .footer-value {
       margin-top: 5px;
       font-size: 22px;
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.02em;
       color: #ffffff;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      font-family: var(--number-font);
     }
 
     .footer-value.green {
@@ -610,6 +626,7 @@
       font-size: 20px;
       font-weight: 700;
       line-height: 1.3;
+      font-family: var(--number-font);
     }
 
     .hide {
