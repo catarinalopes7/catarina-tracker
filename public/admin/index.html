@@ -616,11 +616,11 @@
     }
 
     function getCatalogSlotName(item) {
-      return item?.name || item?.nome || "";
+      return item?.name || item?.nome || item?.slot_name || item?.title || "";
     }
 
     function getCatalogSlotId(item) {
-      return item?.id ?? null;
+      return item?.id ?? item?.slot_id ?? null;
     }
 
     function getSlotTypeValue(slot) {
@@ -762,24 +762,57 @@
       return { res, data };
     }
 
-    async function loadSlotsCatalog() {
-      try {
-        const { res, data } = await fetchJson(
-          `${SUPABASE_URL}/rest/v1/slots?select=id,name,nome&order=id.asc`,
-          { headers: headers(false) }
-        );
+    async function tryLoadCatalogWithSelect(selectClause) {
+      const { res, data } = await fetchJson(
+        `${SUPABASE_URL}/rest/v1/slots?select=${encodeURIComponent(selectClause)}&limit=5000`,
+        { headers: headers(false) }
+      );
 
-        if (!res.ok) {
-          console.log(data);
-          slotsCatalog = [];
-          return;
-        }
-
-        slotsCatalog = Array.isArray(data) ? data : [];
-      } catch (err) {
-        console.log(err);
-        slotsCatalog = [];
+      if (!res.ok) {
+        return { ok: false, data };
       }
+
+      if (!Array.isArray(data)) {
+        return { ok: false, data };
+      }
+
+      const mapped = data.map(item => ({
+        id: item?.id ?? item?.slot_id ?? null,
+        name: item?.name || item?.nome || item?.slot_name || item?.title || ""
+      })).filter(item => item.name);
+
+      if (!mapped.length) {
+        return { ok: false, data };
+      }
+
+      return { ok: true, data: mapped };
+    }
+
+    async function loadSlotsCatalog() {
+      const attempts = [
+        "id,name,nome",
+        "id,name",
+        "id,nome",
+        "id,slot_name",
+        "id,title",
+        "*"
+      ];
+
+      for (const selectClause of attempts) {
+        try {
+          const result = await tryLoadCatalogWithSelect(selectClause);
+          if (result.ok) {
+            slotsCatalog = result.data;
+            return true;
+          }
+          console.log("Falhou catálogo com select:", selectClause, result.data);
+        } catch (err) {
+          console.log("Erro catálogo com select:", selectClause, err);
+        }
+      }
+
+      slotsCatalog = [];
+      return false;
     }
 
     function getSuggestions(query, limit = 8) {
@@ -1372,13 +1405,13 @@
     });
 
     (async function init() {
-      await loadSlotsCatalog();
+      const catalogLoaded = await loadSlotsCatalog();
       setupAddSlotAutocomplete();
       startAutoRefresh();
       loadHunts();
 
-      if (!slotsCatalog.length) {
-        showNotice("Não foi possível carregar a lista de slots para autocomplete. Ainda podes adicionar manualmente.", "error");
+      if (!catalogLoaded) {
+        showNotice("Não foi possível carregar automaticamente a lista de slots. Ainda podes adicionar manualmente, mas as imagens automáticas podem falhar.", "error");
       }
     })();
   </script>
