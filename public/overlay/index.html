@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=1080, height=1920" />
   <title>Catarina Tracker Overlay</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+
   <style>
     * {
       box-sizing: border-box;
@@ -15,7 +19,7 @@
       height: 1920px;
       margin: 0;
       overflow: hidden;
-      font-family: 'Poppins', Arial, sans-serif;
+      font-family: 'Montserrat', Arial, sans-serif;
       color: #ffffff;
       background: transparent;
     }
@@ -31,15 +35,15 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      background: linear-gradient(180deg, #04162d 0%, #072149 60%, #04162d 100%);
+      background: linear-gradient(180deg, #14082f 0%, #26105a 58%, #14082f 100%);
       border-right: 2px solid rgba(255,255,255,0.06);
       box-shadow: 0 0 0 1px rgba(255,255,255,0.03) inset;
     }
 
     .panel {
-      background: linear-gradient(180deg, #0a2a55 0%, #071f40 100%);
+      background: linear-gradient(180deg, #41207d 0%, #24124f 100%);
       border-radius: 20px;
-      border: 2px solid rgba(74, 142, 235, 0.32);
+      border: 2px solid rgba(143, 108, 255, 0.34);
       box-shadow:
         0 12px 26px rgba(0,0,0,0.34),
         inset 0 1px 0 rgba(255,255,255,0.08);
@@ -75,9 +79,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 2px solid #27a2ff;
-      color: #27a2ff;
-      box-shadow: 0 0 10px rgba(39,162,255,0.18);
+      border: 2px solid #44b2ff;
+      color: #44b2ff;
+      box-shadow: 0 0 10px rgba(68,178,255,0.18);
       font-weight: 900;
       font-size: 15px;
       line-height: 1;
@@ -94,7 +98,7 @@
       font-weight: 900;
       text-transform: uppercase;
       color: #ffffff;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -104,7 +108,7 @@
       margin-top: 3px;
       font-size: 11px;
       line-height: 1;
-      font-weight: 900;
+      font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.72);
       white-space: nowrap;
@@ -132,7 +136,7 @@
     .stat-box {
       min-height: 58px;
       border-radius: 12px;
-      background: linear-gradient(180deg, rgba(16,47,92,0.98), rgba(8,28,56,0.98));
+      background: linear-gradient(180deg, rgba(72,36,139,0.98), rgba(37,18,80,0.98));
       border: 1px solid rgba(255,255,255,0.06);
       padding: 7px 8px 6px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
@@ -148,9 +152,9 @@
       margin-bottom: 5px;
       color: rgba(255,255,255,0.80);
       font-size: 11px;
-      font-weight: 900;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.2px;
+      letter-spacing: 0.15px;
       line-height: 1;
     }
 
@@ -230,7 +234,7 @@
       flex: 1;
       height: 10px;
       border-radius: 999px;
-      background: rgba(1, 10, 22, 0.55);
+      background: rgba(7, 11, 33, 0.55);
       overflow: hidden;
       box-shadow:
         inset 0 2px 4px rgba(0,0,0,0.28),
@@ -241,8 +245,9 @@
       height: 100%;
       width: 0%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #a574ff 0%, #6fceff 100%);
+      background: linear-gradient(90deg, #4fb2ff 0%, #2d7dff 100%);
       transition: width 0.35s ease;
+      box-shadow: 0 0 10px rgba(79,178,255,0.20);
     }
 
     .progress-count {
@@ -284,7 +289,7 @@
     }
 
     .slot-card {
-      background: linear-gradient(180deg, #09244a 0%, #061b37 100%);
+      background: linear-gradient(180deg, #34196d 0%, #201147 100%);
       border-radius: 16px;
       border: 1px solid rgba(255,255,255,0.06);
       box-shadow:
@@ -371,13 +376,13 @@
       width: 100%;
       height: 100%;
       display: block;
-      object-fit: cover;
-      object-position: center top;
+      object-fit: contain;
+      object-position: center center;
     }
 
     .slot-image-box img {
       filter: saturate(0.88) brightness(0.88) contrast(0.96);
-      transform: scale(1.02);
+      transform: scale(0.94);
     }
 
     .slot-image-box::after {
@@ -423,7 +428,7 @@
     .bottom-box {
       min-height: 56px;
       border-radius: 12px;
-      background: linear-gradient(180deg, rgba(16,47,92,0.98), rgba(8,28,56,0.98));
+      background: linear-gradient(180deg, rgba(72,36,139,0.98), rgba(37,18,80,0.98));
       border: 1px solid rgba(255,255,255,0.06);
       padding: 7px 8px 6px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
@@ -441,7 +446,7 @@
       margin-bottom: 5px;
       font-size: 11px;
       line-height: 1;
-      font-weight: 900;
+      font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.80);
     }
@@ -457,7 +462,7 @@
     .empty-state {
       height: 100%;
       border-radius: 16px;
-      background: linear-gradient(180deg, #09244a 0%, #061b37 100%);
+      background: linear-gradient(180deg, #34196d 0%, #201147 100%);
       border: 1px solid rgba(255,255,255,0.06);
       display: flex;
       align-items: center;
