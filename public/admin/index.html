@@ -2,492 +2,921 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <title>Catarina Tracker - Admin</title>
+  <meta name="viewport" content="width=1080, height=1920" />
+  <title>Catarina Tracker Overlay</title>
 
   <style>
     * {
       box-sizing: border-box;
     }
 
+    html, body {
+      width: 1080px;
+      height: 1920px;
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Poppins', Arial, sans-serif;
+      color: #ffffff;
+      background: linear-gradient(180deg, #4F3EC7, #2b1d74);
+    }
+
     body {
-      margin: 0;
-      background:
-        radial-gradient(circle at top, rgba(92, 67, 201, 0.22), transparent 35%),
-        linear-gradient(180deg, #0f1221 0%, #0a0d18 100%);
-      color: #fff;
-      font-family: Arial, sans-serif;
-      padding: 20px;
+      padding: 18px;
     }
 
-    h1, h2, h3 {
-      margin: 0;
-    }
-
-    .page {
-      max-width: 1500px;
-      margin: 0 auto;
-    }
-
-    .topbar {
+    #app {
+      width: 100%;
+      height: 100%;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 18px;
-    }
-
-    .title-wrap h2 {
-      font-size: 32px;
-      line-height: 1;
-      margin-bottom: 6px;
-      color: #ffd54a;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-    }
-
-    .title-wrap .sub {
-      color: rgba(255,255,255,0.72);
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .status-badge {
-      padding: 10px 14px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 900;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
-      white-space: nowrap;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 440px 1fr;
-      gap: 18px;
-      align-items: start;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .panel {
-      background: linear-gradient(180deg, rgba(33, 38, 68, 0.96), rgba(20, 24, 44, 0.98));
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 18px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.28);
+      background: linear-gradient(180deg, #3b2a70, #2a1d55);
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       overflow: hidden;
+      flex-shrink: 0;
     }
 
-    .panel-head {
-      padding: 16px 18px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+    .header {
+      padding: 16px 20px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+      width: 100%;
+    }
+
+    .logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 30% 30%, #7e6aff 0%, #5a43e0 50%, #35227f 100%);
+      box-shadow:
+        inset 0 0 0 3px rgba(255,255,255,0.08),
+        0 8px 18px rgba(0,0,0,0.35);
+      font-size: 28px;
+      font-weight: 900;
+      color: #f5edff;
+    }
+
+    .hunt-meta {
+      min-width: 0;
+    }
+
+    .hunt-label {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #FFD54A;
+      line-height: 1;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 900px;
+    }
+
+    .hunt-sub {
+      margin-top: 5px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 900px;
+    }
+
+    .stats-wrap {
+      padding: 0 20px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-card {
+      min-height: 92px;
+      border-radius: 18px;
+      padding: 12px;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(94, 73, 174, 0.95), rgba(48, 33, 106, 0.98));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 8px 24px rgba(0,0,0,0.22);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .stat-card.start-balance {
+      min-height: 100px;
+      background: linear-gradient(180deg, rgba(111, 89, 205, 0.98), rgba(58, 40, 128, 0.98));
+    }
+
+    .stat-title {
+      font-size: 16px;
+      line-height: 1;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #d6cdf7;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+    }
+
+    .stat-card.start-balance .stat-title {
+      color: #f1e9ff;
+    }
+
+    .stat-value {
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 0 3px 10px rgba(0,0,0,0.28);
+    }
+
+    .stat-card.start-balance .stat-value {
+      font-size: 40px;
+    }
+
+    .stat-value.negative {
+      color: #ffb2c4;
+    }
+
+    .stat-value.positive {
+      color: #9ff2bd;
+    }
+
+    .bonuses-wrap {
+      padding: 0 20px 14px;
+    }
+
+    .bonuses-bar {
+      background: linear-gradient(180deg, rgba(89, 66, 169, 0.96), rgba(45, 31, 102, 0.98));
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 8px 24px rgba(0,0,0,0.20);
+    }
+
+    .bonuses-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+
+    .bonuses-title {
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .bonuses-count {
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .tag-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .tag {
+      position: relative;
+      min-height: 66px;
+      border-radius: 18px;
+      padding: 12px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      overflow: hidden;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 8px 20px rgba(0,0,0,0.18);
     }
 
-    .panel-head h3 {
-      font-size: 18px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      color: #fff;
+    .tag::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.28;
+      pointer-events: none;
     }
 
-    .panel-head .count {
-      min-width: 34px;
-      height: 34px;
-      padding: 0 12px;
-      border-radius: 999px;
-      display: inline-flex;
+    .tag-left {
+      display: flex;
       align-items: center;
-      justify-content: center;
-      background: rgba(255,255,255,0.08);
-      font-weight: 900;
-      font-size: 14px;
-    }
-
-    .table-wrap {
-      width: 100%;
-      overflow: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      text-align: left;
-      vertical-align: middle;
-      font-size: 14px;
-    }
-
-    th {
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      color: rgba(255,255,255,0.72);
-      background: rgba(255,255,255,0.03);
-      position: sticky;
-      top: 0;
+      gap: 10px;
+      position: relative;
       z-index: 1;
     }
 
-    tr:hover td {
-      background: rgba(255,255,255,0.04);
+    .tag-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(255,255,255,0.18);
     }
 
-    .hunt-row {
-      cursor: pointer;
-    }
-
-    .hunt-row.active td {
-      background: rgba(138, 104, 255, 0.16);
-    }
-
-    .hunt-name,
-    .slot-name {
+    .tag-label {
+      font-size: 18px;
       font-weight: 900;
-      color: #fff;
-    }
-
-    .hunt-start,
-    .slot-bet,
-    .slot-payout {
-      font-weight: 900;
-      color: #dbe5ff;
-    }
-
-    .slot-id {
-      color: rgba(255,255,255,0.7);
-      font-weight: 700;
-    }
-
-    button {
-      padding: 9px 14px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 900;
-      font-size: 13px;
       text-transform: uppercase;
-      transition: 0.18s ease;
+      letter-spacing: 0.5px;
+      position: relative;
+      z-index: 1;
     }
 
-    button:hover {
-      transform: translateY(-1px);
-    }
-
-    .btn-open {
-      background: linear-gradient(180deg, #7a5cff, #5f44dc);
-      color: #fff;
-      box-shadow: 0 6px 18px rgba(95, 68, 220, 0.28);
-    }
-
-    .btn-open.active {
-      background: linear-gradient(180deg, #2ad6a0, #17b887);
-      box-shadow: 0 6px 18px rgba(23, 184, 135, 0.28);
-    }
-
-    .btn-add {
-      background: linear-gradient(180deg, #2ad6a0, #17b887);
-      color: #071c16;
-      box-shadow: 0 6px 18px rgba(23, 184, 135, 0.28);
-      min-width: 120px;
-    }
-
-    .pill {
+    .tag-value {
+      min-width: 42px;
+      height: 42px;
+      padding: 0 14px;
+      border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 32px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.35px;
-      white-space: nowrap;
-    }
-
-    .pill.green {
-      color: #0d2a20;
-      background: #30efb3;
-    }
-
-    .pill.red {
-      color: #3d0f18;
-      background: #ff7d92;
-    }
-
-    .editable {
-      cursor: pointer;
-      transition: 0.18s ease;
-      min-width: 120px;
-      position: relative;
-    }
-
-    .editable:hover {
-      background: rgba(255,255,255,0.06);
-      border-radius: 8px;
-    }
-
-    .editable.editing {
-      background: rgba(255,255,255,0.08);
-      border-radius: 8px;
-    }
-
-    .edit-input,
-    .form-input {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.14);
-      outline: none;
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      font-weight: 800;
-      font-size: 14px;
-    }
-
-    .edit-input.wide {
-      min-width: 220px;
-    }
-
-    .empty {
-      padding: 24px 18px;
-      text-align: center;
-      color: rgba(255,255,255,0.72);
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    .summary-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      padding: 14px 18px 0;
-    }
-
-    .summary-card {
-      min-width: 140px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .summary-title {
-      font-size: 12px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.68);
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .summary-value {
       font-size: 20px;
       font-weight: 900;
-      color: #fff;
-      line-height: 1;
-    }
-
-    .add-bar {
-      padding: 14px 18px 0;
-    }
-
-    .add-grid {
-      display: grid;
-      grid-template-columns: minmax(280px, 1fr) 140px 120px;
-      gap: 10px;
-      align-items: start;
-    }
-
-    .field-wrap {
       position: relative;
+      z-index: 1;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
-    .autocomplete-box {
-      position: absolute;
-      top: calc(100% + 6px);
-      left: 0;
-      right: 0;
-      background: #141a31;
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 12px;
+    .tag.super {
+      background: linear-gradient(180deg, rgba(215, 177, 89, 0.22), rgba(166, 126, 33, 0.16));
+      border: 1px solid rgba(225, 189, 96, 0.28);
+    }
+
+    .tag.super::before {
+      background: radial-gradient(circle at 18% 20%, rgba(255, 220, 120, 0.55), transparent 42%);
+    }
+
+    .tag.super .tag-dot {
+      background: #f0c866;
+    }
+
+    .tag.super .tag-label {
+      color: #f8e4aa;
+    }
+
+    .tag.super .tag-value {
+      background: rgba(245, 212, 122, 0.15);
+      color: #fff0bf;
+      border: 1px solid rgba(245, 212, 122, 0.22);
+    }
+
+    .tag.epic {
+      background: linear-gradient(180deg, rgba(180, 92, 123, 0.20), rgba(126, 45, 73, 0.14));
+      border: 1px solid rgba(198, 104, 136, 0.26);
+    }
+
+    .tag.epic::before {
+      background: radial-gradient(circle at 18% 20%, rgba(255, 128, 170, 0.40), transparent 42%);
+    }
+
+    .tag.epic .tag-dot {
+      background: #d87d9d;
+    }
+
+    .tag.epic .tag-label {
+      color: #ffd8e4;
+    }
+
+    .tag.epic .tag-value {
+      background: rgba(223, 133, 164, 0.12);
+      color: #ffe6ee;
+      border: 1px solid rgba(223, 133, 164, 0.22);
+    }
+
+    .progress-wrap {
+      margin-top: 12px;
+    }
+
+    .progress-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      gap: 12px;
+    }
+
+    .progress-label {
+      font-size: 15px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.84);
+      letter-spacing: 0.4px;
+    }
+
+    .progress-count {
+      font-size: 20px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 16px;
+      border-radius: 999px;
       overflow: hidden;
-      box-shadow: 0 14px 28px rgba(0,0,0,0.32);
-      z-index: 50;
-      max-height: 280px;
-      overflow-y: auto;
+      background: rgba(11, 7, 34, 0.42);
+      box-shadow:
+        inset 0 2px 6px rgba(0,0,0,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #a574ff 0%, #6fceff 100%);
+      box-shadow: 0 0 16px rgba(129, 194, 255, 0.22);
+      transition: width 0.35s ease;
+    }
+
+    .current-opening {
+      margin-top: 12px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(132, 70, 93, 0.85) 0%, rgba(108, 44, 74, 0.88) 48%, rgba(73, 26, 66, 0.90) 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 10px 24px rgba(0,0,0,0.22);
       display: none;
     }
 
-    .autocomplete-box.show {
+    .current-opening.show {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 12px;
+      padding: 10px;
+    }
+
+    .current-thumb {
+      width: 120px;
+      min-width: 120px;
+      height: 120px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .current-thumb img,
+    .current-thumb .current-placeholder {
+      width: 100%;
+      height: 100%;
       display: block;
+      object-fit: cover;
     }
 
-    .autocomplete-item {
-      padding: 10px 12px;
-      cursor: pointer;
+    .current-placeholder {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px;
+      font-size: 13px;
       font-weight: 800;
-      color: #fff;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.04);
     }
 
-    .autocomplete-item:last-child {
-      border-bottom: none;
+    .current-content {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
     }
 
-    .autocomplete-item:hover,
-    .autocomplete-item.active {
-      background: rgba(122, 92, 255, 0.22);
+    .current-name {
+      font-size: 22px;
+      line-height: 1.02;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #ffffff;
+      word-break: break-word;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.28);
     }
 
-    .helper {
-      padding: 8px 2px 0;
+    .current-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .current-stat {
+      border-radius: 14px;
+      background: rgba(255,255,255,0.10);
+      padding: 10px 8px;
+      text-align: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .current-stat-label {
       font-size: 12px;
-      color: rgba(255,255,255,0.60);
-      font-weight: 700;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.78);
+      margin-bottom: 6px;
     }
 
-    .cell-editor {
+    .current-stat-value {
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    .bestworst-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .mini-card {
+      background: linear-gradient(180deg, rgba(58, 40, 128, 0.92), rgba(36, 24, 85, 0.96));
+      border-radius: 18px;
+      padding: 10px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 8px 20px rgba(0,0,0,0.18);
+      min-height: 112px;
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+      overflow: hidden;
+    }
+
+    .mini-card.best {
+      border: 1px solid rgba(117, 224, 165, 0.20);
+    }
+
+    .mini-card.worst {
+      border: 1px solid rgba(236, 132, 156, 0.20);
+    }
+
+    .mini-thumb {
+      width: 96px;
+      min-width: 96px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.05);
+      align-self: stretch;
+    }
+
+    .mini-thumb img,
+    .mini-thumb .mini-placeholder {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .mini-placeholder {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 8px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .mini-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .mini-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .mini-label {
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .mini-card.best .mini-label {
+      color: #9ff2bd;
+    }
+
+    .mini-card.worst .mini-label {
+      color: #ffb2c4;
+    }
+
+    .mini-badge {
+      font-size: 12px;
+      font-weight: 900;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.85);
+      white-space: nowrap;
+    }
+
+    .mini-name {
+      font-size: 16px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.05;
+      text-transform: uppercase;
+      word-break: break-word;
+    }
+
+    .mini-stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .mini-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .mini-stat-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .mini-stat-value {
+      font-size: 16px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    .slots-section {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .slots-list {
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 4px;
+    }
+
+    .slot-card {
+      background: linear-gradient(180deg, #3b2a70, #2a1d55);
+      border-radius: 16px;
+      padding: 9px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 10px 24px rgba(0,0,0,0.26);
+      overflow: hidden;
+      transition: 0.25s ease;
+    }
+
+    .slot-card.opened {
+      opacity: 0.45;
+    }
+
+    .slot-card.current {
+      opacity: 1;
+      border: 2px solid rgba(153, 215, 255, 0.52);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        0 0 0 1px rgba(255,255,255,0.05),
+        0 10px 24px rgba(0,0,0,0.26),
+        0 0 18px rgba(111, 206, 255, 0.20);
+      background: linear-gradient(180deg, #4b368d, #302060);
+    }
+
+    .slot-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 6px;
+    }
+
+    .slot-title {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .slot-name {
+      font-size: 18px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: #f4f8ff;
+      line-height: 1.05;
+      font-style: italic;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      word-break: break-word;
+    }
+
+    .slot-bet {
+      margin-top: 4px;
+      font-size: 15px;
+      font-weight: 900;
+      color: #dbe8ff;
+      line-height: 1;
+      opacity: 0.9;
+    }
+
+    .slot-index {
+      font-size: 17px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.78);
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .slot-image-wrap {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
       position: relative;
     }
 
-    @media (max-width: 1200px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
+    .slot-image {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      display: block;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border-radius: 10px;
     }
 
-    @media (max-width: 900px) {
-      .add-grid {
-        grid-template-columns: 1fr;
-      }
+    .slot-placeholder {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border-radius: 10px;
+    }
+
+    .empty-state {
+      height: 100%;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+      background: linear-gradient(180deg, #3b2a70, #2a1d55);
+      font-size: 24px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.82);
+      text-transform: uppercase;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 10px 24px rgba(0,0,0,0.26);
+    }
+
+    .footer-space {
+      height: 2px;
+      flex-shrink: 0;
     }
   </style>
 </head>
 
 <body>
-  <div class="page">
-    <div class="topbar">
-      <div class="title-wrap">
-        <h2>Catarina Tracker - Admin</h2>
-        <div class="sub">Gestão de hunts, adicionar slots e editar rápido</div>
+  <div id="app">
+    <div class="panel">
+      <div class="header">
+        <div class="header-left">
+          <div class="logo">✦</div>
+
+          <div class="hunt-meta">
+            <div id="huntLabel" class="hunt-label">BONUS HUNT</div>
+            <div id="huntSub" class="hunt-sub">A carregar...</div>
+          </div>
+        </div>
       </div>
 
-      <div id="selectedHuntBadge" class="status-badge">Nenhuma hunt aberta</div>
+      <div class="stats-wrap">
+        <div class="stat-card start-balance">
+          <div class="stat-title">Start Balance</div>
+          <div id="start" class="stat-value">$0.00</div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-title">AVG</div>
+            <div id="avg" class="stat-value">0.00x</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">BE Inicial</div>
+            <div id="be" class="stat-value">0%</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">Profit/Loss</div>
+            <div id="profitLoss" class="stat-value">$0.00</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-title">Total Pago</div>
+            <div id="totalPaid" class="stat-value">$0.00</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bonuses-wrap">
+        <div class="bonuses-bar">
+          <div class="bonuses-top">
+            <div class="bonuses-title">Bonuses</div>
+            <div id="total" class="bonuses-count">0</div>
+          </div>
+
+          <div class="tag-row">
+            <div class="tag super">
+              <div class="tag-left">
+                <div class="tag-dot"></div>
+                <div class="tag-label">Super</div>
+              </div>
+              <div id="superCount" class="tag-value">0</div>
+            </div>
+
+            <div class="tag epic">
+              <div class="tag-left">
+                <div class="tag-dot"></div>
+                <div class="tag-label">Epic</div>
+              </div>
+              <div id="epicCount" class="tag-value">0</div>
+            </div>
+          </div>
+
+          <div class="progress-wrap">
+            <div class="progress-head">
+              <div class="progress-label">Opening Progress</div>
+              <div id="open" class="progress-count">0/0</div>
+            </div>
+
+            <div class="progress-track">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
+          </div>
+
+          <div id="currentOpening" class="current-opening">
+            <div class="current-thumb" id="currentThumb">
+              <div class="current-placeholder">Sem imagem</div>
+            </div>
+
+            <div class="current-content">
+              <div id="currentName" class="current-name">À espera de abertura</div>
+
+              <div class="current-stats">
+                <div class="current-stat">
+                  <div class="current-stat-label">Win</div>
+                  <div id="currentWin" class="current-stat-value">$0.00</div>
+                </div>
+
+                <div class="current-stat">
+                  <div class="current-stat-label">Multi</div>
+                  <div id="currentMulti" class="current-stat-value">0.00x</div>
+                </div>
+
+                <div class="current-stat">
+                  <div class="current-stat-label">Bet</div>
+                  <div id="currentBet" class="current-stat-value">$0.00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bestworst-grid">
+            <div class="mini-card best" id="bestCard">
+              <div class="mini-thumb" id="bestThumb">
+                <div class="mini-placeholder">Sem abertura</div>
+              </div>
+
+              <div class="mini-content">
+                <div class="mini-topline">
+                  <div class="mini-label">Best Slot</div>
+                  <div class="mini-badge" id="bestRank">--</div>
+                </div>
+
+                <div class="mini-name" id="bestName">À espera</div>
+
+                <div class="mini-stats">
+                  <div class="mini-stat">
+                    <div class="mini-stat-label">Win</div>
+                    <div class="mini-stat-value" id="bestWin">$0.00</div>
+                  </div>
+
+                  <div class="mini-stat">
+                    <div class="mini-stat-label">Multi</div>
+                    <div class="mini-stat-value" id="bestMulti">0.00x</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mini-card worst" id="worstCard">
+              <div class="mini-thumb" id="worstThumb">
+                <div class="mini-placeholder">Sem abertura</div>
+              </div>
+
+              <div class="mini-content">
+                <div class="mini-topline">
+                  <div class="mini-label">Worst Slot</div>
+                  <div class="mini-badge" id="worstRank">--</div>
+                </div>
+
+                <div class="mini-name" id="worstName">À espera</div>
+
+                <div class="mini-stats">
+                  <div class="mini-stat">
+                    <div class="mini-stat-label">Win</div>
+                    <div class="mini-stat-value" id="worstWin">$0.00</div>
+                  </div>
+
+                  <div class="mini-stat">
+                    <div class="mini-stat-label">Multi</div>
+                    <div class="mini-stat-value" id="worstMulti">0.00x</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="layout">
-      <div class="panel">
-        <div class="panel-head">
-          <h3>Hunts</h3>
-          <div id="huntsCount" class="count">0</div>
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Start</th>
-                <th>Ação</th>
-              </tr>
-            </thead>
-            <tbody id="hunts"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head">
-          <h3>Slots</h3>
-          <div id="slotsCount" class="count">0</div>
-        </div>
-
-        <div class="summary-bar">
-          <div class="summary-card">
-            <div class="summary-title">Total Slots</div>
-            <div id="sumTotal" class="summary-value">0</div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-title">Abertos</div>
-            <div id="sumOpen" class="summary-value">0</div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-title">Fechados</div>
-            <div id="sumClosed" class="summary-value">0</div>
-          </div>
-
-          <div class="summary-card">
-            <div class="summary-title">Total Pago</div>
-            <div id="sumPaid" class="summary-value">$0.00</div>
-          </div>
-        </div>
-
-        <div class="add-bar">
-          <div class="add-grid">
-            <div class="field-wrap">
-              <input id="newSlotName" class="form-input" type="text" placeholder="Escreve o nome da slot..." autocomplete="off" />
-              <div id="newSlotSuggestions" class="autocomplete-box"></div>
-              <div class="helper">Escreve umas letras e escolhe a slot da lista</div>
-            </div>
-
-            <div>
-              <input id="newSlotBet" class="form-input" type="text" placeholder="Bet" value="0.20" />
-            </div>
-
-            <div>
-              <button id="addSlotBtn" class="btn-add" type="button">Adicionar</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Slot</th>
-                <th>Bet</th>
-                <th>Payout</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody id="slots">
-              <tr>
-                <td colspan="5" class="empty">Abre uma hunt para veres os slots</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <div class="slots-section">
+      <div id="slotsList" class="slots-list">
+        <div class="empty-state">A carregar slots...</div>
       </div>
     </div>
+
+    <div class="footer-space"></div>
   </div>
 
   <script>
     const SUPABASE_URL = "https://cwengomkuhqvrdcpkgwp.supabase.co";
     const SUPABASE_KEY = "sb_publishable_Hi1T9WK_snEgqPep5JJnRQ__HSJXQUs";
 
-    let selectedHunt = null;
-    let huntsCache = [];
-    let slotsCatalog = [];
-    let isEditing = false;
-    let refreshTimer = null;
-
-    function headers() {
-      return {
-        apikey: SUPABASE_KEY,
-        Authorization: "Bearer " + SUPABASE_KEY,
-        "Content-Type": "application/json"
-      };
-    }
+    let slotsCatalogCache = [];
+    let slotsCatalogLoaded = false;
 
     function parseMoney(value) {
       if (value === null || value === undefined) return 0;
@@ -496,8 +925,35 @@
       return isNaN(num) ? 0 : num;
     }
 
-    function formatMoney(value) {
-      return "$" + parseMoney(value).toFixed(2);
+    function normalizeText(text) {
+      return String(text || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "");
+    }
+
+    function getStartFromHunt(hunt) {
+      const startBalance = parseMoney(hunt?.start_balance);
+      const startValue = parseMoney(hunt?.start_value);
+
+      if (startBalance > 0) return startBalance;
+      if (startValue > 0) return startValue;
+      return 0;
+    }
+
+    function formatCurrency(value) {
+      const num = parseMoney(value);
+      const sign = num < 0 ? "-" : "";
+      return sign + "$" + Math.abs(num).toFixed(2);
+    }
+
+    function formatMultiplier(value) {
+      return parseMoney(value).toFixed(2) + "x";
+    }
+
+    function formatPercent(value) {
+      return Math.round(parseMoney(value)) + "%";
     }
 
     function escapeHtml(text) {
@@ -509,558 +965,351 @@
         .replaceAll("'", "&#039;");
     }
 
-    function normalizeText(text) {
-      return String(text || "")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]/g, "");
+    function getBonusTypeLabel(item) {
+      const raw = String(
+        item?.bonus_type ||
+        item?.type ||
+        item?.categoria ||
+        item?.rarity ||
+        item?.tipo_slot ||
+        ""
+      ).trim().toLowerCase();
+
+      if (raw.includes("super")) return "super";
+      if (raw.includes("epic")) return "epic";
+      if (raw.includes("extreme")) return "epic";
+      return "normal";
     }
 
-    function getCatalogSlotName(item) {
-      return item?.name || item?.nome || "";
+    function getBonusName(item) {
+      return item?.slot_name || item?.nome || item?.name || "Sem nome";
     }
 
-    function setSelectedHuntBadge() {
-      const badge = document.getElementById("selectedHuntBadge");
-
-      if (!selectedHunt) {
-        badge.textContent = "Nenhuma hunt aberta";
-        return;
-      }
-
-      const hunt = huntsCache.find(h => Number(h.id) === Number(selectedHunt));
-      if (!hunt) {
-        badge.textContent = "Hunt aberta";
-        return;
-      }
-
-      badge.textContent = `Hunt aberta: #${hunt.id} - ${hunt.nome || "Sem nome"}`;
+    function getBonusBet(item) {
+      return parseMoney(
+        item?.bet_size ??
+        item?.bet ??
+        item?.aposta ??
+        0
+      );
     }
 
-    function renderHunts(data) {
-      const tbody = document.getElementById("hunts");
-      document.getElementById("huntsCount").textContent = data.length;
-
-      if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="4" class="empty">Sem hunts</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = data.map(h => {
-        const isActive = Number(selectedHunt) === Number(h.id);
-
-        return `
-          <tr class="hunt-row ${isActive ? "active" : ""}" onclick="openHunt(${h.id})">
-            <td><span class="slot-id">#${h.id}</span></td>
-            <td><span class="hunt-name">${escapeHtml(h.nome || "Sem nome")}</span></td>
-            <td><span class="hunt-start">${formatMoney(h.start_balance)}</span></td>
-            <td>
-              <button class="btn-open ${isActive ? "active" : ""}" onclick="event.stopPropagation(); openHunt(${h.id})">
-                ${isActive ? "Aberta" : "Abrir"}
-              </button>
-            </td>
-          </tr>
-        `;
-      }).join("");
+    function getBonusPayout(item) {
+      return parseMoney(
+        item?.payout ??
+        item?.valor_pago ??
+        item?.total_pago ??
+        0
+      );
     }
 
-    function renderSlots(data) {
-      const tbody = document.getElementById("slots");
-      const total = data.length;
-      const opened = data.filter(slot => parseMoney(slot.payout) > 0).length;
-      const closed = total - opened;
-      const totalPaid = data.reduce((sum, slot) => sum + parseMoney(slot.payout), 0);
-
-      document.getElementById("slotsCount").textContent = total;
-      document.getElementById("sumTotal").textContent = total;
-      document.getElementById("sumOpen").textContent = opened;
-      document.getElementById("sumClosed").textContent = closed;
-      document.getElementById("sumPaid").textContent = formatMoney(totalPaid);
-
-      if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="5" class="empty">Sem slots nesta hunt</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = data.map(slot => {
-        const payout = parseMoney(slot.payout);
-        const estado = payout > 0
-          ? `<span class="pill green">BONUS OPENING</span>`
-          : `<span class="pill red">FECHADO</span>`;
-
-        return `
-          <tr>
-            <td><span class="slot-id">#${slot.id}</span></td>
-            <td class="editable" onclick="editSlotName(this, ${slot.id}, ${JSON.stringify(slot.slot_name || "")})">
-              <span class="slot-name">${escapeHtml(slot.slot_name || "Sem nome")}</span>
-            </td>
-            <td class="editable" onclick="editBet(this, ${slot.id}, ${parseMoney(slot.bet_size)})">
-              <span class="slot-bet">${formatMoney(slot.bet_size)}</span>
-            </td>
-            <td class="editable" onclick="editPayout(this, ${slot.id}, ${payout})">
-              <span class="slot-payout">${payout.toFixed(2)}</span>
-            </td>
-            <td>${estado}</td>
-          </tr>
-        `;
-      }).join("");
+    function getBonusMulti(item) {
+      const bet = getBonusBet(item);
+      const payout = getBonusPayout(item);
+      if (bet <= 0) return 0;
+      return payout / bet;
     }
 
     async function loadSlotsCatalog() {
-      try {
-        const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/slots?select=id,name,nome&order=id.asc`,
-          { headers: headers() }
-        );
+      if (slotsCatalogLoaded) return slotsCatalogCache;
 
-        const data = await res.json();
-        slotsCatalog = Array.isArray(data) ? data : [];
-      } catch (err) {
-        console.log(err);
-        slotsCatalog = [];
-      }
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/slots?select=name,nome,image_url,imagem_url,image,thumbnail,thumb,cover,slug,tipo_slot`,
+        {
+          headers: {
+            apikey: SUPABASE_KEY,
+            Authorization: `Bearer ${SUPABASE_KEY}`
+          }
+        }
+      );
+
+      const data = await res.json();
+      slotsCatalogCache = Array.isArray(data) ? data : [];
+      slotsCatalogLoaded = true;
+      return slotsCatalogCache;
     }
 
-    function getSuggestions(query, limit = 8) {
-      const q = normalizeText(query);
-      if (!q) return [];
+    function getCatalogMatch(item) {
+      const itemName = normalizeText(getBonusName(item));
+      if (!itemName || !slotsCatalogCache.length) return null;
 
-      return slotsCatalog
-        .map(item => getCatalogSlotName(item))
-        .filter(Boolean)
-        .filter((name, index, arr) => arr.indexOf(name) === index)
-        .filter(name => normalizeText(name).includes(q))
-        .slice(0, limit);
+      let exact = slotsCatalogCache.find(slot => {
+        const slotName = normalizeText(slot?.name || slot?.nome || "");
+        return slotName === itemName;
+      });
+
+      if (exact) return exact;
+
+      let slugMatch = slotsCatalogCache.find(slot => {
+        const slug = normalizeText(slot?.slug || "");
+        return slug === itemName;
+      });
+
+      return slugMatch || null;
     }
 
-    function renderAutocomplete(box, items, onPick, activeIndex = -1) {
-      if (!items.length) {
-        box.innerHTML = "";
-        box.classList.remove("show");
+    function getImageFromBonus(item) {
+      const direct =
+        item?.image_url ||
+        item?.imagem_url ||
+        item?.image ||
+        item?.thumbnail ||
+        item?.thumb ||
+        item?.cover ||
+        "";
+
+      if (direct) return direct;
+
+      const catalog = getCatalogMatch(item);
+      if (!catalog) return "";
+
+      return (
+        catalog?.image_url ||
+        catalog?.imagem_url ||
+        catalog?.image ||
+        catalog?.thumbnail ||
+        catalog?.thumb ||
+        catalog?.cover ||
+        ""
+      );
+    }
+
+    function renderMiniCard(prefix, item, index) {
+      const thumb = document.getElementById(prefix + "Thumb");
+      const rank = document.getElementById(prefix + "Rank");
+      const name = document.getElementById(prefix + "Name");
+      const win = document.getElementById(prefix + "Win");
+      const multi = document.getElementById(prefix + "Multi");
+
+      if (!item) {
+        thumb.innerHTML = `<div class="mini-placeholder">Sem abertura</div>`;
+        rank.innerText = "--";
+        name.innerText = "À espera";
+        win.innerText = "$0.00";
+        multi.innerText = "0.00x";
         return;
       }
 
-      box.innerHTML = items.map((item, index) => `
-        <div class="autocomplete-item ${index === activeIndex ? "active" : ""}" data-value="${escapeHtml(item)}">
-          ${escapeHtml(item)}
-        </div>
-      `).join("");
+      const img = getImageFromBonus(item);
+      const bonusName = getBonusName(item);
+      const payout = getBonusPayout(item);
+      const multiValue = getBonusMulti(item);
+
+      thumb.innerHTML = img
+        ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(bonusName)}" />`
+        : `<div class="mini-placeholder">Sem imagem</div>`;
+
+      rank.innerText = "#" + (index + 1);
+      name.innerText = bonusName;
+      win.innerText = formatCurrency(payout);
+      multi.innerText = formatMultiplier(multiValue);
+    }
+
+    function renderCurrentOpening(item) {
+      const box = document.getElementById("currentOpening");
+      const thumb = document.getElementById("currentThumb");
+      const name = document.getElementById("currentName");
+      const win = document.getElementById("currentWin");
+      const multi = document.getElementById("currentMulti");
+      const bet = document.getElementById("currentBet");
+
+      if (!item) {
+        box.classList.remove("show");
+        thumb.innerHTML = `<div class="current-placeholder">Sem imagem</div>`;
+        name.innerText = "À espera de abertura";
+        win.innerText = "$0.00";
+        multi.innerText = "0.00x";
+        bet.innerText = "$0.00";
+        return;
+      }
+
+      const img = getImageFromBonus(item);
+      const bonusName = getBonusName(item);
 
       box.classList.add("show");
+      thumb.innerHTML = img
+        ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(bonusName)}" />`
+        : `<div class="current-placeholder">Sem imagem</div>`;
 
-      box.querySelectorAll(".autocomplete-item").forEach(el => {
-        el.addEventListener("mousedown", (e) => {
-          e.preventDefault();
-          onPick(el.getAttribute("data-value"));
-        });
-      });
+      name.innerText = bonusName;
+      win.innerText = formatCurrency(getBonusPayout(item));
+      multi.innerText = formatMultiplier(getBonusMulti(item));
+      bet.innerText = formatCurrency(getBonusBet(item));
     }
 
-    function closeAutocomplete(box) {
-      box.innerHTML = "";
-      box.classList.remove("show");
-    }
+    function renderSlots(items, latestOpenedIndex = -1) {
+      const list = document.getElementById("slotsList");
 
-    async function loadHunts() {
-      try {
-        const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/hunts?select=*&order=id.desc`,
-          { headers: headers() }
-        );
-
-        const data = await res.json();
-        huntsCache = Array.isArray(data) ? data : [];
-
-        if (!selectedHunt && huntsCache.length) {
-          selectedHunt = huntsCache[0].id;
-        }
-
-        const stillExists = huntsCache.some(h => Number(h.id) === Number(selectedHunt));
-        if (!stillExists) {
-          selectedHunt = huntsCache.length ? huntsCache[0].id : null;
-        }
-
-        renderHunts(huntsCache);
-        setSelectedHuntBadge();
-
-        if (selectedHunt) {
-          await loadSlots();
-        } else {
-          renderSlots([]);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
-
-    async function loadSlots() {
-      if (!selectedHunt || isEditing) {
+      if (!items.length) {
+        list.innerHTML = '<div class="empty-state">Sem bónus nesta hunt</div>';
         return;
       }
 
+      list.innerHTML = items.map((item, index) => {
+        const name = getBonusName(item);
+        const bet = getBonusBet(item);
+        const img = getImageFromBonus(item);
+        const payout = getBonusPayout(item);
+
+        const classes = [
+          "slot-card",
+          payout > 0 ? "opened" : "",
+          index === latestOpenedIndex ? "current" : ""
+        ].filter(Boolean).join(" ");
+
+        return `
+          <div class="${classes}">
+            <div class="slot-top">
+              <div class="slot-title">
+                <div class="slot-name">${escapeHtml(name)}</div>
+                <div class="slot-bet">${formatCurrency(bet)}</div>
+              </div>
+              <div class="slot-index">#${index + 1}</div>
+            </div>
+
+            <div class="slot-image-wrap">
+              ${
+                img
+                  ? `<img class="slot-image" src="${escapeHtml(img)}" alt="${escapeHtml(name)}" />`
+                  : `<div class="slot-placeholder">Sem imagem</div>`
+              }
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function resetOverlayNoHunt(message = "Sem hunt ativa") {
+      document.getElementById("huntLabel").innerText = "BONUS HUNT";
+      document.getElementById("huntSub").innerText = message;
+      document.getElementById("start").innerText = "$0.00";
+      document.getElementById("avg").innerText = "0.00x";
+      document.getElementById("be").innerText = "0%";
+      document.getElementById("profitLoss").innerText = "$0.00";
+      document.getElementById("totalPaid").innerText = "$0.00";
+      document.getElementById("profitLoss").className = "stat-value";
+      document.getElementById("total").innerText = "0";
+      document.getElementById("superCount").innerText = "0";
+      document.getElementById("epicCount").innerText = "0";
+      document.getElementById("open").innerText = "0/0";
+      document.getElementById("progressFill").style.width = "0%";
+      renderCurrentOpening(null);
+      renderMiniCard("best", null, -1);
+      renderMiniCard("worst", null, -1);
+      document.getElementById("slotsList").innerHTML = `<div class="empty-state">${message}</div>`;
+    }
+
+    async function load() {
       try {
-        const res = await fetch(
-          `${SUPABASE_URL}/rest/v1/hunt_slots?hunt_id=eq.${selectedHunt}&select=*&order=id.asc`,
-          { headers: headers() }
+        const huntRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/hunts?select=*&is_active=eq.true&order=id.desc&limit=1`,
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: `Bearer ${SUPABASE_KEY}`
+            }
+          }
         );
 
-        const data = await res.json();
-        const rows = Array.isArray(data) ? data : [];
+        const huntData = await huntRes.json();
+        const hunt = Array.isArray(huntData) ? huntData[0] : null;
 
-        renderSlots(rows);
-        renderHunts(huntsCache);
-        setSelectedHuntBadge();
-      } catch (err) {
-        console.log(err);
-      }
-    }
-
-    function openHunt(id) {
-      if (isEditing) return;
-      selectedHunt = id;
-      renderHunts(huntsCache);
-      setSelectedHuntBadge();
-      loadSlots();
-    }
-
-    async function patchHuntSlot(id, body) {
-      await fetch(`${SUPABASE_URL}/rest/v1/hunt_slots?id=eq.${id}`, {
-        method: "PATCH",
-        headers: headers(),
-        body: JSON.stringify(body)
-      });
-    }
-
-    function finishEdit() {
-      isEditing = false;
-      loadSlots();
-    }
-
-    function editBet(td, id, currentValue) {
-      if (isEditing) return;
-      isEditing = true;
-      td.classList.add("editing");
-
-      const input = document.createElement("input");
-      input.className = "edit-input";
-      input.value = parseMoney(currentValue).toFixed(2);
-
-      td.innerHTML = "";
-      td.appendChild(input);
-      input.focus();
-      input.select();
-
-      let handled = false;
-
-      input.addEventListener("keydown", async (e) => {
-        if (e.key === "Enter") {
-          handled = true;
-          try {
-            await patchHuntSlot(id, { bet_size: parseMoney(input.value) });
-          } catch (err) {
-            console.log(err);
-          }
-          finishEdit();
+        if (!hunt) {
+          resetOverlayNoHunt("Sem hunt ativa");
+          return;
         }
 
-        if (e.key === "Escape") {
-          handled = true;
-          finishEdit();
-        }
-      });
+        await loadSlotsCatalog();
 
-      input.addEventListener("blur", () => {
-        if (handled) return;
-        finishEdit();
-      });
-    }
+        const startValue = getStartFromHunt(hunt);
 
-    function editPayout(td, id, currentValue) {
-      if (isEditing) return;
-      isEditing = true;
-      td.classList.add("editing");
-
-      const input = document.createElement("input");
-      input.className = "edit-input";
-      input.value = parseMoney(currentValue).toFixed(2);
-
-      td.innerHTML = "";
-      td.appendChild(input);
-      input.focus();
-      input.select();
-
-      let handled = false;
-
-      input.addEventListener("keydown", async (e) => {
-        if (e.key === "Enter") {
-          handled = true;
-          const newValue = parseMoney(input.value);
-
-          try {
-            await patchHuntSlot(id, {
-              payout: newValue,
-              status: newValue > 0 ? "open" : "pending"
-            });
-          } catch (err) {
-            console.log(err);
-          }
-
-          finishEdit();
-        }
-
-        if (e.key === "Escape") {
-          handled = true;
-          finishEdit();
-        }
-      });
-
-      input.addEventListener("blur", () => {
-        if (handled) return;
-        finishEdit();
-      });
-    }
-
-    function editSlotName(td, id, currentValue) {
-      if (isEditing) return;
-      isEditing = true;
-      td.classList.add("editing");
-
-      const wrapper = document.createElement("div");
-      wrapper.className = "cell-editor";
-
-      const input = document.createElement("input");
-      input.className = "edit-input wide";
-      input.value = currentValue || "";
-      input.autocomplete = "off";
-
-      const box = document.createElement("div");
-      box.className = "autocomplete-box";
-
-      wrapper.appendChild(input);
-      wrapper.appendChild(box);
-
-      td.innerHTML = "";
-      td.appendChild(wrapper);
-
-      input.focus();
-      input.select();
-
-      let handled = false;
-      let activeIndex = -1;
-      let currentSuggestions = [];
-
-      function refreshSuggestions() {
-        currentSuggestions = getSuggestions(input.value);
-        if (activeIndex >= currentSuggestions.length) activeIndex = -1;
-        renderAutocomplete(box, currentSuggestions, async (picked) => {
-          input.value = picked;
-          handled = true;
-          try {
-            await patchHuntSlot(id, { slot_name: picked });
-          } catch (err) {
-            console.log(err);
-          }
-          finishEdit();
-        }, activeIndex);
-      }
-
-      refreshSuggestions();
-
-      input.addEventListener("input", () => {
-        activeIndex = -1;
-        refreshSuggestions();
-      });
-
-      input.addEventListener("keydown", async (e) => {
-        if (e.key === "ArrowDown") {
-          if (!currentSuggestions.length) return;
-          e.preventDefault();
-          activeIndex = Math.min(activeIndex + 1, currentSuggestions.length - 1);
-          renderAutocomplete(box, currentSuggestions, async (picked) => {
-            input.value = picked;
-            handled = true;
-            try {
-              await patchHuntSlot(id, { slot_name: picked });
-            } catch (err) {
-              console.log(err);
+        const huntSlotsRes = await fetch(
+          `${SUPABASE_URL}/rest/v1/hunt_slots?select=*&hunt_id=eq.${hunt.id}&order=id.asc`,
+          {
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: `Bearer ${SUPABASE_KEY}`
             }
-            finishEdit();
-          }, activeIndex);
-        }
-
-        if (e.key === "ArrowUp") {
-          if (!currentSuggestions.length) return;
-          e.preventDefault();
-          activeIndex = Math.max(activeIndex - 1, 0);
-          renderAutocomplete(box, currentSuggestions, async (picked) => {
-            input.value = picked;
-            handled = true;
-            try {
-              await patchHuntSlot(id, { slot_name: picked });
-            } catch (err) {
-              console.log(err);
-            }
-            finishEdit();
-          }, activeIndex);
-        }
-
-        if (e.key === "Enter") {
-          e.preventDefault();
-          handled = true;
-
-          let valueToSave = input.value.trim();
-
-          if (activeIndex >= 0 && currentSuggestions[activeIndex]) {
-            valueToSave = currentSuggestions[activeIndex];
           }
+        );
 
-          try {
-            await patchHuntSlot(id, { slot_name: valueToSave });
-          } catch (err) {
-            console.log(err);
-          }
+        const huntSlotsData = await huntSlotsRes.json();
+        const bonuses = Array.isArray(huntSlotsData) ? huntSlotsData : [];
 
-          finishEdit();
+        const total = bonuses.length;
+        const opened = bonuses
+          .map((bonus, index) => ({ bonus, index }))
+          .filter(item => getBonusPayout(item.bonus) > 0);
+
+        const latestOpened = opened.length ? opened[opened.length - 1] : null;
+        const totalPaid = bonuses.reduce((sum, b) => sum + getBonusPayout(b), 0);
+
+        document.getElementById("huntLabel").innerText = "BONUS HUNT";
+        document.getElementById("huntSub").innerText = hunt.nome || "Sem nome";
+        document.getElementById("start").innerText = formatCurrency(startValue);
+
+        let superCount = 0;
+        let epicCount = 0;
+
+        for (const bonus of bonuses) {
+          const type = getBonusTypeLabel(bonus);
+          if (type === "super") superCount++;
+          if (type === "epic") epicCount++;
         }
 
-        if (e.key === "Escape") {
-          handled = true;
-          finishEdit();
-        }
-      });
+        document.getElementById("total").innerText = total;
+        document.getElementById("superCount").innerText = superCount;
+        document.getElementById("epicCount").innerText = epicCount;
+        document.getElementById("open").innerText = opened.length + "/" + total;
 
-      input.addEventListener("focus", refreshSuggestions);
+        const progress = total > 0 ? (opened.length / total) * 100 : 0;
+        document.getElementById("progressFill").style.width = progress + "%";
 
-      input.addEventListener("blur", () => {
-        setTimeout(() => {
-          if (handled) return;
-          finishEdit();
-        }, 120);
-      });
-    }
+        const openedCount = opened.length;
+        const avgMulti = openedCount > 0
+          ? opened.reduce((sum, item) => sum + getBonusMulti(item.bonus), 0) / openedCount
+          : 0;
 
-    function setupAddSlotAutocomplete() {
-      const input = document.getElementById("newSlotName");
-      const box = document.getElementById("newSlotSuggestions");
+        const bePercent = startValue > 0
+          ? (totalPaid / startValue) * 100
+          : 0;
 
-      let activeIndex = -1;
-      let currentSuggestions = [];
+        const profitLoss = totalPaid - startValue;
 
-      function refresh() {
-        currentSuggestions = getSuggestions(input.value);
-        if (activeIndex >= currentSuggestions.length) activeIndex = -1;
-        renderAutocomplete(box, currentSuggestions, (picked) => {
-          input.value = picked;
-          closeAutocomplete(box);
-        }, activeIndex);
-      }
+        document.getElementById("avg").innerText = formatMultiplier(avgMulti);
+        document.getElementById("be").innerText = formatPercent(bePercent);
+        document.getElementById("totalPaid").innerText = formatCurrency(totalPaid);
 
-      input.addEventListener("input", () => {
-        activeIndex = -1;
-        refresh();
-      });
+        const profitEl = document.getElementById("profitLoss");
+        profitEl.innerText = formatCurrency(profitLoss);
+        profitEl.className = "stat-value" + (profitLoss > 0 ? " positive" : profitLoss < 0 ? " negative" : "");
 
-      input.addEventListener("focus", refresh);
+        let bestItem = null;
+        let worstItem = null;
 
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowDown") {
-          if (!currentSuggestions.length) return;
-          e.preventDefault();
-          activeIndex = Math.min(activeIndex + 1, currentSuggestions.length - 1);
-          renderAutocomplete(box, currentSuggestions, (picked) => {
-            input.value = picked;
-            closeAutocomplete(box);
-          }, activeIndex);
+        if (opened.length) {
+          bestItem = opened.reduce((best, current) => {
+            return getBonusMulti(current.bonus) > getBonusMulti(best.bonus) ? current : best;
+          });
+
+          worstItem = opened.reduce((worst, current) => {
+            return getBonusMulti(current.bonus) < getBonusMulti(worst.bonus) ? current : worst;
+          });
         }
 
-        if (e.key === "ArrowUp") {
-          if (!currentSuggestions.length) return;
-          e.preventDefault();
-          activeIndex = Math.max(activeIndex - 1, 0);
-          renderAutocomplete(box, currentSuggestions, (picked) => {
-            input.value = picked;
-            closeAutocomplete(box);
-          }, activeIndex);
-        }
+        renderCurrentOpening(latestOpened?.bonus || null);
+        renderMiniCard("best", bestItem?.bonus || null, bestItem?.index ?? -1);
+        renderMiniCard("worst", worstItem?.bonus || null, worstItem?.index ?? -1);
+        renderSlots(bonuses, latestOpened?.index ?? -1);
 
-        if (e.key === "Enter") {
-          if (activeIndex >= 0 && currentSuggestions[activeIndex]) {
-            e.preventDefault();
-            input.value = currentSuggestions[activeIndex];
-            closeAutocomplete(box);
-          }
-        }
-      });
-
-      input.addEventListener("blur", () => {
-        setTimeout(() => closeAutocomplete(box), 120);
-      });
-    }
-
-    async function addSlotToHunt() {
-      if (!selectedHunt || isEditing) return;
-
-      const nameInput = document.getElementById("newSlotName");
-      const betInput = document.getElementById("newSlotBet");
-
-      const slotName = nameInput.value.trim();
-      const betSize = parseMoney(betInput.value);
-
-      if (!slotName) {
-        nameInput.focus();
-        return;
-      }
-
-      try {
-        await fetch(`${SUPABASE_URL}/rest/v1/hunt_slots`, {
-          method: "POST",
-          headers: headers(),
-          body: JSON.stringify({
-            hunt_id: selectedHunt,
-            slot_name: slotName,
-            bet_size: betSize,
-            payout: 0,
-            status: "pending"
-          })
-        });
-
-        nameInput.value = "";
-        betInput.value = betSize > 0 ? betSize.toFixed(2) : "0.20";
-        document.getElementById("newSlotSuggestions").classList.remove("show");
-
-        loadSlots();
-      } catch (err) {
-        console.log(err);
+      } catch (e) {
+        console.log(e);
+        resetOverlayNoHunt("Erro overlay");
       }
     }
 
-    function startAutoRefresh() {
-      if (refreshTimer) clearInterval(refreshTimer);
-
-      refreshTimer = setInterval(() => {
-        if (!isEditing && selectedHunt) {
-          loadSlots();
-        }
-      }, 2500);
-    }
-
-    document.getElementById("addSlotBtn").addEventListener("click", addSlotToHunt);
-    document.getElementById("newSlotBet").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") addSlotToHunt();
-    });
-    document.getElementById("newSlotName").addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !document.getElementById("newSlotSuggestions").classList.contains("show")) {
-        addSlotToHunt();
-      }
-    });
-
-    (async function init() {
-      await loadSlotsCatalog();
-      setupAddSlotAutocomplete();
-      startAutoRefresh();
-      loadHunts();
-    })();
+    setInterval(load, 2000);
+    load();
   </script>
 </body>
 </html>
