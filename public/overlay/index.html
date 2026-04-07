@@ -378,18 +378,24 @@
 
     .current-opening.show {
       display: grid;
-      grid-template-columns: 60px 1fr;
-      gap: 5px;
-      padding: 5px;
+      grid-template-columns: 68px 1fr;
+      gap: 7px;
+      padding: 6px;
+      align-items: center;
     }
 
     .current-thumb {
-      width: 60px;
-      min-width: 60px;
-      height: 60px;
-      border-radius: 8px;
+      width: 68px;
+      min-width: 68px;
+      height: 68px;
+      border-radius: 12px;
       overflow: hidden;
-      background: rgba(255,255,255,0.06);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      position: relative;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 4px 10px rgba(0,0,0,0.18);
     }
 
     .current-thumb img,
@@ -398,6 +404,21 @@
       height: 100%;
       display: block;
       object-fit: cover;
+    }
+
+    .current-thumb img {
+      filter: saturate(0.72) brightness(0.74) contrast(0.92);
+      transform: scale(1.04);
+    }
+
+    .current-thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(10, 8, 24, 0.04), rgba(10, 8, 24, 0.32)),
+        radial-gradient(circle at top, rgba(255,255,255,0.10), transparent 48%);
+      pointer-events: none;
     }
 
     .current-placeholder {
@@ -470,14 +491,14 @@
     .mini-card {
       background: linear-gradient(180deg, rgba(58, 40, 128, 0.92), rgba(36, 24, 85, 0.96));
       border-radius: 11px;
-      padding: 5px;
+      padding: 6px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
         0 5px 12px rgba(0,0,0,0.14);
-      min-height: 62px;
+      min-height: 72px;
       display: flex;
-      gap: 5px;
-      align-items: stretch;
+      gap: 7px;
+      align-items: center;
       overflow: hidden;
     }
 
@@ -490,12 +511,17 @@
     }
 
     .mini-thumb {
-      width: 46px;
-      min-width: 46px;
-      border-radius: 8px;
+      width: 58px;
+      min-width: 58px;
+      height: 58px;
+      border-radius: 11px;
       overflow: hidden;
-      background: rgba(255,255,255,0.05);
-      align-self: stretch;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      position: relative;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 4px 10px rgba(0,0,0,0.16);
     }
 
     .mini-thumb img,
@@ -504,6 +530,21 @@
       height: 100%;
       display: block;
       object-fit: cover;
+    }
+
+    .mini-thumb img {
+      filter: saturate(0.72) brightness(0.75) contrast(0.93);
+      transform: scale(1.04);
+    }
+
+    .mini-thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(10, 8, 24, 0.06), rgba(10, 8, 24, 0.30)),
+        radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 48%);
+      pointer-events: none;
     }
 
     .mini-placeholder {
@@ -628,7 +669,7 @@
       position: relative;
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
       border-radius: 11px;
-      padding: 5px;
+      padding: 6px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.04),
         0 6px 16px rgba(0,0,0,0.19);
@@ -686,82 +727,100 @@
       background: linear-gradient(135deg, rgba(224, 126, 177, 0.10), transparent 30%, transparent 70%, rgba(173, 118, 255, 0.10));
     }
 
-    .slot-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 7px;
-      margin-bottom: 3px;
+    .slot-inner {
       position: relative;
       z-index: 1;
+      display: grid;
+      grid-template-columns: 62px 1fr auto;
+      gap: 8px;
+      align-items: center;
     }
 
-    .slot-title {
+    .slot-thumb {
+      width: 62px;
+      min-width: 62px;
+      height: 62px;
+      border-radius: 12px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      position: relative;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 4px 10px rgba(0,0,0,0.18);
+    }
+
+    .slot-thumb img,
+    .slot-thumb .slot-placeholder {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .slot-thumb img {
+      filter: saturate(0.70) brightness(0.74) contrast(0.92);
+      transform: scale(1.05);
+    }
+
+    .slot-thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(10, 8, 24, 0.05), rgba(10, 8, 24, 0.34)),
+        radial-gradient(circle at top, rgba(255,255,255,0.10), transparent 50%);
+      pointer-events: none;
+    }
+
+    .slot-meta {
       min-width: 0;
-      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
     }
 
     .slot-name {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
       color: #f4f8ff;
-      line-height: 1.03;
-      font-style: italic;
+      line-height: 1.05;
       text-shadow: 0 2px 7px rgba(0,0,0,0.32);
       word-break: break-word;
     }
 
     .slot-bet {
-      margin-top: 2px;
-      font-size: 8px;
+      font-size: 9px;
       font-weight: 900;
       color: #dbe8ff;
       line-height: 1;
-      opacity: 0.9;
+      opacity: 0.92;
     }
 
     .slot-index {
-      font-size: 9px;
+      font-size: 10px;
       font-weight: 900;
       color: rgba(255,255,255,0.78);
       flex-shrink: 0;
       line-height: 1;
-      position: relative;
-      z-index: 1;
-    }
-
-    .slot-image-wrap {
-      width: 100%;
-      border-radius: 8px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.04);
-      position: relative;
-      z-index: 1;
-    }
-
-    .slot-image {
-      width: 100%;
-      aspect-ratio: 16 / 6;
-      object-fit: cover;
-      display: block;
-      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-      border-radius: 8px;
+      align-self: flex-start;
+      padding-top: 2px;
     }
 
     .slot-placeholder {
-      width: 100%;
-      aspect-ratio: 16 / 6;
-      display: flex;
+      display: flex !important;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
+      font-size: 9px;
       font-weight: 800;
       color: rgba(255,255,255,0.65);
       text-transform: uppercase;
-      letter-spacing: 0.45px;
+      letter-spacing: 0.35px;
       background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-      border-radius: 8px;
+      text-align: center;
+      padding: 4px;
     }
 
     .empty-state {
@@ -1166,7 +1225,8 @@
           name: getBonusName(item),
           bet: getBonusBet(item),
           payout: getBonusPayout(item),
-          type: getBonusTypeLabel(item)
+          type: getBonusTypeLabel(item),
+          image: getImageFromBonus(item)
         }))
       });
     }
@@ -1313,20 +1373,21 @@
 
         return `
           <div class="${classes}">
-            <div class="slot-top">
-              <div class="slot-title">
+            <div class="slot-inner">
+              <div class="slot-thumb">
+                ${
+                  img
+                    ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(name)}" />`
+                    : `<div class="slot-placeholder">Sem imagem</div>`
+                }
+              </div>
+
+              <div class="slot-meta">
                 <div class="slot-name">${escapeHtml(name)}</div>
                 <div class="slot-bet">${formatCurrency(bet)}</div>
               </div>
-              <div class="slot-index">#${index + 1}</div>
-            </div>
 
-            <div class="slot-image-wrap">
-              ${
-                img
-                  ? `<img class="slot-image" src="${escapeHtml(img)}" alt="${escapeHtml(name)}" />`
-                  : `<div class="slot-placeholder">Sem imagem</div>`
-              }
+              <div class="slot-index">#${index + 1}</div>
             </div>
           </div>
         `;
