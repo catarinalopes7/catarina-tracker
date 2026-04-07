@@ -21,7 +21,7 @@
     }
 
     body {
-      padding: 10px;
+      padding: 9px;
     }
 
     #app {
@@ -29,19 +29,19 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
     .panel {
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      border-radius: 18px;
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.38);
+      border-radius: 17px;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.36);
       overflow: hidden;
       flex-shrink: 0;
     }
 
     .header {
-      padding: 8px 12px 6px;
+      padding: 7px 11px 5px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -56,8 +56,8 @@
     }
 
     .logo {
-      width: 38px;
-      height: 38px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       flex-shrink: 0;
       display: flex;
@@ -66,8 +66,8 @@
       background: radial-gradient(circle at 30% 30%, #7e6aff 0%, #5a43e0 50%, #35227f 100%);
       box-shadow:
         inset 0 0 0 2px rgba(255,255,255,0.08),
-        0 6px 14px rgba(0,0,0,0.32);
-      font-size: 17px;
+        0 5px 12px rgba(0,0,0,0.30);
+      font-size: 15px;
       font-weight: 900;
       color: #f5edff;
     }
@@ -78,9 +78,9 @@
     }
 
     .hunt-label {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.7px;
       text-transform: uppercase;
       color: #FFD54A;
       line-height: 1;
@@ -91,39 +91,39 @@
     }
 
     .hunt-sub {
-      margin-top: 3px;
-      font-size: 11px;
+      margin-top: 2px;
+      font-size: 10px;
       font-weight: 700;
       color: #ffffff;
       text-transform: uppercase;
-      letter-spacing: 0.35px;
+      letter-spacing: 0.3px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .stats-wrap {
-      padding: 0 12px 6px;
+      padding: 0 11px 5px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 6px;
+      gap: 5px;
     }
 
     .stat-card {
-      min-height: 54px;
-      border-radius: 12px;
-      padding: 6px 6px;
+      min-height: 50px;
+      border-radius: 11px;
+      padding: 5px 5px;
       text-align: center;
       background: linear-gradient(180deg, rgba(94, 73, 174, 0.95), rgba(48, 33, 106, 0.98));
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
-        0 6px 14px rgba(0,0,0,0.18);
+        0 5px 12px rgba(0,0,0,0.17);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -134,12 +134,12 @@
     }
 
     .stat-title {
-      font-size: 10px;
+      font-size: 9px;
       line-height: 1;
       text-transform: uppercase;
       font-weight: 700;
       color: #d6cdf7;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.35px;
       margin-bottom: 4px;
     }
 
@@ -148,15 +148,15 @@
     }
 
     .stat-value {
-      font-size: 18px;
+      font-size: 17px;
       line-height: 1;
       font-weight: 900;
       color: #ffffff;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      text-shadow: 0 2px 7px rgba(0,0,0,0.24);
     }
 
     .stat-card.start-balance .stat-value {
-      font-size: 20px;
+      font-size: 19px;
     }
 
     .stat-value.negative {
@@ -168,16 +168,16 @@
     }
 
     .bonuses-wrap {
-      padding: 0 12px 8px;
+      padding: 0 11px 7px;
     }
 
     .bonuses-bar {
       background: linear-gradient(180deg, rgba(89, 66, 169, 0.96), rgba(45, 31, 102, 0.98));
-      border-radius: 12px;
-      padding: 7px;
+      border-radius: 11px;
+      padding: 6px;
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 7px 18px rgba(0,0,0,0.18);
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 6px 16px rgba(0,0,0,0.17);
     }
 
     .bonuses-top {
@@ -185,11 +185,11 @@
       justify-content: space-between;
       align-items: center;
       gap: 10px;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
     }
 
     .bonuses-title {
-      font-size: 12px;
+      font-size: 11px;
       line-height: 1;
       font-weight: 900;
       text-transform: uppercase;
@@ -197,7 +197,7 @@
     }
 
     .bonuses-count {
-      font-size: 16px;
+      font-size: 15px;
       line-height: 1;
       font-weight: 900;
       color: #ffffff;
@@ -206,23 +206,23 @@
     .tag-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 3px;
+      gap: 5px;
+      margin-top: 2px;
     }
 
     .tag {
       position: relative;
-      min-height: 42px;
-      border-radius: 12px;
-      padding: 7px 9px;
+      min-height: 38px;
+      border-radius: 11px;
+      padding: 6px 8px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 7px;
       overflow: hidden;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.06),
-        0 6px 14px rgba(0,0,0,0.14);
+        0 5px 12px rgba(0,0,0,0.13);
     }
 
     .tag::before {
@@ -236,37 +236,37 @@
     .tag-left {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       position: relative;
       z-index: 1;
     }
 
     .tag-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       flex-shrink: 0;
       box-shadow: 0 0 8px rgba(255,255,255,0.18);
     }
 
     .tag-label {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.25px;
       position: relative;
       z-index: 1;
     }
 
     .tag-value {
-      min-width: 30px;
-      height: 28px;
-      padding: 0 10px;
+      min-width: 28px;
+      height: 25px;
+      padding: 0 9px;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
       position: relative;
       z-index: 1;
@@ -320,34 +320,34 @@
     }
 
     .progress-wrap {
-      margin-top: 6px;
+      margin-top: 5px;
     }
 
     .progress-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       gap: 8px;
     }
 
     .progress-label {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.84);
-      letter-spacing: 0.3px;
+      letter-spacing: 0.25px;
     }
 
     .progress-count {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
       color: #ffffff;
     }
 
     .progress-track {
       width: 100%;
-      height: 10px;
+      height: 9px;
       border-radius: 999px;
       overflow: hidden;
       background: rgba(11, 7, 34, 0.42);
@@ -361,33 +361,33 @@
       width: 0%;
       border-radius: 999px;
       background: linear-gradient(90deg, #a574ff 0%, #6fceff 100%);
-      box-shadow: 0 0 14px rgba(129, 194, 255, 0.20);
+      box-shadow: 0 0 12px rgba(129, 194, 255, 0.20);
       transition: width 0.35s ease;
     }
 
     .current-opening {
-      margin-top: 6px;
-      border-radius: 12px;
+      margin-top: 5px;
+      border-radius: 11px;
       overflow: hidden;
       background: linear-gradient(135deg, rgba(132, 70, 93, 0.85) 0%, rgba(108, 44, 74, 0.88) 48%, rgba(73, 26, 66, 0.90) 100%);
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.06),
-        0 7px 16px rgba(0,0,0,0.16);
+        0 6px 14px rgba(0,0,0,0.15);
       display: none;
     }
 
     .current-opening.show {
       display: grid;
-      grid-template-columns: 68px 1fr;
-      gap: 6px;
-      padding: 6px;
+      grid-template-columns: 60px 1fr;
+      gap: 5px;
+      padding: 5px;
     }
 
     .current-thumb {
-      width: 68px;
-      min-width: 68px;
-      height: 68px;
-      border-radius: 9px;
+      width: 60px;
+      min-width: 60px;
+      height: 60px;
+      border-radius: 8px;
       overflow: hidden;
       background: rgba(255,255,255,0.06);
     }
@@ -405,8 +405,8 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 5px;
-      font-size: 9px;
+      padding: 4px;
+      font-size: 8px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.7);
@@ -422,7 +422,7 @@
     }
 
     .current-name {
-      font-size: 13px;
+      font-size: 12px;
       line-height: 1.03;
       font-weight: 900;
       text-transform: uppercase;
@@ -438,15 +438,15 @@
     }
 
     .current-stat {
-      border-radius: 9px;
+      border-radius: 8px;
       background: rgba(255,255,255,0.10);
-      padding: 5px 4px;
+      padding: 4px 3px;
       text-align: center;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
     .current-stat-label {
-      font-size: 9px;
+      font-size: 8px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.78);
@@ -454,7 +454,7 @@
     }
 
     .current-stat-value {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1;
@@ -463,20 +463,20 @@
     .bestworst-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 6px;
+      gap: 5px;
+      margin-top: 5px;
     }
 
     .mini-card {
       background: linear-gradient(180deg, rgba(58, 40, 128, 0.92), rgba(36, 24, 85, 0.96));
-      border-radius: 12px;
-      padding: 6px;
+      border-radius: 11px;
+      padding: 5px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
-        0 6px 14px rgba(0,0,0,0.15);
-      min-height: 70px;
+        0 5px 12px rgba(0,0,0,0.14);
+      min-height: 62px;
       display: flex;
-      gap: 6px;
+      gap: 5px;
       align-items: stretch;
       overflow: hidden;
     }
@@ -490,9 +490,9 @@
     }
 
     .mini-thumb {
-      width: 52px;
-      min-width: 52px;
-      border-radius: 9px;
+      width: 46px;
+      min-width: 46px;
+      border-radius: 8px;
       overflow: hidden;
       background: rgba(255,255,255,0.05);
       align-self: stretch;
@@ -510,7 +510,7 @@
       display: flex !important;
       align-items: center;
       justify-content: center;
-      font-size: 8px;
+      font-size: 7px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.6);
@@ -536,10 +536,10 @@
     }
 
     .mini-label {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.25px;
+      letter-spacing: 0.2px;
     }
 
     .mini-card.best .mini-label {
@@ -551,9 +551,9 @@
     }
 
     .mini-badge {
-      font-size: 9px;
+      font-size: 8px;
       font-weight: 900;
-      padding: 2px 6px;
+      padding: 2px 5px;
       border-radius: 999px;
       background: rgba(255,255,255,0.06);
       color: rgba(255,255,255,0.85);
@@ -561,7 +561,7 @@
     }
 
     .mini-name {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1.04;
@@ -571,7 +571,7 @@
 
     .mini-stats {
       display: flex;
-      gap: 7px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
@@ -582,14 +582,14 @@
     }
 
     .mini-stat-label {
-      font-size: 8px;
+      font-size: 7px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.65);
     }
 
     .mini-stat-value {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1;
@@ -610,27 +610,28 @@
     .slots-track {
       will-change: transform;
       display: block;
+      transform: translateY(0px);
     }
 
     .slots-group {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 4px;
     }
 
     .slots-gap {
-      height: 10px;
+      height: 8px;
       flex-shrink: 0;
     }
 
     .slot-card {
       position: relative;
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      border-radius: 12px;
-      padding: 6px;
+      border-radius: 11px;
+      padding: 5px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.04),
-        0 7px 18px rgba(0,0,0,0.20);
+        0 6px 16px rgba(0,0,0,0.19);
       overflow: hidden;
       transition: 0.25s ease;
       border: 1px solid rgba(255,255,255,0.04);
@@ -655,15 +656,15 @@
       border: 1px solid rgba(244, 206, 103, 0.55);
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
-        0 7px 18px rgba(0,0,0,0.20),
-        0 0 14px rgba(244, 206, 103, 0.12);
+        0 6px 16px rgba(0,0,0,0.19),
+        0 0 12px rgba(244, 206, 103, 0.12);
     }
 
     .slot-card.super-slot::before {
       content: "";
       position: absolute;
       inset: 0;
-      border-radius: 12px;
+      border-radius: 11px;
       pointer-events: none;
       background: linear-gradient(135deg, rgba(244, 206, 103, 0.10), transparent 30%, transparent 70%, rgba(244, 206, 103, 0.08));
     }
@@ -672,15 +673,15 @@
       border: 1px solid rgba(224, 126, 177, 0.58);
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
-        0 7px 18px rgba(0,0,0,0.20),
-        0 0 14px rgba(224, 126, 177, 0.12);
+        0 6px 16px rgba(0,0,0,0.19),
+        0 0 12px rgba(224, 126, 177, 0.12);
     }
 
     .slot-card.epic-slot::before {
       content: "";
       position: absolute;
       inset: 0;
-      border-radius: 12px;
+      border-radius: 11px;
       pointer-events: none;
       background: linear-gradient(135deg, rgba(224, 126, 177, 0.10), transparent 30%, transparent 70%, rgba(173, 118, 255, 0.10));
     }
@@ -689,7 +690,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 8px;
+      gap: 7px;
       margin-bottom: 3px;
       position: relative;
       z-index: 1;
@@ -701,7 +702,7 @@
     }
 
     .slot-name {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 900;
       text-transform: uppercase;
       color: #f4f8ff;
@@ -713,7 +714,7 @@
 
     .slot-bet {
       margin-top: 2px;
-      font-size: 9px;
+      font-size: 8px;
       font-weight: 900;
       color: #dbe8ff;
       line-height: 1;
@@ -721,7 +722,7 @@
     }
 
     .slot-index {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 900;
       color: rgba(255,255,255,0.78);
       flex-shrink: 0;
@@ -732,7 +733,7 @@
 
     .slot-image-wrap {
       width: 100%;
-      border-radius: 9px;
+      border-radius: 8px;
       overflow: hidden;
       background: rgba(255,255,255,0.04);
       position: relative;
@@ -741,38 +742,38 @@
 
     .slot-image {
       width: 100%;
-      aspect-ratio: 16 / 6.6;
+      aspect-ratio: 16 / 6;
       object-fit: cover;
       display: block;
       background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-      border-radius: 9px;
+      border-radius: 8px;
     }
 
     .slot-placeholder {
       width: 100%;
-      aspect-ratio: 16 / 6.6;
+      aspect-ratio: 16 / 6;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       color: rgba(255,255,255,0.65);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.45px;
       background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-      border-radius: 9px;
+      border-radius: 8px;
     }
 
     .empty-state {
       height: 100%;
-      border-radius: 16px;
+      border-radius: 15px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 30px;
+      padding: 28px;
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
       color: rgba(255,255,255,0.82);
       text-transform: uppercase;
@@ -973,10 +974,16 @@
 
     let scrollAnimationId = null;
     let scrollOffset = 0;
-    let scrollOriginalHeight = 0;
+    let scrollSingleHeight = 0;
     let scrollLastTimestamp = 0;
-    const scrollGap = 10;
-    const scrollSpeed = 15;
+    let scrollPauseUntil = 0;
+    let lastRenderedSignature = "";
+    let lastKnownLatestOpenedIndex = -1;
+
+    const SCROLL_GAP = 8;
+    const SCROLL_SPEED = 14;
+    const SCROLL_START_PAUSE = 1200;
+    const SCROLL_LOOP_PAUSE = 900;
 
     function parseMoney(value) {
       if (value === null || value === undefined) return 0;
@@ -1141,13 +1148,27 @@
       }
 
       scrollOffset = 0;
-      scrollOriginalHeight = 0;
+      scrollSingleHeight = 0;
       scrollLastTimestamp = 0;
+      scrollPauseUntil = 0;
 
       const track = document.getElementById("slotsTrack");
       if (track) {
         track.style.transform = "translateY(0px)";
       }
+    }
+
+    function buildSlotsSignature(items, latestOpenedIndex) {
+      return JSON.stringify({
+        latestOpenedIndex,
+        items: items.map(item => ({
+          id: item?.id ?? null,
+          name: getBonusName(item),
+          bet: getBonusBet(item),
+          payout: getBonusPayout(item),
+          type: getBonusTypeLabel(item)
+        }))
+      });
     }
 
     function startAutoScrollIfNeeded() {
@@ -1162,12 +1183,13 @@
       const viewportHeight = viewport.clientHeight;
       const contentHeight = firstGroup.offsetHeight;
 
-      if (contentHeight <= viewportHeight + 4) {
+      if (contentHeight <= viewportHeight + 2) {
         track.style.transform = "translateY(0px)";
         return;
       }
 
-      scrollOriginalHeight = contentHeight + scrollGap;
+      scrollSingleHeight = contentHeight + SCROLL_GAP;
+      scrollPauseUntil = performance.now() + SCROLL_START_PAUSE;
 
       function animate(timestamp) {
         if (!scrollLastTimestamp) {
@@ -1176,10 +1198,14 @@
 
         const delta = (timestamp - scrollLastTimestamp) / 1000;
         scrollLastTimestamp = timestamp;
-        scrollOffset += scrollSpeed * delta;
 
-        if (scrollOffset >= scrollOriginalHeight) {
-          scrollOffset = 0;
+        if (timestamp >= scrollPauseUntil) {
+          scrollOffset += SCROLL_SPEED * delta;
+
+          if (scrollOffset >= scrollSingleHeight) {
+            scrollOffset = 0;
+            scrollPauseUntil = timestamp + SCROLL_LOOP_PAUSE;
+          }
         }
 
         track.style.transform = `translateY(-${scrollOffset}px)`;
@@ -1252,8 +1278,16 @@
       bet.innerText = formatCurrency(getBonusBet(item));
     }
 
-    function renderSlots(items, latestOpenedIndex = -1) {
+    function renderSlots(items, latestOpenedIndex = -1, force = false) {
       const track = document.getElementById("slotsTrack");
+      const signature = buildSlotsSignature(items, latestOpenedIndex);
+
+      if (!force && signature === lastRenderedSignature) {
+        return;
+      }
+
+      lastRenderedSignature = signature;
+      lastKnownLatestOpenedIndex = latestOpenedIndex;
 
       stopAutoScroll();
 
@@ -1311,6 +1345,8 @@
 
     function resetOverlayNoHunt(message = "Sem hunt ativa") {
       stopAutoScroll();
+      lastRenderedSignature = "";
+      lastKnownLatestOpenedIndex = -1;
       document.getElementById("huntLabel").innerText = "BONUS HUNT";
       document.getElementById("huntSub").innerText = message;
       document.getElementById("start").innerText = "$0.00";
