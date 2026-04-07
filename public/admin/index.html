@@ -146,21 +146,13 @@
       background: rgba(138, 104, 255, 0.16);
     }
 
-    .hunt-name {
-      font-weight: 900;
-      color: #fff;
-    }
-
-    .hunt-start {
-      font-weight: 900;
-      color: #dbe5ff;
-    }
-
+    .hunt-name,
     .slot-name {
       font-weight: 900;
       color: #fff;
     }
 
+    .hunt-start,
     .slot-bet,
     .slot-payout {
       font-weight: 900;
@@ -198,6 +190,13 @@
       box-shadow: 0 6px 18px rgba(23, 184, 135, 0.28);
     }
 
+    .btn-add {
+      background: linear-gradient(180deg, #2ad6a0, #17b887);
+      color: #071c16;
+      box-shadow: 0 6px 18px rgba(23, 184, 135, 0.28);
+      min-width: 120px;
+    }
+
     .pill {
       display: inline-flex;
       align-items: center;
@@ -222,15 +221,11 @@
       background: #ff7d92;
     }
 
-    .pill.gray {
-      color: #ffffff;
-      background: rgba(255,255,255,0.10);
-    }
-
     .editable {
       cursor: pointer;
       transition: 0.18s ease;
       min-width: 120px;
+      position: relative;
     }
 
     .editable:hover {
@@ -243,16 +238,21 @@
       border-radius: 8px;
     }
 
-    .edit-input {
-      width: 110px;
-      padding: 9px 10px;
+    .edit-input,
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.14);
       outline: none;
       background: rgba(255,255,255,0.08);
       color: #fff;
-      font-weight: 900;
+      font-weight: 800;
       font-size: 14px;
+    }
+
+    .edit-input.wide {
+      min-width: 220px;
     }
 
     .empty {
@@ -293,8 +293,77 @@
       line-height: 1;
     }
 
+    .add-bar {
+      padding: 14px 18px 0;
+    }
+
+    .add-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) 140px 120px;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .field-wrap {
+      position: relative;
+    }
+
+    .autocomplete-box {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: #141a31;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 14px 28px rgba(0,0,0,0.32);
+      z-index: 50;
+      max-height: 280px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .autocomplete-box.show {
+      display: block;
+    }
+
+    .autocomplete-item {
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 800;
+      color: #fff;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+
+    .autocomplete-item:hover,
+    .autocomplete-item.active {
+      background: rgba(122, 92, 255, 0.22);
+    }
+
+    .helper {
+      padding: 8px 2px 0;
+      font-size: 12px;
+      color: rgba(255,255,255,0.60);
+      font-weight: 700;
+    }
+
+    .cell-editor {
+      position: relative;
+    }
+
     @media (max-width: 1200px) {
       .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .add-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -306,7 +375,7 @@
     <div class="topbar">
       <div class="title-wrap">
         <h2>Catarina Tracker - Admin</h2>
-        <div class="sub">Gestão de hunts e edição rápida de payouts</div>
+        <div class="sub">Gestão de hunts, adicionar slots e editar rápido</div>
       </div>
 
       <div id="selectedHuntBadge" class="status-badge">Nenhuma hunt aberta</div>
@@ -362,6 +431,24 @@
           </div>
         </div>
 
+        <div class="add-bar">
+          <div class="add-grid">
+            <div class="field-wrap">
+              <input id="newSlotName" class="form-input" type="text" placeholder="Escreve o nome da slot..." autocomplete="off" />
+              <div id="newSlotSuggestions" class="autocomplete-box"></div>
+              <div class="helper">Escreve umas letras e escolhe a slot da lista</div>
+            </div>
+
+            <div>
+              <input id="newSlotBet" class="form-input" type="text" placeholder="Bet" value="0.20" />
+            </div>
+
+            <div>
+              <button id="addSlotBtn" class="btn-add" type="button">Adicionar</button>
+            </div>
+          </div>
+        </div>
+
         <div class="table-wrap">
           <table>
             <thead>
@@ -390,7 +477,8 @@
 
     let selectedHunt = null;
     let huntsCache = [];
-    let isEditingPayout = false;
+    let slotsCatalog = [];
+    let isEditing = false;
     let refreshTimer = null;
 
     function headers() {
@@ -419,6 +507,18 @@
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
+    }
+
+    function normalizeText(text) {
+      return String(text || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "");
+    }
+
+    function getCatalogSlotName(item) {
+      return item?.name || item?.nome || "";
     }
 
     function setSelectedHuntBadge() {
@@ -492,15 +592,74 @@
         return `
           <tr>
             <td><span class="slot-id">#${slot.id}</span></td>
-            <td><span class="slot-name">${escapeHtml(slot.slot_name || "Sem nome")}</span></td>
-            <td><span class="slot-bet">${formatMoney(slot.bet_size)}</span></td>
-            <td class="editable" data-slot-id="${slot.id}" onclick="editPayout(this, ${slot.id}, ${payout})">
+            <td class="editable" onclick="editSlotName(this, ${slot.id}, ${JSON.stringify(slot.slot_name || "")})">
+              <span class="slot-name">${escapeHtml(slot.slot_name || "Sem nome")}</span>
+            </td>
+            <td class="editable" onclick="editBet(this, ${slot.id}, ${parseMoney(slot.bet_size)})">
+              <span class="slot-bet">${formatMoney(slot.bet_size)}</span>
+            </td>
+            <td class="editable" onclick="editPayout(this, ${slot.id}, ${payout})">
               <span class="slot-payout">${payout.toFixed(2)}</span>
             </td>
             <td>${estado}</td>
           </tr>
         `;
       }).join("");
+    }
+
+    async function loadSlotsCatalog() {
+      try {
+        const res = await fetch(
+          `${SUPABASE_URL}/rest/v1/slots?select=id,name,nome&order=id.asc`,
+          { headers: headers() }
+        );
+
+        const data = await res.json();
+        slotsCatalog = Array.isArray(data) ? data : [];
+      } catch (err) {
+        console.log(err);
+        slotsCatalog = [];
+      }
+    }
+
+    function getSuggestions(query, limit = 8) {
+      const q = normalizeText(query);
+      if (!q) return [];
+
+      return slotsCatalog
+        .map(item => getCatalogSlotName(item))
+        .filter(Boolean)
+        .filter((name, index, arr) => arr.indexOf(name) === index)
+        .filter(name => normalizeText(name).includes(q))
+        .slice(0, limit);
+    }
+
+    function renderAutocomplete(box, items, onPick, activeIndex = -1) {
+      if (!items.length) {
+        box.innerHTML = "";
+        box.classList.remove("show");
+        return;
+      }
+
+      box.innerHTML = items.map((item, index) => `
+        <div class="autocomplete-item ${index === activeIndex ? "active" : ""}" data-value="${escapeHtml(item)}">
+          ${escapeHtml(item)}
+        </div>
+      `).join("");
+
+      box.classList.add("show");
+
+      box.querySelectorAll(".autocomplete-item").forEach(el => {
+        el.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          onPick(el.getAttribute("data-value"));
+        });
+      });
+    }
+
+    function closeAutocomplete(box) {
+      box.innerHTML = "";
+      box.classList.remove("show");
     }
 
     async function loadHunts() {
@@ -536,12 +695,7 @@
     }
 
     async function loadSlots() {
-      if (!selectedHunt) {
-        renderSlots([]);
-        return;
-      }
-
-      if (isEditingPayout) {
+      if (!selectedHunt || isEditing) {
         return;
       }
 
@@ -563,24 +717,29 @@
     }
 
     function openHunt(id) {
-      if (isEditingPayout) return;
-
+      if (isEditing) return;
       selectedHunt = id;
       renderHunts(huntsCache);
       setSelectedHuntBadge();
       loadSlots();
     }
 
-    function finishEditAndReload() {
-      isEditingPayout = false;
+    async function patchHuntSlot(id, body) {
+      await fetch(`${SUPABASE_URL}/rest/v1/hunt_slots?id=eq.${id}`, {
+        method: "PATCH",
+        headers: headers(),
+        body: JSON.stringify(body)
+      });
+    }
+
+    function finishEdit() {
+      isEditing = false;
       loadSlots();
     }
 
-    function editPayout(td, id, currentValue) {
-      if (isEditingPayout) return;
-      if (td.querySelector("input")) return;
-
-      isEditingPayout = true;
+    function editBet(td, id, currentValue) {
+      if (isEditing) return;
+      isEditing = true;
       td.classList.add("editing");
 
       const input = document.createElement("input");
@@ -597,49 +756,311 @@
       input.addEventListener("keydown", async (e) => {
         if (e.key === "Enter") {
           handled = true;
-
-          const newValue = parseMoney(input.value);
-
           try {
-            await fetch(`${SUPABASE_URL}/rest/v1/hunt_slots?id=eq.${id}`, {
-              method: "PATCH",
-              headers: headers(),
-              body: JSON.stringify({
-                payout: newValue,
-                status: newValue > 0 ? "open" : "pending"
-              })
-            });
+            await patchHuntSlot(id, { bet_size: parseMoney(input.value) });
           } catch (err) {
             console.log(err);
           }
-
-          finishEditAndReload();
+          finishEdit();
         }
 
         if (e.key === "Escape") {
           handled = true;
-          finishEditAndReload();
+          finishEdit();
         }
       });
 
       input.addEventListener("blur", () => {
         if (handled) return;
-        finishEditAndReload();
+        finishEdit();
       });
+    }
+
+    function editPayout(td, id, currentValue) {
+      if (isEditing) return;
+      isEditing = true;
+      td.classList.add("editing");
+
+      const input = document.createElement("input");
+      input.className = "edit-input";
+      input.value = parseMoney(currentValue).toFixed(2);
+
+      td.innerHTML = "";
+      td.appendChild(input);
+      input.focus();
+      input.select();
+
+      let handled = false;
+
+      input.addEventListener("keydown", async (e) => {
+        if (e.key === "Enter") {
+          handled = true;
+          const newValue = parseMoney(input.value);
+
+          try {
+            await patchHuntSlot(id, {
+              payout: newValue,
+              status: newValue > 0 ? "open" : "pending"
+            });
+          } catch (err) {
+            console.log(err);
+          }
+
+          finishEdit();
+        }
+
+        if (e.key === "Escape") {
+          handled = true;
+          finishEdit();
+        }
+      });
+
+      input.addEventListener("blur", () => {
+        if (handled) return;
+        finishEdit();
+      });
+    }
+
+    function editSlotName(td, id, currentValue) {
+      if (isEditing) return;
+      isEditing = true;
+      td.classList.add("editing");
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "cell-editor";
+
+      const input = document.createElement("input");
+      input.className = "edit-input wide";
+      input.value = currentValue || "";
+      input.autocomplete = "off";
+
+      const box = document.createElement("div");
+      box.className = "autocomplete-box";
+
+      wrapper.appendChild(input);
+      wrapper.appendChild(box);
+
+      td.innerHTML = "";
+      td.appendChild(wrapper);
+
+      input.focus();
+      input.select();
+
+      let handled = false;
+      let activeIndex = -1;
+      let currentSuggestions = [];
+
+      function refreshSuggestions() {
+        currentSuggestions = getSuggestions(input.value);
+        if (activeIndex >= currentSuggestions.length) activeIndex = -1;
+        renderAutocomplete(box, currentSuggestions, async (picked) => {
+          input.value = picked;
+          handled = true;
+          try {
+            await patchHuntSlot(id, { slot_name: picked });
+          } catch (err) {
+            console.log(err);
+          }
+          finishEdit();
+        }, activeIndex);
+      }
+
+      refreshSuggestions();
+
+      input.addEventListener("input", () => {
+        activeIndex = -1;
+        refreshSuggestions();
+      });
+
+      input.addEventListener("keydown", async (e) => {
+        if (e.key === "ArrowDown") {
+          if (!currentSuggestions.length) return;
+          e.preventDefault();
+          activeIndex = Math.min(activeIndex + 1, currentSuggestions.length - 1);
+          renderAutocomplete(box, currentSuggestions, async (picked) => {
+            input.value = picked;
+            handled = true;
+            try {
+              await patchHuntSlot(id, { slot_name: picked });
+            } catch (err) {
+              console.log(err);
+            }
+            finishEdit();
+          }, activeIndex);
+        }
+
+        if (e.key === "ArrowUp") {
+          if (!currentSuggestions.length) return;
+          e.preventDefault();
+          activeIndex = Math.max(activeIndex - 1, 0);
+          renderAutocomplete(box, currentSuggestions, async (picked) => {
+            input.value = picked;
+            handled = true;
+            try {
+              await patchHuntSlot(id, { slot_name: picked });
+            } catch (err) {
+              console.log(err);
+            }
+            finishEdit();
+          }, activeIndex);
+        }
+
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handled = true;
+
+          let valueToSave = input.value.trim();
+
+          if (activeIndex >= 0 && currentSuggestions[activeIndex]) {
+            valueToSave = currentSuggestions[activeIndex];
+          }
+
+          try {
+            await patchHuntSlot(id, { slot_name: valueToSave });
+          } catch (err) {
+            console.log(err);
+          }
+
+          finishEdit();
+        }
+
+        if (e.key === "Escape") {
+          handled = true;
+          finishEdit();
+        }
+      });
+
+      input.addEventListener("focus", refreshSuggestions);
+
+      input.addEventListener("blur", () => {
+        setTimeout(() => {
+          if (handled) return;
+          finishEdit();
+        }, 120);
+      });
+    }
+
+    function setupAddSlotAutocomplete() {
+      const input = document.getElementById("newSlotName");
+      const box = document.getElementById("newSlotSuggestions");
+
+      let activeIndex = -1;
+      let currentSuggestions = [];
+
+      function refresh() {
+        currentSuggestions = getSuggestions(input.value);
+        if (activeIndex >= currentSuggestions.length) activeIndex = -1;
+        renderAutocomplete(box, currentSuggestions, (picked) => {
+          input.value = picked;
+          closeAutocomplete(box);
+        }, activeIndex);
+      }
+
+      input.addEventListener("input", () => {
+        activeIndex = -1;
+        refresh();
+      });
+
+      input.addEventListener("focus", refresh);
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowDown") {
+          if (!currentSuggestions.length) return;
+          e.preventDefault();
+          activeIndex = Math.min(activeIndex + 1, currentSuggestions.length - 1);
+          renderAutocomplete(box, currentSuggestions, (picked) => {
+            input.value = picked;
+            closeAutocomplete(box);
+          }, activeIndex);
+        }
+
+        if (e.key === "ArrowUp") {
+          if (!currentSuggestions.length) return;
+          e.preventDefault();
+          activeIndex = Math.max(activeIndex - 1, 0);
+          renderAutocomplete(box, currentSuggestions, (picked) => {
+            input.value = picked;
+            closeAutocomplete(box);
+          }, activeIndex);
+        }
+
+        if (e.key === "Enter") {
+          if (activeIndex >= 0 && currentSuggestions[activeIndex]) {
+            e.preventDefault();
+            input.value = currentSuggestions[activeIndex];
+            closeAutocomplete(box);
+          }
+        }
+      });
+
+      input.addEventListener("blur", () => {
+        setTimeout(() => closeAutocomplete(box), 120);
+      });
+    }
+
+    async function addSlotToHunt() {
+      if (!selectedHunt || isEditing) return;
+
+      const nameInput = document.getElementById("newSlotName");
+      const betInput = document.getElementById("newSlotBet");
+
+      const slotName = nameInput.value.trim();
+      const betSize = parseMoney(betInput.value);
+
+      if (!slotName) {
+        nameInput.focus();
+        return;
+      }
+
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/hunt_slots`, {
+          method: "POST",
+          headers: headers(),
+          body: JSON.stringify({
+            hunt_id: selectedHunt,
+            slot_name: slotName,
+            bet_size: betSize,
+            payout: 0,
+            status: "pending"
+          })
+        });
+
+        nameInput.value = "";
+        betInput.value = betSize > 0 ? betSize.toFixed(2) : "0.20";
+        document.getElementById("newSlotSuggestions").classList.remove("show");
+
+        loadSlots();
+      } catch (err) {
+        console.log(err);
+      }
     }
 
     function startAutoRefresh() {
       if (refreshTimer) clearInterval(refreshTimer);
 
       refreshTimer = setInterval(() => {
-        if (!isEditingPayout && selectedHunt) {
+        if (!isEditing && selectedHunt) {
           loadSlots();
         }
       }, 2500);
     }
 
-    startAutoRefresh();
-    loadHunts();
+    document.getElementById("addSlotBtn").addEventListener("click", addSlotToHunt);
+    document.getElementById("newSlotBet").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") addSlotToHunt();
+    });
+    document.getElementById("newSlotName").addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !document.getElementById("newSlotSuggestions").classList.contains("show")) {
+        addSlotToHunt();
+      }
+    });
+
+    (async function init() {
+      await loadSlotsCatalog();
+      setupAddSlotAutocomplete();
+      startAutoRefresh();
+      loadHunts();
+    })();
   </script>
 </body>
 </html>
