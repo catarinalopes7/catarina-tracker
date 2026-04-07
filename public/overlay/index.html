@@ -21,7 +21,7 @@
     }
 
     body {
-      padding: 14px;
+      padding: 12px;
     }
 
     #app {
@@ -29,36 +29,36 @@
       height: 100%;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .panel {
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      border-radius: 22px;
+      border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       overflow: hidden;
       flex-shrink: 0;
     }
 
     .header {
-      padding: 14px 18px 10px;
+      padding: 10px 14px 8px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      gap: 14px;
+      gap: 10px;
     }
 
     .header-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       min-width: 0;
       width: 100%;
     }
 
     .logo {
-      width: 50px;
-      height: 50px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       flex-shrink: 0;
       display: flex;
@@ -68,19 +68,20 @@
       box-shadow:
         inset 0 0 0 3px rgba(255,255,255,0.08),
         0 8px 18px rgba(0,0,0,0.35);
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 900;
       color: #f5edff;
     }
 
     .hunt-meta {
       min-width: 0;
+      flex: 1;
     }
 
     .hunt-label {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
       color: #FFD54A;
       line-height: 1;
@@ -93,11 +94,11 @@
 
     .hunt-sub {
       margin-top: 4px;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 700;
       color: #ffffff;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -105,22 +106,22 @@
     }
 
     .stats-wrap {
-      padding: 0 18px 10px;
+      padding: 0 14px 8px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
     }
 
     .stat-card {
-      min-height: 74px;
-      border-radius: 16px;
-      padding: 10px;
+      min-height: 64px;
+      border-radius: 14px;
+      padding: 8px 8px;
       text-align: center;
       background: linear-gradient(180deg, rgba(94, 73, 174, 0.95), rgba(48, 33, 106, 0.98));
       box-shadow:
@@ -132,18 +133,17 @@
     }
 
     .stat-card.start-balance {
-      min-height: 82px;
       background: linear-gradient(180deg, rgba(111, 89, 205, 0.98), rgba(58, 40, 128, 0.98));
     }
 
     .stat-title {
-      font-size: 14px;
+      font-size: 11px;
       line-height: 1;
       text-transform: uppercase;
       font-weight: 700;
       color: #d6cdf7;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
+      letter-spacing: 0.45px;
+      margin-bottom: 5px;
     }
 
     .stat-card.start-balance .stat-title {
@@ -151,7 +151,7 @@
     }
 
     .stat-value {
-      font-size: 26px;
+      font-size: 22px;
       line-height: 1;
       font-weight: 900;
       color: #ffffff;
@@ -159,7 +159,7 @@
     }
 
     .stat-card.start-balance .stat-value {
-      font-size: 34px;
+      font-size: 26px;
     }
 
     .stat-value.negative {
@@ -171,13 +171,13 @@
     }
 
     .bonuses-wrap {
-      padding: 0 18px 12px;
+      padding: 0 14px 10px;
     }
 
     .bonuses-bar {
       background: linear-gradient(180deg, rgba(89, 66, 169, 0.96), rgba(45, 31, 102, 0.98));
-      border-radius: 16px;
-      padding: 10px;
+      border-radius: 14px;
+      padding: 8px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
         0 8px 20px rgba(0,0,0,0.20);
@@ -187,12 +187,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 14px;
-      margin-bottom: 8px;
+      gap: 12px;
+      margin-bottom: 6px;
     }
 
     .bonuses-title {
-      font-size: 16px;
+      font-size: 14px;
       line-height: 1;
       font-weight: 900;
       text-transform: uppercase;
@@ -200,7 +200,7 @@
     }
 
     .bonuses-count {
-      font-size: 22px;
+      font-size: 20px;
       line-height: 1;
       font-weight: 900;
       color: #ffffff;
@@ -209,19 +209,19 @@
     .tag-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 6px;
+      gap: 7px;
+      margin-top: 4px;
     }
 
     .tag {
       position: relative;
-      min-height: 56px;
-      border-radius: 16px;
-      padding: 10px 12px;
+      min-height: 48px;
+      border-radius: 14px;
+      padding: 8px 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
       overflow: hidden;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.08),
@@ -239,37 +239,37 @@
     .tag-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       position: relative;
       z-index: 1;
     }
 
     .tag-dot {
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       flex-shrink: 0;
       box-shadow: 0 0 10px rgba(255,255,255,0.18);
     }
 
     .tag-label {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.35px;
       position: relative;
       z-index: 1;
     }
 
     .tag-value {
-      min-width: 36px;
-      height: 36px;
-      padding: 0 12px;
+      min-width: 34px;
+      height: 32px;
+      padding: 0 11px;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
       position: relative;
       z-index: 1;
@@ -323,34 +323,34 @@
     }
 
     .progress-wrap {
-      margin-top: 10px;
+      margin-top: 8px;
     }
 
     .progress-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 6px;
-      gap: 10px;
+      margin-bottom: 5px;
+      gap: 8px;
     }
 
     .progress-label {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.84);
-      letter-spacing: 0.4px;
+      letter-spacing: 0.35px;
     }
 
     .progress-count {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 900;
       color: #ffffff;
     }
 
     .progress-track {
       width: 100%;
-      height: 14px;
+      height: 12px;
       border-radius: 999px;
       overflow: hidden;
       background: rgba(11, 7, 34, 0.42);
@@ -369,8 +369,8 @@
     }
 
     .current-opening {
-      margin-top: 10px;
-      border-radius: 16px;
+      margin-top: 8px;
+      border-radius: 14px;
       overflow: hidden;
       background: linear-gradient(135deg, rgba(132, 70, 93, 0.85) 0%, rgba(108, 44, 74, 0.88) 48%, rgba(73, 26, 66, 0.90) 100%);
       box-shadow:
@@ -381,16 +381,16 @@
 
     .current-opening.show {
       display: grid;
-      grid-template-columns: 98px 1fr;
-      gap: 10px;
-      padding: 8px;
+      grid-template-columns: 84px 1fr;
+      gap: 8px;
+      padding: 7px;
     }
 
     .current-thumb {
-      width: 98px;
-      min-width: 98px;
-      height: 98px;
-      border-radius: 12px;
+      width: 84px;
+      min-width: 84px;
+      height: 84px;
+      border-radius: 10px;
       overflow: hidden;
       background: rgba(255,255,255,0.06);
     }
@@ -409,7 +409,7 @@
       justify-content: center;
       text-align: center;
       padding: 6px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.7);
@@ -421,12 +421,12 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 6px;
+      gap: 5px;
     }
 
     .current-name {
-      font-size: 18px;
-      line-height: 1.02;
+      font-size: 15px;
+      line-height: 1.03;
       font-weight: 900;
       text-transform: uppercase;
       color: #ffffff;
@@ -437,27 +437,27 @@
     .current-stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
+      gap: 5px;
     }
 
     .current-stat {
-      border-radius: 12px;
+      border-radius: 10px;
       background: rgba(255,255,255,0.10);
-      padding: 8px 6px;
+      padding: 6px 4px;
       text-align: center;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
     }
 
     .current-stat-label {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.78);
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .current-stat-value {
-      font-size: 20px;
+      font-size: 17px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1;
@@ -466,20 +466,20 @@
     .bestworst-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 10px;
+      gap: 7px;
+      margin-top: 8px;
     }
 
     .mini-card {
       background: linear-gradient(180deg, rgba(58, 40, 128, 0.92), rgba(36, 24, 85, 0.96));
-      border-radius: 16px;
-      padding: 8px;
+      border-radius: 14px;
+      padding: 7px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
         0 8px 18px rgba(0,0,0,0.16);
-      min-height: 94px;
+      min-height: 82px;
       display: flex;
-      gap: 8px;
+      gap: 7px;
       align-items: stretch;
       overflow: hidden;
     }
@@ -493,9 +493,9 @@
     }
 
     .mini-thumb {
-      width: 74px;
-      min-width: 74px;
-      border-radius: 12px;
+      width: 62px;
+      min-width: 62px;
+      border-radius: 10px;
       overflow: hidden;
       background: rgba(255,255,255,0.05);
       align-self: stretch;
@@ -513,7 +513,7 @@
       display: flex !important;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.6);
@@ -528,21 +528,21 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 4px;
+      gap: 3px;
     }
 
     .mini-topline {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
+      gap: 5px;
     }
 
     .mini-label {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.35px;
+      letter-spacing: 0.3px;
     }
 
     .mini-card.best .mini-label {
@@ -554,9 +554,9 @@
     }
 
     .mini-badge {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 900;
-      padding: 4px 8px;
+      padding: 3px 7px;
       border-radius: 999px;
       background: rgba(255,255,255,0.06);
       color: rgba(255,255,255,0.85);
@@ -564,7 +564,7 @@
     }
 
     .mini-name {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1.05;
@@ -574,7 +574,7 @@
 
     .mini-stats {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
@@ -585,14 +585,14 @@
     }
 
     .mini-stat-label {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 800;
       text-transform: uppercase;
       color: rgba(255,255,255,0.65);
     }
 
     .mini-stat-value {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 900;
       color: #ffffff;
       line-height: 1;
@@ -609,14 +609,14 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
       padding-right: 2px;
     }
 
     .slot-card {
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      border-radius: 14px;
-      padding: 8px;
+      border-radius: 13px;
+      padding: 7px;
       box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.05),
         0 8px 20px rgba(0,0,0,0.22);
@@ -643,8 +643,8 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 5px;
+      gap: 10px;
+      margin-bottom: 4px;
     }
 
     .slot-title {
@@ -653,11 +653,11 @@
     }
 
     .slot-name {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 900;
       text-transform: uppercase;
       color: #f4f8ff;
-      line-height: 1.05;
+      line-height: 1.03;
       font-style: italic;
       text-shadow: 0 2px 8px rgba(0,0,0,0.35);
       word-break: break-word;
@@ -665,7 +665,7 @@
 
     .slot-bet {
       margin-top: 3px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 900;
       color: #dbe8ff;
       line-height: 1;
@@ -673,7 +673,7 @@
     }
 
     .slot-index {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 900;
       color: rgba(255,255,255,0.78);
       flex-shrink: 0;
@@ -703,25 +703,25 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
       color: rgba(255,255,255,0.65);
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.7px;
       background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
       border-radius: 10px;
     }
 
     .empty-state {
       height: 100%;
-      border-radius: 20px;
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 40px;
       background: linear-gradient(180deg, #3b2a70, #2a1d55);
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 900;
       color: rgba(255,255,255,0.82);
       text-transform: uppercase;
@@ -752,12 +752,12 @@
       </div>
 
       <div class="stats-wrap">
-        <div class="stat-card start-balance">
-          <div class="stat-title">Start Balance</div>
-          <div id="start" class="stat-value">$0.00</div>
-        </div>
-
         <div class="stats-grid">
+          <div class="stat-card start-balance">
+            <div class="stat-title">Start Balance</div>
+            <div id="start" class="stat-value">$0.00</div>
+          </div>
+
           <div class="stat-card">
             <div class="stat-title">AVG</div>
             <div id="avg" class="stat-value">0.00x</div>
@@ -772,7 +772,9 @@
             <div class="stat-title">Profit/Loss</div>
             <div id="profitLoss" class="stat-value">$0.00</div>
           </div>
+        </div>
 
+        <div class="stats-grid" style="grid-template-columns: 1fr;">
           <div class="stat-card">
             <div class="stat-title">Total Pago</div>
             <div id="totalPaid" class="stat-value">$0.00</div>
