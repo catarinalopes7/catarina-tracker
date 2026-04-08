@@ -2710,15 +2710,6 @@ export default {
       aliases: ["big bass reel repeat"]
     },
     {
-      id: "pragmatic-play:ice-mints-wolf-gold-4-pack",
-      provider: "pragmatic-play",
-      providerName: "Pragmatic Play",
-      slug: "ice-mints-wolf-gold-4-pack",
-      name: "Ice Mints Wolf Gold 4 Pack",
-      image: "/shared/images/slots/pragmatic-play/ice-mints-wolf-gold-4-pack.webp",
-      aliases: ["ice mints wolf gold 4 pack"]
-    },
-    {
       id: "pragmatic-play:captain-kraken-megaways",
       provider: "pragmatic-play",
       providerName: "Pragmatic Play",
@@ -2809,15 +2800,6 @@ export default {
       aliases: ["wild wild riches returns"]
     },
     {
-      id: "pragmatic-play:duel-at-dawn",
-      provider: "pragmatic-play",
-      providerName: "Pragmatic Play",
-      slug: "duel-at-dawn",
-      name: "Duel at Dawn",
-      image: "/shared/images/slots/pragmatic-play/duel-at-dawn.webp",
-      aliases: ["duel at dawn"]
-    },
-    {
       id: "pragmatic-play:santas-slay",
       provider: "pragmatic-play",
       providerName: "Pragmatic Play",
@@ -2861,6 +2843,33 @@ export default {
       name: "Sweet Craze",
       image: "/shared/images/slots/pragmatic-play/sweet-craze.webp",
       aliases: ["sweet craze"]
+    },
+    {
+      id: "pragmatic-play:ice-mints",
+      provider: "pragmatic-play",
+      providerName: "Pragmatic Play",
+      slug: "ice-mints",
+      name: "Ice Mints",
+      image: "/shared/images/slots/pragmatic-play/ice-mints.webp",
+      aliases: ["ice mints"]
+    },
+    {
+      id: "pragmatic-play:wolf-gold-4-pack",
+      provider: "pragmatic-play",
+      providerName: "Pragmatic Play",
+      slug: "wolf-gold-4-pack",
+      name: "Wolf Gold 4 Pack",
+      image: "/shared/images/slots/pragmatic-play/wolf-gold-4-pack.webp",
+      aliases: ["wolf gold 4 pack"]
+    },
+    {
+      id: "pragmatic-play:wild-beach-party",
+      provider: "pragmatic-play",
+      providerName: "Pragmatic Play",
+      slug: "wild-beach-party",
+      name: "Wild Beach Party",
+      image: "/shared/images/slots/pragmatic-play/wild-beach-party.webp",
+      aliases: ["wild beach party"]
     },
     {
       id: "pragmatic-play:sweet-bonanza-2500",
