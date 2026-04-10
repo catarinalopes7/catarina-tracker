@@ -1154,5 +1154,14 @@ export default {
       image: "/shared/images/slots/nolimit/xways-hoarder-2.webp",
       aliases: ["xways hoarder 2"]
     }
+        {
+      id: "nolimit:tombstone-begins",
+      provider: "nolimit",
+      providerName: "NoLimit City",
+      slug: "tombstone-begins",
+      name: "Tombstone Begins",
+      image: "/shared/images/slots/nolimit/tombstone-begins.webp",
+      aliases: ["tombstone begins"]
+    },
   ]
 };
