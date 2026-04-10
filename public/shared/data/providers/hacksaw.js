@@ -1649,5 +1649,14 @@ export default {
       image: "/shared/images/slots/hacksaw/pirate-bonanza.webp",
       aliases: ["pirate bonanza"]
     }
+    {
+      id: "hacksaw:mirage-city",
+      provider: "hacksaw",
+      providerName: "Hacksaw Gaming",
+      slug: "mirage-city",
+      name: "Mirage City",
+      image: "/shared/images/slots/hacksaw/mirage-city.webp",
+      aliases: ["mirage city", "mirage city ace roll"]
+    },
   ]
 };
