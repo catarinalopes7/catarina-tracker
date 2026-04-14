@@ -1595,6 +1595,51 @@ export default {
       image: "/shared/images/slots/playngo/ninja-fruits-multimax.webp",
       aliases: ["ninja fruits multimax"]
     },
+        {
+      id: "playngo:wild-north-radiant-skies-go-collect",
+      provider: "playngo",
+      providerName: "Play'n GO",
+      slug: "wild-north-radiant-skies-go-collect",
+      name: "Wild North Radiant Skies Go Collect",
+      image: "/shared/images/slots/playngo/wild-north-radiant-skies-go-collect.webp",
+      aliases: ["wild north radiant skies go collect"]
+    },
+    {
+      id: "playngo:wild-falls-2",
+      provider: "playngo",
+      providerName: "Play'n GO",
+      slug: "wild-falls-2",
+      name: "Wild Falls 2",
+      image: "/shared/images/slots/playngo/wild-falls-2.webp",
+      aliases: ["wild falls 2"]
+    },
+    {
+      id: "playngo:spinnin-records-raving-reels",
+      provider: "playngo",
+      providerName: "Play'n GO",
+      slug: "spinnin-records-raving-reels",
+      name: "Spinnin' Records Raving Reels",
+      image: "/shared/images/slots/playngo/spinnin-records-raving-reels.webp",
+      aliases: ["spinnin records raving reels", "spinnin' records raving reels"]
+    },
+    {
+      id: "playngo:the-sword-and-the-grail-excalibur",
+      provider: "playngo",
+      providerName: "Play'n GO",
+      slug: "the-sword-and-the-grail-excalibur",
+      name: "The Sword and the Grail Excalibur",
+      image: "/shared/images/slots/playngo/the-sword-and-the-grail-excalibur.webp",
+      aliases: ["the sword and the grail excalibur"]
+    },
+    {
+      id: "playngo:honey-rush-black-and-yellow",
+      provider: "playngo",
+      providerName: "Play'n GO",
+      slug: "honey-rush-black-and-yellow",
+      name: "Honey Rush Black and Yellow",
+      image: "/shared/images/slots/playngo/honey-rush-black-and-yellow.webp",
+      aliases: ["honey rush black and yellow"]
+    },
     {
       id: "playngo:ninja-fruits-2",
       provider: "playngo",
